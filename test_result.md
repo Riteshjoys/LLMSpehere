@@ -277,3 +277,5 @@ agent_communication:
     message: "Starting comprehensive testing of all backend API endpoints"
   - agent: "testing"
     message: "All backend API endpoints have been tested successfully. The authentication system, provider management, text generation, and health check endpoints are all working as expected. No issues were found during testing."
+  - agent: "testing"
+    message: "Starting comprehensive testing of the frontend application. Will test authentication flow, dashboard, admin panel, text generation, and UI/UX aspects."
