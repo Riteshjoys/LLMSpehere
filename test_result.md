@@ -195,17 +195,65 @@ backend:
         comment: "Health check endpoint is working correctly. Returns status 'healthy' as expected."
 
 frontend:
-  - task: "Frontend Testing"
+  - task: "Authentication Flow"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Login.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Need to test login page loads correctly, admin login functionality, dashboard access after login, and logout functionality"
+
+  - task: "Dashboard"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Dashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Need to verify dashboard layout and navigation, UI components rendering, responsive design, and admin badge/panel access"
+
+  - task: "Admin Panel"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/AdminPanel.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Need to test navigation to admin panel, provider list display, Add Provider form, preset templates, and provider management interface"
+
+  - task: "Text Generation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/TextGeneration.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Need to verify text generation page navigation, provider dropdown, model selection, settings controls, prompt input interface, and conversation area layout"
+
+  - task: "UI/UX Testing"
     implemented: true
     working: "NA"
     file: "/app/frontend/src/App.js"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "testing"
-        comment: "Frontend testing not in scope for this task"
+        comment: "Need to test responsive design on different viewport sizes, verify buttons and links work, check loading states and animations, test form validation and error handling, and verify clean modern design with proper spacing"
 
 metadata:
   created_by: "testing_agent"
