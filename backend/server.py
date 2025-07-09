@@ -41,6 +41,7 @@ providers_collection = db.providers
 conversations_collection = db.conversations
 generations_collection = db.generations
 image_generations_collection = db.image_generations
+video_generations_collection = db.video_generations
 
 # Security
 security = HTTPBearer()
