@@ -406,11 +406,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: 
-    - "Server Decomposition and Modularization"
-    - "Groq Integration"
-    - "Text Generation with Groq"
-    - "Unit and Functional Testing"
+  current_focus: []
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
