@@ -380,3 +380,7 @@ agent_communication:
     message: "Testing image generation functionality. The backend has OpenAI (DALL-E) and fal.ai (Stable Diffusion) providers pre-configured. Image generation endpoints return appropriate error messages when API keys are missing, which is the expected behavior in the test environment. Image provider management and history endpoints are working correctly."
   - agent: "testing"
     message: "Testing video generation functionality. The video generation page is accessible from the dashboard and properly implemented. The page has the correct layout with Generate and History tabs. The Generate tab includes provider selection, model selection, video settings (duration, aspect ratio, resolution), and prompt input. The History tab shows an appropriate empty state message. API calls return 401 errors as expected due to missing API keys in the test environment."
+  - agent: "main"
+    message: "Fixed authentication issue: Backend server was failing to start due to missing httpcore dependency. Added httpcore==1.0.9 to requirements.txt and restarted services. Authentication is now working correctly for both admin and regular users."
+  - agent: "main"
+    message: "Confirmed login functionality working: Admin login (admin/admin123) and regular user login (testuser/test123) both work successfully. Admin users see the Admin badge in the header, regular users do not. Both users can access the dashboard and all features are loading properly."
