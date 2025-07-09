@@ -44,7 +44,7 @@ const Dashboard = () => {
       icon: Video,
       path: '/video-generation',
       color: 'bg-purple-500',
-      available: false
+      available: true
     },
     {
       name: 'Code Assistant',
