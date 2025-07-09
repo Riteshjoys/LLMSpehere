@@ -193,6 +193,66 @@ backend:
       - working: true
         agent: "testing"
         comment: "Health check endpoint is working correctly. Returns status 'healthy' as expected."
+        
+  - task: "Image Generation API"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial test needed for image generation endpoint"
+      - working: true
+        agent: "testing"
+        comment: "Image generation endpoint is implemented correctly. The endpoint returns appropriate error messages when API keys are missing, which is the expected behavior in the test environment."
+
+  - task: "Image Provider Management"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial test needed for image provider management endpoints"
+      - working: true
+        agent: "testing"
+        comment: "Image provider management endpoints are working correctly. Successfully retrieved image providers list with both OpenAI and fal.ai providers configured."
+
+  - task: "Image History"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial test needed for image history endpoint"
+      - working: true
+        agent: "testing"
+        comment: "Image history endpoint is working correctly. Successfully retrieved user's image generation history."
+
+  - task: "Multi-provider Support"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial test needed for multi-provider support"
+      - working: true
+        agent: "testing"
+        comment: "Multi-provider support is implemented correctly. Both OpenAI DALL-E and fal.ai Stable Diffusion providers are configured and the system handles API calls to both providers, returning appropriate error messages when API keys are missing."
 
 frontend:
   - task: "Authentication Flow"
@@ -283,6 +343,10 @@ test_plan:
     - "Admin Panel"
     - "Text Generation"
     - "UI/UX Testing"
+    - "Image Generation API"
+    - "Image Provider Management"
+    - "Image History"
+    - "Multi-provider Support"
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
@@ -296,3 +360,5 @@ agent_communication:
     message: "Starting comprehensive testing of the frontend application. Will test authentication flow, dashboard, admin panel, text generation, and UI/UX aspects."
   - agent: "testing"
     message: "Frontend testing completed successfully. All major components (Authentication Flow, Dashboard, Admin Panel, Text Generation) are working correctly. The UI is responsive and works well on different viewport sizes. The application has a clean, modern design with proper spacing and good user experience."
+  - agent: "testing"
+    message: "Testing image generation functionality. The backend has OpenAI (DALL-E) and fal.ai (Stable Diffusion) providers pre-configured. Image generation endpoints return appropriate error messages when API keys are missing, which is the expected behavior in the test environment. Image provider management and history endpoints are working correctly."
