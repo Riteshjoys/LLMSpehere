@@ -104,6 +104,15 @@ class ImageGenerationRequest(BaseModel):
     number_of_images: Optional[int] = 1
     session_id: Optional[str] = None
 
+class VideoGenerationRequest(BaseModel):
+    provider_name: str
+    model: str
+    prompt: str
+    duration: Optional[int] = 5  # seconds
+    aspect_ratio: Optional[str] = "16:9"
+    resolution: Optional[str] = "720p"
+    session_id: Optional[str] = None
+
 class ConversationMessage(BaseModel):
     role: str
     content: str
