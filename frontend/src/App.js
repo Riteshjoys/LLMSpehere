@@ -7,6 +7,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import TextGeneration from './components/TextGeneration';
+import ImageGeneration from './components/ImageGeneration';
 import AdminPanel from './components/AdminPanel';
 import './App.css';
 
