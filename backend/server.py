@@ -1,6 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
+import sys
+import os
+
+# Add the current directory to the Python path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from modules.auth_routes import auth_router
 from modules.provider_routes import provider_router
 from modules.generation_routes import generation_router
