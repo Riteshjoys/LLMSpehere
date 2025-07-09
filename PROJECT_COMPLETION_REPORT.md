@@ -193,6 +193,53 @@ Use the preset templates as examples:
 }
 ```
 
+**Luma AI Dream Machine Template:**
+```json
+{
+  "name": "luma",
+  "description": "Luma AI Dream Machine for video generation",
+  "base_url": "https://api.lumalabs.ai/dream-machine/v1/generations/video",
+  "headers": {
+    "Authorization": "Bearer YOUR_LUMA_API_KEY",
+    "Content-Type": "application/json"
+  },
+  "request_body_template": {
+    "prompt": "{prompt}",
+    "aspect_ratio": "{aspect_ratio}",
+    "duration": "{duration}s"
+  },
+  "response_parser": {
+    "content_path": "assets.video"
+  },
+  "models": ["luma-dream-machine"],
+  "provider_type": "video"
+}
+```
+
+**Pika Labs Template:**
+```json
+{
+  "name": "pika",
+  "description": "Pika Labs for video generation",
+  "base_url": "https://app.ai4chat.co/api/v1/video/generate",
+  "headers": {
+    "Authorization": "Bearer YOUR_PIKA_API_KEY",
+    "Content-Type": "application/json"
+  },
+  "request_body_template": {
+    "prompt": "{prompt}",
+    "aspectRatio": "{aspect_ratio}",
+    "model": "{model}",
+    "img2video": false
+  },
+  "response_parser": {
+    "content_path": "video_url"
+  },
+  "models": ["pika-1.0", "pika-1.5"],
+  "provider_type": "video"
+}
+```
+
 ## 🚀 Ready for Next Phase
 
 The Phase 1 & 2 core features are complete and ready for:
