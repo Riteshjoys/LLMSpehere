@@ -36,7 +36,7 @@ const Dashboard = () => {
       icon: Image,
       path: '/image-generation',
       color: 'bg-green-500',
-      available: false
+      available: true
     },
     {
       name: 'Video Generation',
