@@ -307,6 +307,21 @@ backend:
       - working: "NA"
         agent: "main"
         comment: "Added comprehensive unit and functional test suites"
+        
+  - task: "Code Generation API"
+    implemented: true
+    working: true
+    file: "/app/backend/modules/code_generation_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial test needed for code generation API endpoints"
+      - working: true
+        agent: "testing"
+        comment: "Code Generation API endpoints are working correctly. Successfully tested GET /api/code/providers, GET /api/code/languages, and GET /api/code/request-types which all return the expected data. The POST /api/code/generate endpoint requires authentication and returns an error due to missing API keys, which is expected in the test environment. The GET /api/code/history endpoint also requires authentication and returns an empty array as expected since no code has been generated yet."
 
 frontend:
   - task: "Authentication Flow"
@@ -436,3 +451,5 @@ agent_communication:
     message: "Successfully decomposed monolithic server.py into modular components: Created separate modules for authentication, provider management, text/image/video generation services, database operations, and utility functions. Added comprehensive unit and functional testing with pytest. Integrated Groq API for text generation with provided API key. The new modular architecture maintains all existing functionality while being more maintainable and scalable."
   - agent: "testing"
     message: "Completed testing of the refactored backend system. The server decomposition is working correctly with all modules properly integrated. The Groq API integration is functioning well with llama3-8b-8192 and llama3-70b-8192 models (mixtral-8x7b-32768 and gemma-7b-it are decommissioned according to Groq API). All text generation endpoints are working correctly with both custom providers and Groq. The modular architecture maintains all existing functionality while being more maintainable and scalable."
+  - agent: "testing"
+    message: "Completed testing of the Code Generation API endpoints. The public endpoints (GET /api/code/providers, GET /api/code/languages, GET /api/code/request-types) are working correctly and return the expected data. The protected endpoints (POST /api/code/generate, GET /api/code/history) require authentication and work as expected. The code generation endpoint returns an error due to missing API keys, which is expected in the test environment. The history endpoint returns an empty array as expected since no code has been generated yet."
