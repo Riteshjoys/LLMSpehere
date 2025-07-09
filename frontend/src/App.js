@@ -39,6 +39,11 @@ function App() {
                 <TextGeneration />
               </ProtectedRoute>
             } />
+            <Route path="/image-generation" element={
+              <ProtectedRoute>
+                <ImageGeneration />
+              </ProtectedRoute>
+            } />
             <Route path="/admin" element={
               <ProtectedRoute>
                 <AdminPanel />
