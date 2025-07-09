@@ -37,14 +37,6 @@ const AdminPanel = () => {
     is_active: true
   });
 
-  useEffect(() => {
-    if (user && !user.is_admin) {
-      toast.error('Admin access required');
-      return;
-    }
-    loadProviders();
-  }, [user, loadProviders]);
-
   const loadProviders = useCallback(async () => {
     try {
       const response = await api.get('/api/admin/providers');
@@ -56,6 +48,14 @@ const AdminPanel = () => {
       setLoading(false);
     }
   }, [api]);
+
+  useEffect(() => {
+    if (user && !user.is_admin) {
+      toast.error('Admin access required');
+      return;
+    }
+    loadProviders();
+  }, [user, loadProviders]);
 
   const handleAddProvider = async (e) => {
     e.preventDefault();
