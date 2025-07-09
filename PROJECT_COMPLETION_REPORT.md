@@ -245,7 +245,6 @@ Use the preset templates as examples:
 The Phase 1 & 2 core features are complete and ready for:
 
 ### Phase 2 Features (Ready to Implement):
-- [ ] Video Generation Lab
 - [ ] Code Generation Assistant
 - [ ] Social Media Content Generator
 - [ ] Workflow Automation
