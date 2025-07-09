@@ -48,18 +48,29 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
+      console.log('Attempting login with:', username);
+      console.log('API Base URL:', API_BASE_URL);
+      
       const response = await api.post('/api/auth/login', { username, password });
+      console.log('Login response:', response.data);
+      
       const { access_token } = response.data;
       
       // Store token in cookie
       Cookies.set('token', access_token, { expires: 7 });
+      console.log('Token stored in cookie');
       
       // Get user info
       const userResponse = await api.get('/api/auth/me');
+      console.log('User info response:', userResponse.data);
+      
       setUser(userResponse.data);
       
       return { success: true };
     } catch (error) {
+      console.error('Login error:', error);
+      console.error('Error response:', error.response?.data);
+      
       return { 
         success: false, 
         error: error.response?.data?.detail || 'Login failed' 
