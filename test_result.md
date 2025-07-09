@@ -179,7 +179,7 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "testing"
@@ -187,6 +187,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "Get user generations endpoint is working correctly. Successfully retrieved user generation history."
+      - working: true
+        agent: "testing"
+        comment: "Get user generations endpoint is still working correctly after server decomposition. Successfully retrieved user generation history including Groq generations."
 
   - task: "Health Check"
     implemented: true
