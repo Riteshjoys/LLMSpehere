@@ -28,13 +28,19 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+    
+    console.log('Login attempt started with:', formData.username);
+    
     const result = await login(formData.username, formData.password);
+    
+    console.log('Login result:', result);
 
     if (result.success) {
       toast.success('Login successful!');
+      console.log('Login successful, should redirect');
     } else {
-      toast.error(result.error);
+      console.log('Login failed with error:', result.error);
+      toast.error(result.error || 'Login failed');
     }
 
     setLoading(false);
