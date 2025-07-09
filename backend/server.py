@@ -53,6 +53,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(config('JWT_ACCESS_TOKEN_EXPIRE_MINUTES', defa
 # API Keys
 OPENAI_API_KEY = config('OPENAI_API_KEY', default='')
 FAL_API_KEY = config('FAL_API_KEY', default='')
+LUMA_API_KEY = config('LUMA_API_KEY', default='')
+PIKA_API_KEY = config('PIKA_API_KEY', default='')
 
 # Set fal.ai API key
 if FAL_API_KEY:
