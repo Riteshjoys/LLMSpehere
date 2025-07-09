@@ -52,7 +52,7 @@ const Dashboard = () => {
       icon: Code,
       path: '/code-generation',
       color: 'bg-orange-500',
-      available: false
+      available: true
     },
     {
       name: 'Social Media',
