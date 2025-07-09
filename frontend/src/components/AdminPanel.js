@@ -22,7 +22,9 @@ const AdminPanel = () => {
   const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showCurlModal, setShowCurlModal] = useState(false);
   const [editingProvider, setEditingProvider] = useState(null);
+  const [activeTab, setActiveTab] = useState('providers');
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -31,6 +33,7 @@ const AdminPanel = () => {
     request_body_template: '{"model": "{model}", "messages": [{"role": "user", "content": "{prompt}"}], "max_tokens": {max_tokens}, "temperature": {temperature}}',
     response_parser: '{"content_path": "choices.0.message.content"}',
     models: '',
+    provider_type: 'text',
     is_active: true
   });
 
