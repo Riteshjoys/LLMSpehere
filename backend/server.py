@@ -998,8 +998,49 @@ async def initialize_default_providers():
         }
     ]
     
+    # Default video providers
+    default_video_providers = [
+        {
+            "provider_id": "luma-video-default",
+            "name": "luma",
+            "description": "Luma AI Dream Machine for video generation",
+            "base_url": "https://api.lumalabs.ai/dream-machine/v1/generations/video",
+            "headers": {"Authorization": "Bearer YOUR_LUMA_API_KEY", "Content-Type": "application/json"},
+            "request_body_template": {
+                "prompt": "{prompt}",
+                "aspect_ratio": "{aspect_ratio}",
+                "duration": "{duration}s"
+            },
+            "response_parser": {"content_path": "assets.video"},
+            "models": ["luma-dream-machine"],
+            "provider_type": "video",
+            "is_active": True,
+            "created_at": datetime.utcnow(),
+            "created_by": "system"
+        },
+        {
+            "provider_id": "pika-video-default",
+            "name": "pika",
+            "description": "Pika Labs for video generation",
+            "base_url": "https://app.ai4chat.co/api/v1/video/generate",
+            "headers": {"Authorization": "Bearer YOUR_PIKA_API_KEY", "Content-Type": "application/json"},
+            "request_body_template": {
+                "prompt": "{prompt}",
+                "aspectRatio": "{aspect_ratio}",
+                "model": "{model}",
+                "img2video": False
+            },
+            "response_parser": {"content_path": "video_url"},
+            "models": ["pika-1.0", "pika-1.5"],
+            "provider_type": "video",
+            "is_active": True,
+            "created_at": datetime.utcnow(),
+            "created_by": "system"
+        }
+    ]
+    
     # Insert default providers if they don't exist
-    for provider in default_text_providers + default_image_providers:
+    for provider in default_text_providers + default_image_providers + default_video_providers:
         if not providers_collection.find_one({"provider_id": provider["provider_id"]}):
             providers_collection.insert_one(provider)
 
