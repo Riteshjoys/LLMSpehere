@@ -9,6 +9,7 @@ import Dashboard from './components/Dashboard';
 import TextGeneration from './components/TextGeneration';
 import ImageGeneration from './components/ImageGeneration';
 import VideoGeneration from './components/VideoGeneration';
+import CodeGeneration from './components/CodeGeneration';
 import AdminPanel from './components/AdminPanel';
 import './App.css';
 
