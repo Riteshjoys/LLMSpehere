@@ -386,3 +386,5 @@ agent_communication:
     message: "Confirmed login functionality working: Admin login (admin/admin123) and regular user login (testuser/test123) both work successfully. Admin users see the Admin badge in the header, regular users do not. Both users can access the dashboard and all features are loading properly."
   - agent: "main"
     message: "Fixed admin panel JavaScript error: Resolved 'Cannot access loadProviders before initialization' error in AdminPanel.js by reordering the loadProviders function definition before the useEffect hook. Admin panel now loads correctly and displays all provider management functionality including tabs for All Providers, Text Providers, and Image Providers."
+  - agent: "main"
+    message: "Fixed dashboard routing issue: Added /dashboard route to App.js routing configuration. The dashboard was previously only accessible at the root route (/). Now both routes work correctly: root route (/) and /dashboard route serve the same Dashboard component. Dashboard displays welcome message, AI tools grid, stats, and recent activity section."
