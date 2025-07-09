@@ -275,11 +275,14 @@ backend:
     file: "/app/backend/services/text_generation_service.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Added Groq API integration for text generation"
+      - working: true
+        agent: "testing"
+        comment: "Groq integration is working correctly. Successfully tested text generation with Groq models llama3-8b-8192 and llama3-70b-8192. The mixtral-8x7b-32768 and gemma-7b-it models are decommissioned according to Groq API. Conversation history and user generations with Groq are working properly."
 
   - task: "Unit and Functional Testing"
     implemented: true
