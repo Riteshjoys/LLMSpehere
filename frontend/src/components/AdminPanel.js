@@ -45,7 +45,7 @@ const AdminPanel = () => {
     loadProviders();
   }, [user, loadProviders]);
 
-  const loadProviders = async () => {
+  const loadProviders = useCallback(async () => {
     try {
       const response = await api.get('/api/admin/providers');
       setProviders(response.data.providers);
@@ -55,7 +55,7 @@ const AdminPanel = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [api]);
 
   const handleAddProvider = async (e) => {
     e.preventDefault();
