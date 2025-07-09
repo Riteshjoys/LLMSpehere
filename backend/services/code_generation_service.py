@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 from emergentintegrations.llm.chat import LlmChat, UserMessage
-from utils.database import get_database
+from utils.database import db
 from models.generation_models import CodeGenerationRequest, CodeGenerationResponse
 import logging
 
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class CodeGenerationService:
     def __init__(self):
-        self.db = get_database()
+        self.db = db
     
     async def generate_code(self, request: CodeGenerationRequest, user_id: str) -> CodeGenerationResponse:
         """
