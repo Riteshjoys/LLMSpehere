@@ -2,21 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
+import CurlProviderModal from './CurlProviderModal';
 import { 
-  ArrowLeft, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Save, 
-  X, 
-  Settings, 
-  Brain,
-  CheckCircle,
-  XCircle,
-  Code,
-  Database,
-  Globe
-} from 'lucide-react';
+  ArrowLeftIcon, 
+  PlusIcon, 
+  PencilIcon, 
+  TrashIcon, 
+  CheckCircleIcon,
+  XCircleIcon,
+  CodeBracketIcon,
+  DatabaseIcon,
+  GlobeAltIcon,
+  CogIcon,
+  CommandLineIcon
+} from '@heroicons/react/24/outline';
 
 const AdminPanel = () => {
   const { api, user } = useAuth();
