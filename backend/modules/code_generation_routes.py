@@ -3,7 +3,6 @@ from typing import List, Dict
 from utils.auth_utils import get_current_user
 from services.code_generation_service import CodeGenerationService
 from models.generation_models import CodeGenerationRequest, CodeGenerationResponse
-from models.user_models import User
 
 router = APIRouter(prefix="/api/code", tags=["code_generation"])
 
@@ -13,13 +12,13 @@ code_service = CodeGenerationService()
 @router.post("/generate", response_model=CodeGenerationResponse)
 async def generate_code(
     request: CodeGenerationRequest,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """
     Generate code using AI providers
     """
     try:
-        response = await code_service.generate_code(request, current_user.id)
+        response = await code_service.generate_code(request, current_user)
         return response
     except Exception as e:
         raise HTTPException(
@@ -30,13 +29,13 @@ async def generate_code(
 @router.get("/history", response_model=List[Dict])
 async def get_code_generation_history(
     limit: int = 50,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """
     Get user's code generation history
     """
     try:
-        history = await code_service.get_user_code_generations(current_user.id, limit)
+        history = await code_service.get_user_code_generations(current_user, limit)
         return history
     except Exception as e:
         raise HTTPException(
@@ -47,13 +46,13 @@ async def get_code_generation_history(
 @router.get("/generation/{generation_id}")
 async def get_code_generation(
     generation_id: str,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """
     Get specific code generation by ID
     """
     try:
-        generation = await code_service.get_code_generation_by_id(generation_id, current_user.id)
+        generation = await code_service.get_code_generation_by_id(generation_id, current_user)
         if not generation:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -114,7 +113,7 @@ async def get_request_types():
 async def continue_code_session(
     session_id: str,
     request: CodeGenerationRequest,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """
     Continue code generation in existing session
@@ -122,7 +121,7 @@ async def continue_code_session(
     try:
         # Override session_id in request
         request.session_id = session_id
-        response = await code_service.generate_code(request, current_user.id)
+        response = await code_service.generate_code(request, current_user)
         return response
     except Exception as e:
         raise HTTPException(
@@ -133,14 +132,14 @@ async def continue_code_session(
 @router.delete("/generation/{generation_id}")
 async def delete_code_generation(
     generation_id: str,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """
     Delete a code generation
     """
     try:
         # Check if generation exists and belongs to user
-        generation = await code_service.get_code_generation_by_id(generation_id, current_user.id)
+        generation = await code_service.get_code_generation_by_id(generation_id, current_user)
         if not generation:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -151,7 +150,7 @@ async def delete_code_generation(
         code_generations_collection = code_service.db.code_generations
         await code_generations_collection.delete_one({
             "id": generation_id,
-            "user_id": current_user.id
+            "user_id": current_user
         })
         
         return {"message": "Code generation deleted successfully"}
@@ -166,7 +165,7 @@ async def delete_code_generation(
 
 @router.get("/stats")
 async def get_code_generation_stats(
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """
     Get user's code generation statistics
@@ -176,12 +175,12 @@ async def get_code_generation_stats(
         
         # Total generations
         total_generations = await code_generations_collection.count_documents({
-            "user_id": current_user.id
+            "user_id": current_user
         })
         
         # Generations by language
         language_pipeline = [
-            {"$match": {"user_id": current_user.id}},
+            {"$match": {"user_id": current_user}},
             {"$group": {"_id": "$language", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}}
         ]
@@ -195,7 +194,7 @@ async def get_code_generation_stats(
         
         # Generations by request type
         type_pipeline = [
-            {"$match": {"user_id": current_user.id}},
+            {"$match": {"user_id": current_user}},
             {"$group": {"_id": "$request_type", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}}
         ]
@@ -209,7 +208,7 @@ async def get_code_generation_stats(
         
         # Generations by provider
         provider_pipeline = [
-            {"$match": {"user_id": current_user.id}},
+            {"$match": {"user_id": current_user}},
             {"$group": {"_id": "$provider", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}}
         ]
