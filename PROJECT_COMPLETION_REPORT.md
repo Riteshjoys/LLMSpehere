@@ -106,6 +106,8 @@ ContentForge AI is now a fully functional, production-ready AI content generatio
 - `providers`: LLM provider configurations
 - `conversations`: Multi-turn conversation history
 - `generations`: Individual generation records
+- `image_generations`: Image generation history
+- `video_generations`: Video generation history
 
 ## 🔐 Security & Authentication
 
