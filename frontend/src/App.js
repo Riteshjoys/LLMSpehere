@@ -8,6 +8,7 @@ import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import TextGeneration from './components/TextGeneration';
 import ImageGeneration from './components/ImageGeneration';
+import VideoGeneration from './components/VideoGeneration';
 import AdminPanel from './components/AdminPanel';
 import './App.css';
 
