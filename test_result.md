@@ -362,6 +362,7 @@ test_plan:
     - "Image Provider Management"
     - "Image History"
     - "Multi-provider Support"
+    - "Video Generation"
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
