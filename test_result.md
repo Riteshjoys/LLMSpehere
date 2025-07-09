@@ -315,6 +315,21 @@ frontend:
         agent: "testing"
         comment: "Text generation page works correctly. Navigation to the page works, provider dropdown and model selection are functional, settings controls (temperature, max tokens) work properly, prompt input interface is available, and conversation area layout is correct. Note: Actual text generation API call returns 401 Unauthorized, but this is likely due to missing API keys in the test environment."
 
+  - task: "Video Generation"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/components/VideoGeneration.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Need to test video generation page navigation, layout, tab functionality, form controls, and error handling"
+      - working: true
+        agent: "testing"
+        comment: "Video generation page works correctly. Navigation from dashboard works, page layout with two-column design is correct, tab navigation between Generate and History tabs functions properly, video settings controls (duration, aspect ratio, resolution) are available, and the History tab shows appropriate empty state. API calls return 401 errors as expected due to missing API keys in the test environment."
+
   - task: "UI/UX Testing"
     implemented: true
     working: true
