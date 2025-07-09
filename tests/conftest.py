@@ -38,7 +38,7 @@ def mock_db():
 @pytest.fixture
 def test_client():
     """Create a test client for the FastAPI application"""
-    from server_new import app
+    from server import app
     return TestClient(app)
 
 @pytest.fixture
