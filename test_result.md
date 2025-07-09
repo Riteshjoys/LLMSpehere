@@ -161,7 +161,7 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "testing"
@@ -169,6 +169,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "Get user conversations endpoint is working correctly. Successfully retrieved all user conversations."
+      - working: true
+        agent: "testing"
+        comment: "Get user conversations endpoint is still working correctly after server decomposition. Successfully retrieved all user conversations including those from Groq."
 
   - task: "Text Generation - Get User Generations"
     implemented: true
