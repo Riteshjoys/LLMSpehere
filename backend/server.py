@@ -11,6 +11,7 @@ import base64
 import re
 import shlex
 import fal_client
+import asyncio
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
