@@ -43,7 +43,7 @@ const AdminPanel = () => {
       return;
     }
     loadProviders();
-  }, [user]);
+  }, [user, loadProviders]);
 
   const loadProviders = async () => {
     try {
