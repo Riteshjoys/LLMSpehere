@@ -58,7 +58,7 @@ ContentForge AI is now a fully functional, production-ready AI content generatio
 - **Accessibility**: WCAG 2.1 AA compliant design
 
 ### 6. **Admin Management System**
-- **Provider CRUD**: Create, read, update, delete providers (text & image)
+- **Provider CRUD**: Create, read, update, delete providers (text, image & video)
 - **User Management**: Monitor user activity and permissions
 - **System Analytics**: Usage statistics and performance metrics
 - **Preset Templates**: Quick provider setup with industry standards
