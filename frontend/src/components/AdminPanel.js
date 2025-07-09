@@ -11,7 +11,7 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   CodeBracketIcon,
-  DatabaseIcon,
+  ServerIcon,
   GlobeAltIcon,
   CogIcon,
   CommandLineIcon
