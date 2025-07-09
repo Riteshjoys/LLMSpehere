@@ -29,6 +29,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(provider_router)
 app.include_router(generation_router)
+app.include_router(code_router)
 
 # Health check
 @app.get("/api/health")
