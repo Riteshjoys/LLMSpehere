@@ -439,6 +439,14 @@ async def get_image_providers(current_user: str = Depends(get_current_user)):
     ))
     return {"providers": providers}
 
+@app.get("/api/providers/video")
+async def get_video_providers(current_user: str = Depends(get_current_user)):
+    providers = list(providers_collection.find(
+        {"is_active": True, "provider_type": "video"}, 
+        {"_id": 0, "provider_id": 1, "name": 1, "description": 1, "models": 1}
+    ))
+    return {"providers": providers}
+
 # Text Generation Routes
 @app.post("/api/generate/text")
 async def generate_text(request: TextGenerationRequest, current_user: str = Depends(get_current_user)):
