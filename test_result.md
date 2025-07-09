@@ -125,7 +125,7 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "testing"
@@ -133,6 +133,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "Text generation endpoint is working correctly. Successfully generated text with a mock provider."
+      - working: true
+        agent: "testing"
+        comment: "Text generation endpoint is still working correctly after server decomposition. Successfully tested with both mock provider and Groq integration."
 
   - task: "Text Generation - Get Conversation"
     implemented: true
