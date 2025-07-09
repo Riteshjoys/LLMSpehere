@@ -39,3 +39,25 @@ class GenerationResponse(BaseModel):
     prompt: str
     content: str
     created_at: datetime
+
+class CodeGenerationRequest(BaseModel):
+    provider: str
+    model: str
+    request_type: str  # generate, debug, optimize, refactor, review, documentation, test, explain, architecture
+    language: str  # programming language
+    prompt: str
+    max_tokens: Optional[int] = 4000
+    session_id: Optional[str] = None
+
+class CodeGenerationResponse(BaseModel):
+    id: str
+    session_id: str
+    provider: str
+    model: str
+    request_type: str
+    language: str
+    prompt: str
+    response: str
+    user_id: str
+    created_at: datetime
+    status: str = "completed"
