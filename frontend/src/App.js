@@ -56,6 +56,11 @@ function App() {
                 <VideoGeneration />
               </ProtectedRoute>
             } />
+            <Route path="/code-generation" element={
+              <ProtectedRoute>
+                <CodeGeneration />
+              </ProtectedRoute>
+            } />
             <Route path="/admin" element={
               <ProtectedRoute>
                 <AdminPanel />
