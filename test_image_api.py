@@ -2,7 +2,7 @@ import requests
 import json
 
 # Configuration
-BASE_URL = "https://ea310878-9ddc-41e0-89ae-e146de9b21d7.preview.emergentagent.com/api"
+BASE_URL = "https://7ae7b567-5b61-41ca-910a-7392aa8f1e8d.preview.emergentagent.com/api"
 ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "admin123"
 
