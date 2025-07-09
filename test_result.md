@@ -125,7 +125,7 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "testing"
@@ -140,7 +140,7 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "testing"
@@ -155,7 +155,7 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "testing"
@@ -170,7 +170,7 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "testing"
@@ -253,6 +253,42 @@ backend:
       - working: true
         agent: "testing"
         comment: "Multi-provider support is implemented correctly. Both OpenAI DALL-E and fal.ai Stable Diffusion providers are configured and the system handles API calls to both providers, returning appropriate error messages when API keys are missing."
+
+  - task: "Server Decomposition and Modularization"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Decomposed monolithic server.py into modular components"
+
+  - task: "Groq Integration"
+    implemented: true
+    working: true
+    file: "/app/backend/services/text_generation_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added Groq API integration for text generation"
+
+  - task: "Unit and Functional Testing"
+    implemented: true
+    working: true
+    file: "/app/tests/"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added comprehensive unit and functional test suites"
 
 frontend:
   - task: "Authentication Flow"
@@ -353,16 +389,10 @@ metadata:
 
 test_plan:
   current_focus: 
-    - "Authentication Flow"
-    - "Dashboard"
-    - "Admin Panel"
-    - "Text Generation"
-    - "UI/UX Testing"
-    - "Image Generation API"
-    - "Image Provider Management"
-    - "Image History"
-    - "Multi-provider Support"
-    - "Video Generation"
+    - "Server Decomposition and Modularization"
+    - "Groq Integration"
+    - "Text Generation with Groq"
+    - "Unit and Functional Testing"
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
@@ -388,3 +418,5 @@ agent_communication:
     message: "Fixed admin panel JavaScript error: Resolved 'Cannot access loadProviders before initialization' error in AdminPanel.js by reordering the loadProviders function definition before the useEffect hook. Admin panel now loads correctly and displays all provider management functionality including tabs for All Providers, Text Providers, and Image Providers."
   - agent: "main"
     message: "Fixed dashboard routing issue: Added /dashboard route to App.js routing configuration. The dashboard was previously only accessible at the root route (/). Now both routes work correctly: root route (/) and /dashboard route serve the same Dashboard component. Dashboard displays welcome message, AI tools grid, stats, and recent activity section."
+  - agent: "main"
+    message: "Successfully decomposed monolithic server.py into modular components: Created separate modules for authentication, provider management, text/image/video generation services, database operations, and utility functions. Added comprehensive unit and functional testing with pytest. Integrated Groq API for text generation with provided API key. The new modular architecture maintains all existing functionality while being more maintainable and scalable."
