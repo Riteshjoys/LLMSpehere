@@ -256,9 +256,9 @@ The Phase 1 & 2 core features are complete and ready for:
 - [ ] Character & Avatar Builder
 
 ### Immediate Next Steps:
-1. **Choose Next Feature**: Select from Video Generation, Code Assistant, or Social Media
+1. **Choose Next Feature**: Select from Code Assistant or Social Media Generator
 2. **Add Real API Keys**: Replace placeholder keys with actual provider keys
-3. **Test Live Generation**: Verify with real API calls
+3. **Test Live Generation**: Verify video generation with real API calls
 4. **Scale Infrastructure**: Add load balancing and caching
 
 ## 🎉 Success Metrics Achieved
