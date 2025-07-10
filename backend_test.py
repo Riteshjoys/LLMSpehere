@@ -6,7 +6,7 @@ import sys
 from typing import Dict, Any
 
 # Get the backend URL from the frontend .env file
-BACKEND_URL = "https://d73c3a1f-5202-46c0-a0a5-fc6dfa0eabf2.preview.emergentagent.com"
+BACKEND_URL = "https://aad38467-9efd-4d4d-b55d-870032e69899.preview.emergentagent.com"
 
 class CodeGenerationAPITest(unittest.TestCase):
     """Test suite for Code Generation API endpoints"""
