@@ -463,6 +463,360 @@ class WorkflowAPITest(unittest.TestCase):
         else:
             print("⚠️ No workflows available to test management endpoints")
 
+class WorkflowSchedulerAPITest(unittest.TestCase):
+    """Test suite for Workflow Scheduler API endpoints"""
+    
+    def setUp(self):
+        """Set up test environment"""
+        self.base_url = f"{BACKEND_URL}/api"
+        self.auth_token = None
+        self.created_workflow_id = None
+        self.created_schedule_id = None
+        self.login()
+    
+    def login(self):
+        """Login to get authentication token"""
+        login_url = f"{self.base_url}/auth/login"
+        login_data = {
+            "username": "admin",
+            "password": "admin123"
+        }
+        
+        response = requests.post(login_url, json=login_data)
+        if response.status_code == 200:
+            data = response.json()
+            self.auth_token = data.get("access_token")
+            print(f"Successfully logged in as admin. Token: {self.auth_token[:10]}...")
+        else:
+            print(f"Failed to login: {response.status_code} - {response.text}")
+            self.fail("Login failed")
+    
+    def get_headers(self) -> Dict[str, str]:
+        """Get headers with authentication token"""
+        return {
+            "Authorization": f"Bearer {self.auth_token}",
+            "Content-Type": "application/json"
+        }
+    
+    def test_01_validate_cron_expression(self):
+        """Test GET /api/workflow-schedules/validate/cron endpoint"""
+        print("\n=== Testing GET /api/workflow-schedules/validate/cron ===")
+        
+        # Test valid cron expressions
+        valid_expressions = [
+            "0 9 * * *",  # Daily at 9 AM
+            "0 */2 * * *",  # Every 2 hours
+            "0 9 * * MON",  # Every Monday at 9 AM
+            "*/30 * * * *"  # Every 30 minutes
+        ]
+        
+        for expression in valid_expressions:
+            url = f"{self.base_url}/workflow-schedules/validate/cron?expression={expression}"
+            response = requests.get(url, headers=self.get_headers())
+            
+            self.assertEqual(response.status_code, 200, f"Expected status code 200 for expression '{expression}', got {response.status_code}")
+            
+            data = response.json()
+            self.assertIn("valid", data, "Response should have 'valid' field")
+            self.assertIn("next_runs", data, "Response should have 'next_runs' field")
+            self.assertIn("expression", data, "Response should have 'expression' field")
+            self.assertTrue(data["valid"], f"Expression '{expression}' should be valid")
+            self.assertEqual(data["expression"], expression, "Expression should match request")
+            
+            print(f"  ✅ Valid expression '{expression}' - Next runs: {len(data['next_runs'])}")
+        
+        # Test invalid cron expression
+        invalid_expression = "invalid cron"
+        url = f"{self.base_url}/workflow-schedules/validate/cron?expression={invalid_expression}"
+        response = requests.get(url, headers=self.get_headers())
+        
+        self.assertEqual(response.status_code, 200, f"Expected status code 200 for invalid expression, got {response.status_code}")
+        data = response.json()
+        self.assertFalse(data["valid"], "Invalid expression should return valid=false")
+        print(f"  ✅ Invalid expression '{invalid_expression}' correctly identified as invalid")
+    
+    def test_02_get_user_schedules_empty(self):
+        """Test GET /api/workflow-schedules/ endpoint when no schedules exist"""
+        print("\n=== Testing GET /api/workflow-schedules/ (empty) ===")
+        url = f"{self.base_url}/workflow-schedules/"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.get(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIsInstance(data, list, "Response should be a list")
+        print(f"✅ GET /api/workflow-schedules/ returned {len(data)} schedules")
+    
+    def test_03_create_workflow_schedule(self):
+        """Test POST /api/workflow-schedules/ endpoint"""
+        print("\n=== Testing POST /api/workflow-schedules/ ===")
+        
+        # First, get a workflow to schedule
+        workflows_response = requests.get(f"{self.base_url}/workflows/", headers=self.get_headers())
+        self.assertEqual(workflows_response.status_code, 200)
+        workflows = workflows_response.json()
+        
+        if len(workflows) == 0:
+            # Create a workflow from template first
+            templates_response = requests.get(f"{self.base_url}/workflows/templates", headers=self.get_headers())
+            self.assertEqual(templates_response.status_code, 200)
+            templates = templates_response.json()
+            
+            if len(templates) > 0:
+                template = templates[0]
+                variables = {}
+                for var_name in template.get("variables", {}):
+                    variables[var_name] = f"test_value_for_{var_name}"
+                
+                create_response = requests.post(
+                    f"{self.base_url}/workflows/from-template/{template['template_id']}", 
+                    json=variables, 
+                    headers=self.get_headers()
+                )
+                self.assertEqual(create_response.status_code, 200)
+                self.created_workflow_id = create_response.json()["workflow_id"]
+            else:
+                self.skipTest("No workflows or templates available for scheduling test")
+        else:
+            self.created_workflow_id = workflows[0]["workflow_id"]
+        
+        # Now create a schedule
+        schedule_data = {
+            "workflow_id": self.created_workflow_id,
+            "name": "Test Schedule",
+            "description": "Test schedule for automated testing",
+            "cron_expression": "0 9 * * *",  # Daily at 9 AM
+            "timezone": "UTC",
+            "input_variables": {},
+            "max_runs": 10
+        }
+        
+        url = f"{self.base_url}/workflow-schedules/"
+        
+        # Test without authentication
+        response = requests.post(url, json=schedule_data)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.post(url, json=schedule_data, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        required_fields = ["schedule_id", "workflow_id", "name", "description", "cron_expression", "status", "created_at"]
+        for field in required_fields:
+            self.assertIn(field, data, f"Response should have '{field}' field")
+        
+        self.assertEqual(data["workflow_id"], self.created_workflow_id, "Workflow ID should match")
+        self.assertEqual(data["name"], schedule_data["name"], "Name should match")
+        self.assertEqual(data["cron_expression"], schedule_data["cron_expression"], "Cron expression should match")
+        self.assertEqual(data["status"], "active", "New schedule should be active")
+        
+        self.created_schedule_id = data["schedule_id"]
+        print(f"✅ Created schedule: {data['name']} (ID: {data['schedule_id']})")
+    
+    def test_04_get_specific_schedule(self):
+        """Test GET /api/workflow-schedules/{schedule_id} endpoint"""
+        print("\n=== Testing GET /api/workflow-schedules/{schedule_id} ===")
+        
+        if not self.created_schedule_id:
+            self.skipTest("No schedule created in previous test")
+        
+        url = f"{self.base_url}/workflow-schedules/{self.created_schedule_id}"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.get(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertEqual(data["schedule_id"], self.created_schedule_id, "Schedule ID should match")
+        print(f"✅ Retrieved schedule: {data['name']}")
+    
+    def test_05_update_workflow_schedule(self):
+        """Test PUT /api/workflow-schedules/{schedule_id} endpoint"""
+        print("\n=== Testing PUT /api/workflow-schedules/{schedule_id} ===")
+        
+        if not self.created_schedule_id:
+            self.skipTest("No schedule created in previous test")
+        
+        update_data = {
+            "name": "Updated Test Schedule",
+            "description": "Updated description for testing",
+            "cron_expression": "0 10 * * *",  # Daily at 10 AM instead of 9 AM
+            "max_runs": 20
+        }
+        
+        url = f"{self.base_url}/workflow-schedules/{self.created_schedule_id}"
+        
+        # Test without authentication
+        response = requests.put(url, json=update_data)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.put(url, json=update_data, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertEqual(data["name"], update_data["name"], "Name should be updated")
+        self.assertEqual(data["description"], update_data["description"], "Description should be updated")
+        self.assertEqual(data["cron_expression"], update_data["cron_expression"], "Cron expression should be updated")
+        
+        print(f"✅ Updated schedule: {data['name']}")
+    
+    def test_06_pause_workflow_schedule(self):
+        """Test POST /api/workflow-schedules/{schedule_id}/pause endpoint"""
+        print("\n=== Testing POST /api/workflow-schedules/{schedule_id}/pause ===")
+        
+        if not self.created_schedule_id:
+            self.skipTest("No schedule created in previous test")
+        
+        url = f"{self.base_url}/workflow-schedules/{self.created_schedule_id}/pause"
+        
+        # Test without authentication
+        response = requests.post(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.post(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIn("message", data, "Response should have 'message' field")
+        
+        # Verify schedule is paused
+        get_response = requests.get(f"{self.base_url}/workflow-schedules/{self.created_schedule_id}", headers=self.get_headers())
+        self.assertEqual(get_response.status_code, 200)
+        schedule_data = get_response.json()
+        self.assertEqual(schedule_data["status"], "paused", "Schedule should be paused")
+        
+        print(f"✅ Paused schedule: {schedule_data['name']}")
+    
+    def test_07_resume_workflow_schedule(self):
+        """Test POST /api/workflow-schedules/{schedule_id}/resume endpoint"""
+        print("\n=== Testing POST /api/workflow-schedules/{schedule_id}/resume ===")
+        
+        if not self.created_schedule_id:
+            self.skipTest("No schedule created in previous test")
+        
+        url = f"{self.base_url}/workflow-schedules/{self.created_schedule_id}/resume"
+        
+        # Test without authentication
+        response = requests.post(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.post(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIn("message", data, "Response should have 'message' field")
+        
+        # Verify schedule is active
+        get_response = requests.get(f"{self.base_url}/workflow-schedules/{self.created_schedule_id}", headers=self.get_headers())
+        self.assertEqual(get_response.status_code, 200)
+        schedule_data = get_response.json()
+        self.assertEqual(schedule_data["status"], "active", "Schedule should be active")
+        
+        print(f"✅ Resumed schedule: {schedule_data['name']}")
+    
+    def test_08_get_user_schedules_with_data(self):
+        """Test GET /api/workflow-schedules/ endpoint with created schedule"""
+        print("\n=== Testing GET /api/workflow-schedules/ (with data) ===")
+        url = f"{self.base_url}/workflow-schedules/"
+        
+        response = requests.get(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIsInstance(data, list, "Response should be a list")
+        self.assertGreater(len(data), 0, "Should have at least one schedule")
+        
+        # Check schedule structure
+        for schedule in data:
+            required_fields = ["schedule_id", "workflow_id", "name", "description", "cron_expression", "status", "created_at"]
+            for field in required_fields:
+                self.assertIn(field, schedule, f"Schedule should have '{field}' field")
+        
+        print(f"✅ GET /api/workflow-schedules/ returned {len(data)} schedules")
+    
+    def test_09_delete_workflow_schedule(self):
+        """Test DELETE /api/workflow-schedules/{schedule_id} endpoint"""
+        print("\n=== Testing DELETE /api/workflow-schedules/{schedule_id} ===")
+        
+        if not self.created_schedule_id:
+            self.skipTest("No schedule created in previous test")
+        
+        url = f"{self.base_url}/workflow-schedules/{self.created_schedule_id}"
+        
+        # Test without authentication
+        response = requests.delete(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.delete(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIn("message", data, "Response should have 'message' field")
+        
+        # Verify schedule is deleted
+        get_response = requests.get(url, headers=self.get_headers())
+        self.assertEqual(get_response.status_code, 404, "Schedule should not be found after deletion")
+        
+        print(f"✅ Deleted schedule: {self.created_schedule_id}")
+    
+    def test_10_schedule_analytics(self):
+        """Test GET /api/workflow-schedules/{schedule_id}/analytics endpoint"""
+        print("\n=== Testing GET /api/workflow-schedules/{schedule_id}/analytics ===")
+        
+        # Create a new schedule for analytics test
+        if not self.created_workflow_id:
+            self.skipTest("No workflow available for analytics test")
+        
+        schedule_data = {
+            "workflow_id": self.created_workflow_id,
+            "name": "Analytics Test Schedule",
+            "description": "Schedule for testing analytics",
+            "cron_expression": "0 12 * * *",
+            "timezone": "UTC",
+            "input_variables": {}
+        }
+        
+        create_response = requests.post(f"{self.base_url}/workflow-schedules/", json=schedule_data, headers=self.get_headers())
+        if create_response.status_code == 200:
+            schedule_id = create_response.json()["schedule_id"]
+            
+            url = f"{self.base_url}/workflow-schedules/{schedule_id}/analytics"
+            response = requests.get(url, headers=self.get_headers())
+            
+            self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+            
+            data = response.json()
+            # Analytics structure may vary, just check it returns data
+            self.assertIsInstance(data, dict, "Analytics should return a dictionary")
+            
+            print(f"✅ Retrieved analytics for schedule: {schedule_id}")
+            
+            # Clean up
+            requests.delete(f"{self.base_url}/workflow-schedules/{schedule_id}", headers=self.get_headers())
+        else:
+            print("⚠️ Could not create schedule for analytics test")
+
 class SocialMediaAPITest(unittest.TestCase):
     """Test suite for Social Media Generation API endpoints"""
     
