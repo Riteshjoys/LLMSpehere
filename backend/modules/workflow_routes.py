@@ -228,7 +228,7 @@ async def get_user_workflow_executions(
 ):
     """Get all workflow executions for the current user"""
     return await execution_service.get_user_executions(
-        user_id=current_user["user_id"],
+        user_id=current_user,
         limit=limit,
         offset=offset
     )
