@@ -172,7 +172,7 @@ async def execute_workflow(
 @router.get("/{workflow_id}/executions", response_model=List[WorkflowExecution])
 async def get_workflow_executions(
     workflow_id: str,
-    current_user: dict = Depends(get_current_user),
+    current_user: str = Depends(get_current_user),
     limit: int = 50,
     offset: int = 0
 ):
