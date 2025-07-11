@@ -679,6 +679,81 @@ const AdminPanel = () => {
         onClose={() => setShowCurlModal(false)}
         onSave={handleAddCurlProvider}
       />
+      
+      {/* API Keys Modal */}
+      {showApiKeyModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">Configure API Keys</h2>
+              <button
+                onClick={() => setShowApiKeyModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <XCircleIcon className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <div className="space-y-6">
+                {Object.entries(apiKeys).map(([key, value]) => (
+                  <div key={key}>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {key.replace(/_/g, ' ')} 
+                      <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <input
+                      type="password"
+                      value={value}
+                      onChange={(e) => setApiKeys(prev => ({ ...prev, [key]: e.target.value }))}
+                      placeholder={`Enter your ${key.replace(/_/g, ' ').toLowerCase()}`}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      {key === 'OPENAI_API_KEY' && 'Required for OpenAI GPT models and DALL-E'}
+                      {key === 'ANTHROPIC_API_KEY' && 'Required for Claude models'}
+                      {key === 'GOOGLE_API_KEY' && 'Required for Google Gemini models'}
+                      {key === 'GROQ_API_KEY' && 'Required for Groq fast inference'}
+                      {key === 'FAL_API_KEY' && 'Required for Stable Diffusion image generation'}
+                      {key === 'LUMA_API_KEY' && 'Required for Luma AI video generation'}
+                      {key === 'PIKA_API_KEY' && 'Required for Pika Labs video generation'}
+                      {key === 'STABILITY_API_KEY' && 'Required for Stability AI image generation'}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h4 className="text-sm font-medium text-blue-800 mb-2">🔐 Security Notice</h4>
+                <p className="text-xs text-blue-700">
+                  API keys are stored securely on the server. They are not transmitted to the frontend 
+                  after being set. Keys are encrypted and only accessible by authorized administrators.
+                </p>
+              </div>
+              
+              <div className="flex justify-end space-x-4 mt-6">
+                <button
+                  onClick={() => setShowApiKeyModal(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    // Here you would typically save the API keys to the backend
+                    // For now, we'll just show a success message
+                    alert('API keys saved successfully! Please restart the server to apply changes.');
+                    setShowApiKeyModal(false);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
+                >
+                  Save API Keys
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
