@@ -379,6 +379,7 @@ const WorkflowAutomation = () => {
           <div className="flex space-x-8">
             {[
               { id: 'workflows', label: 'My Workflows', count: workflows.length },
+              { id: 'schedules', label: 'Schedules', count: 0 },
               { id: 'templates', label: 'Templates', count: templates.length },
               { id: 'executions', label: 'Executions', count: executions.length }
             ].map((tab) => (
