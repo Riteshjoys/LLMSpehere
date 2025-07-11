@@ -1,6 +1,9 @@
 import os
 from decouple import config
 
+# Database
+MONGO_URL = config('MONGO_URL', default='mongodb://localhost:27017')
+
 # API Keys
 OPENAI_API_KEY = config('OPENAI_API_KEY', default='')
 FAL_API_KEY = config('FAL_API_KEY', default='')
