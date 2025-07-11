@@ -186,7 +186,7 @@ class WorkflowService:
     async def delete_workflow(self, workflow_id: str, user_id: str) -> bool:
         """Delete a workflow"""
         try:
-            result = await self.workflows_collection.delete_one({"_id": workflow_id, "user_id": user_id})
+            result = self.workflows_collection.delete_one({"_id": workflow_id, "user_id": user_id})
             return result.deleted_count > 0
         except Exception as e:
             print(f"Error deleting workflow: {e}")
