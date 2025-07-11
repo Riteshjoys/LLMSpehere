@@ -53,6 +53,12 @@ async def startup_event():
     """Initialize default providers and admin user if they don't exist"""
     await initialize_default_data()
 
+# Shutdown event handler
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup resources on shutdown"""
+    await shutdown_scheduler()
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
