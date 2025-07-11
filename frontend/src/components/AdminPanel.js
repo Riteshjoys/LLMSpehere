@@ -66,7 +66,30 @@ const AdminPanel = () => {
       return;
     }
     loadProviders();
+    
+    // Load API keys status when admin panel loads
+    if (user && user.is_admin) {
+      loadApiKeysStatus();
+    }
   }, [user, loadProviders]);
+
+  const loadApiKeysStatus = async () => {
+    try {
+      const response = await api.get('/api/admin/api-keys/status');
+      const statusData = response.data.api_keys_status;
+      
+      // Update apiKeys state with current status
+      const currentKeys = { ...apiKeys };
+      Object.keys(statusData).forEach(key => {
+        if (statusData[key].configured) {
+          currentKeys[key] = statusData[key].preview || 'CONFIGURED';
+        }
+      });
+      setApiKeys(currentKeys);
+    } catch (error) {
+      console.error('Error loading API keys status:', error);
+    }
+  };
 
   const handleAddProvider = async (e) => {
     e.preventDefault();
