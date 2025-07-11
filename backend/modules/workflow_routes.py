@@ -139,7 +139,7 @@ async def duplicate_workflow(
     """Duplicate a workflow"""
     workflow = await workflow_service.duplicate_workflow(
         workflow_id=workflow_id,
-        user_id=current_user["user_id"]
+        user_id=current_user
     )
     if not workflow:
         raise HTTPException(
