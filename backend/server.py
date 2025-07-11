@@ -11,6 +11,7 @@ from modules.auth_routes import auth_router
 from modules.provider_routes import provider_router
 from modules.generation_routes import generation_router
 from modules.code_generation_routes import router as code_router
+from modules.social_media_routes import social_media_router
 from modules.startup import initialize_default_data
 
 # Initialize FastAPI app
