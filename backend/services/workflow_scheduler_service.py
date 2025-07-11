@@ -216,7 +216,7 @@ class WorkflowSchedulerService:
                 try:
                     # Check if we've reached max runs
                     if schedule.max_runs and schedule.runs_count >= schedule.max_runs:
-                        await self.schedules_collection.update_one(
+                        self.schedules_collection.update_one(
                             {"_id": schedule.schedule_id},
                             {"$set": {"status": ScheduleStatus.COMPLETED}}
                         )
