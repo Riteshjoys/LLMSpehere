@@ -15,6 +15,7 @@ from modules.social_media_routes import social_media_router
 from modules.workflow_routes import router as workflow_router
 from modules.workflow_scheduler_routes import router as scheduler_router
 from modules.workflow_monitoring_routes import router as monitoring_router
+from modules.dashboard_routes import router as dashboard_router
 from modules.startup import initialize_default_data, shutdown_scheduler
 
 # Initialize FastAPI app
