@@ -7,7 +7,7 @@ from typing import Dict, Any
 from datetime import datetime
 
 # Get the backend URL from the frontend .env file
-BACKEND_URL = "https://ac96302a-4036-4647-87cc-d83a8a8750d7.preview.emergentagent.com"
+BACKEND_URL = "https://97b6eb44-d3cb-4153-a43b-711c8cbdf8d6.preview.emergentagent.com"
 
 class CodeGenerationAPITest(unittest.TestCase):
     """Test suite for Code Generation API endpoints"""
