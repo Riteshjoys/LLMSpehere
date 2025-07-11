@@ -124,7 +124,7 @@ class WorkflowService:
                 query["status"] = status
             
             workflows = []
-            async for workflow in self.workflows_collection.find(query).sort("updated_at", -1):
+            for workflow in self.workflows_collection.find(query).sort("updated_at", -1):
                 workflow["workflow_id"] = str(workflow.pop("_id"))
                 workflow["steps"] = [WorkflowStep(**step) for step in workflow["steps"]]
                 workflows.append(WorkflowResponse(**workflow))
