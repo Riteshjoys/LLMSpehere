@@ -62,6 +62,11 @@ function App() {
                 <CodeGeneration />
               </ProtectedRoute>
             } />
+            <Route path="/social-media" element={
+              <ProtectedRoute>
+                <SocialMediaGeneration />
+              </ProtectedRoute>
+            } />
             <Route path="/admin" element={
               <ProtectedRoute>
                 <AdminPanel />
