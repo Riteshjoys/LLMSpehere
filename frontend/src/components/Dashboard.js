@@ -148,13 +148,6 @@ const Dashboard = () => {
     }
   ];
 
-  const stats = [
-    { name: 'Total Generations', value: '0', icon: Zap },
-    { name: 'Active Sessions', value: '0', icon: Clock },
-    { name: 'Providers Available', value: '0', icon: Brain },
-    { name: 'Success Rate', value: '0%', icon: BarChart3 }
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
