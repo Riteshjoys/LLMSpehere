@@ -131,7 +131,7 @@ class WorkflowSchedulerService:
     async def delete_schedule(self, schedule_id: str, user_id: str) -> bool:
         """Delete a workflow schedule"""
         try:
-            result = await self.schedules_collection.delete_one({"_id": schedule_id, "user_id": user_id})
+            result = self.schedules_collection.delete_one({"_id": schedule_id, "user_id": user_id})
             return result.deleted_count > 0
         except Exception as e:
             logger.error(f"Error deleting schedule: {e}")
@@ -140,7 +140,7 @@ class WorkflowSchedulerService:
     async def pause_schedule(self, schedule_id: str, user_id: str) -> bool:
         """Pause a workflow schedule"""
         try:
-            result = await self.schedules_collection.update_one(
+            result = self.schedules_collection.update_one(
                 {"_id": schedule_id, "user_id": user_id},
                 {"$set": {"status": ScheduleStatus.PAUSED, "updated_at": datetime.now(timezone.utc)}}
             )
@@ -159,7 +159,7 @@ class WorkflowSchedulerService:
             
             next_run = self._calculate_next_run(schedule.cron_expression)
             
-            result = await self.schedules_collection.update_one(
+            result = self.schedules_collection.update_one(
                 {"_id": schedule_id, "user_id": user_id},
                 {"$set": {
                     "status": ScheduleStatus.ACTIVE,
