@@ -68,6 +68,11 @@ function App() {
                 <SocialMediaGeneration />
               </ProtectedRoute>
             } />
+            <Route path="/workflows" element={
+              <ProtectedRoute>
+                <WorkflowAutomation />
+              </ProtectedRoute>
+            } />
             <Route path="/admin" element={
               <ProtectedRoute>
                 <AdminPanel />
