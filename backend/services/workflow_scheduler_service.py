@@ -53,7 +53,7 @@ class WorkflowSchedulerService:
                 "created_by": user_id
             }
             
-            await self.schedules_collection.insert_one(schedule_doc)
+            self.schedules_collection.insert_one(schedule_doc)
             
             return WorkflowSchedule(
                 schedule_id=schedule_id,
