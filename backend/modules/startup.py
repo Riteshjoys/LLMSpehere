@@ -3,9 +3,14 @@ from datetime import datetime
 from utils.database import users_collection, providers_collection
 from utils.auth_utils import get_password_hash
 from services.workflow_service import WorkflowService
+from services.workflow_scheduler_service import WorkflowSchedulerService
+
+# Global scheduler instance
+scheduler_service = None
 
 async def initialize_default_data():
     """Initialize default providers and admin user if they don't exist"""
+    global scheduler_service
     
     # Check if admin user exists
     admin_user = users_collection.find_one({"username": "admin"})
@@ -189,3 +194,15 @@ async def initialize_default_data():
     # Initialize workflow templates
     workflow_service = WorkflowService()
     await workflow_service.initialize_templates()
+    
+    # Initialize and start workflow scheduler
+    scheduler_service = WorkflowSchedulerService()
+    scheduler_service.start_scheduler()
+    print("Workflow scheduler started successfully")
+
+async def shutdown_scheduler():
+    """Shutdown the workflow scheduler"""
+    global scheduler_service
+    if scheduler_service:
+        scheduler_service.stop_scheduler()
+        print("Workflow scheduler stopped")
