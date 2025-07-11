@@ -158,7 +158,7 @@ async def execute_workflow(
     """Execute a workflow"""
     execution = await execution_service.execute_workflow(
         workflow_id=workflow_id,
-        user_id=current_user["user_id"],
+        user_id=current_user,
         input_variables=execution_request.input_variables,
         run_name=execution_request.run_name
     )
