@@ -257,5 +257,5 @@ async def get_workflow_dashboard(
 ):
     """Get workflow dashboard analytics for the current user"""
     return await execution_service.get_user_dashboard(
-        user_id=current_user["user_id"]
+        user_id=current_user
     )
