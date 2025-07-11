@@ -24,3 +24,4 @@ distro==1.8.0
 httpx-sse==0.4.0
 litellm
 croniter
+aiohttp
