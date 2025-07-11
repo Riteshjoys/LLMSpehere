@@ -188,7 +188,7 @@ async def get_workflow_executions(
 async def get_workflow_execution(
     workflow_id: str,
     execution_id: str,
-    current_user: dict = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Get a specific workflow execution"""
     execution = await execution_service.get_execution(
