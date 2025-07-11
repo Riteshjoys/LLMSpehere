@@ -237,7 +237,7 @@ async def get_user_workflow_executions(
 @router.get("/{workflow_id}/analytics")
 async def get_workflow_analytics(
     workflow_id: str,
-    current_user: dict = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Get analytics for a workflow"""
     analytics = await execution_service.get_workflow_analytics(
