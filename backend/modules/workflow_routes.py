@@ -81,7 +81,7 @@ async def get_user_workflows(
 @router.get("/{workflow_id}", response_model=WorkflowResponse)
 async def get_workflow(
     workflow_id: str,
-    current_user: dict = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Get a specific workflow"""
     workflow = await workflow_service.get_workflow(
