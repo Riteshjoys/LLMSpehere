@@ -105,7 +105,7 @@ async def update_workflow(
     workflow = await workflow_service.update_workflow(
         workflow_id=workflow_id,
         workflow_update=workflow_update,
-        user_id=current_user["user_id"]
+        user_id=current_user
     )
     if not workflow:
         raise HTTPException(
