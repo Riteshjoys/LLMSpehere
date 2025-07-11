@@ -220,7 +220,7 @@ class WorkflowService:
         """Initialize default workflow templates"""
         try:
             # Check if templates already exist
-            count = await self.templates_collection.count_documents({})
+            count = self.templates_collection.count_documents({})
             if count > 0:
                 return
             
