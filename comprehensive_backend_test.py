@@ -118,20 +118,29 @@ class ComprehensiveAPITester:
         print("="*50)
         
         # Test dashboard statistics
-        success, data = self.run_test("Dashboard Statistics", "GET", "dashboard/stats", 200)
+        success, data = self.run_test("Dashboard Statistics", "GET", "dashboard/statistics", 200)
         if success:
-            expected_fields = ["total_generations", "active_workflows", "providers_available", "success_rate"]
-            for field in expected_fields:
-                if field in data:
-                    print(f"  📊 {field}: {data[field]}")
-                else:
-                    print(f"  ⚠️ Missing field: {field}")
+            if 'statistics' in data:
+                stats = data['statistics']
+                expected_fields = ["total_generations", "active_workflows", "providers_available", "success_rate"]
+                for field in expected_fields:
+                    if field in stats:
+                        print(f"  📊 {field}: {stats[field]}")
+                    else:
+                        print(f"  ⚠️ Missing field: {field}")
+            
+            if 'recent_activity' in data:
+                print(f"  📋 Recent activity items: {len(data['recent_activity'])}")
+            
+            if 'generation_breakdown' in data:
+                breakdown = data['generation_breakdown']
+                print(f"  📈 Generation breakdown: Text={breakdown.get('text', 0)}, Image={breakdown.get('image', 0)}, Video={breakdown.get('video', 0)}")
         
-        # Test recent activity
-        self.run_test("Recent Activity", "GET", "dashboard/recent-activity", 200)
+        # Test workflow monitoring dashboard
+        self.run_test("Workflow Monitoring Dashboard", "GET", "workflow-monitoring/dashboard", 200)
         
         # Test system health
-        self.run_test("System Health", "GET", "dashboard/system-health", 200)
+        self.run_test("System Health Check", "GET", "workflow-monitoring/health-check", 200)
 
     def test_provider_management(self):
         """Test AI provider management (Admin Panel)"""
