@@ -122,7 +122,7 @@ async def delete_workflow(
     """Delete a workflow"""
     success = await workflow_service.delete_workflow(
         workflow_id=workflow_id,
-        user_id=current_user["user_id"]
+        user_id=current_user
     )
     if not success:
         raise HTTPException(
