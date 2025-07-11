@@ -222,7 +222,7 @@ async def stop_workflow_execution(
 
 @router.get("/executions/", response_model=List[WorkflowExecution])
 async def get_user_workflow_executions(
-    current_user: dict = Depends(get_current_user),
+    current_user: str = Depends(get_current_user),
     limit: int = 50,
     offset: int = 0
 ):
