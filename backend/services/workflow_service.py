@@ -363,7 +363,7 @@ class WorkflowService:
                 }
             ]
             
-            await self.templates_collection.insert_many(templates)
+            self.templates_collection.insert_many(templates)
             print("Workflow templates initialized successfully")
         except Exception as e:
             print(f"Error initializing workflow templates: {e}")
