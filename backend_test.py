@@ -1110,6 +1110,9 @@ if __name__ == "__main__":
     # Add Workflow tests
     suite.addTests(loader.loadTestsFromTestCase(WorkflowAPITest))
     
+    # Add Workflow Scheduler tests
+    suite.addTests(loader.loadTestsFromTestCase(WorkflowSchedulerAPITest))
+    
     # Add Social Media tests
     suite.addTests(loader.loadTestsFromTestCase(SocialMediaAPITest))
     
