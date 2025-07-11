@@ -1,8 +1,8 @@
+import os
 from pymongo import MongoClient
-from decouple import config
+from utils.config import MONGO_URL
 
-# MongoDB connection
-MONGO_URL = config('MONGO_URL', default='mongodb://localhost:27017/contentforge')
+# MongoDB client and database
 client = MongoClient(MONGO_URL)
 db = client.contentforge
 
@@ -13,3 +13,5 @@ conversations_collection = db.conversations
 generations_collection = db.generations
 image_generations_collection = db.image_generations
 video_generations_collection = db.video_generations
+code_generations_collection = db.code_generations
+social_media_generations_collection = db.social_media_generations
