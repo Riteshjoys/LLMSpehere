@@ -193,7 +193,7 @@ async def get_workflow_execution(
     """Get a specific workflow execution"""
     execution = await execution_service.get_execution(
         execution_id=execution_id,
-        user_id=current_user["user_id"]
+        user_id=current_user
     )
     if not execution:
         raise HTTPException(
