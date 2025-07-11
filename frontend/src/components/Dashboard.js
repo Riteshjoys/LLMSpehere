@@ -36,49 +36,31 @@ const Dashboard = () => {
         const token = localStorage.getItem('token');
         const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
         
-        // Fetch providers count
-        const providersResponse = await fetch(`${backendUrl}/api/providers`, {
+        // Fetch all dashboard statistics in one call
+        const response = await fetch(`${backendUrl}/api/dashboard/statistics`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        const providersData = await providersResponse.json();
         
-        // Fetch generations count
-        const textGensResponse = await fetch(`${backendUrl}/api/generations`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const textGensData = await textGensResponse.json();
+        if (!response.ok) {
+          throw new Error('Failed to fetch dashboard data');
+        }
         
-        // Fetch image generations count
-        const imageGensResponse = await fetch(`${backendUrl}/api/generations/images`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const imageGensData = await imageGensResponse.json();
+        const data = await response.json();
         
-        // Fetch workflows count
-        const workflowsResponse = await fetch(`${backendUrl}/api/workflows/`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const workflowsData = await workflowsResponse.json();
-        
-        // Calculate stats
-        const totalGenerations = (textGensData.generations?.length || 0) + (imageGensData.generations?.length || 0);
-        const providersCount = providersData.providers?.length || 0;
-        const workflowsCount = workflowsData.length || 0;
-        const successRate = totalGenerations > 0 ? Math.round((totalGenerations / (totalGenerations + 1)) * 100) : 0;
-        
+        // Update stats
         setStats([
-          { name: 'Total Generations', value: totalGenerations.toString(), icon: Zap },
-          { name: 'Active Workflows', value: workflowsCount.toString(), icon: Clock },
-          { name: 'Providers Available', value: providersCount.toString(), icon: Brain },
-          { name: 'Success Rate', value: `${successRate}%`, icon: BarChart3 }
+          { name: 'Total Generations', value: data.statistics.total_generations.toString(), icon: Zap },
+          { name: 'Active Workflows', value: data.statistics.active_workflows.toString(), icon: Clock },
+          { name: 'Providers Available', value: data.statistics.providers_available.toString(), icon: Brain },
+          { name: 'Success Rate', value: `${data.statistics.success_rate}%`, icon: BarChart3 }
         ]);
         
         // Set recent activity
-        const recentGens = textGensData.generations?.slice(0, 5) || [];
-        setRecentActivity(recentGens);
+        setRecentActivity(data.recent_activity || []);
         
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+        // Keep default values on error
       } finally {
         setLoading(false);
       }
