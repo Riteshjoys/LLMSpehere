@@ -171,17 +171,20 @@ class ComprehensiveAPITester:
         print("="*50)
         
         # Test get API keys status
-        success, data = self.run_test("Get API Keys Status", "GET", "admin/api-keys", 200)
+        success, data = self.run_test("Get API Keys Status", "GET", "admin/api-keys/status", 200)
         if success:
-            if isinstance(data, dict) and 'api_keys' in data:
+            if 'api_keys_status' in data:
                 print(f"  🔑 API Keys configuration:")
-                for key_name, status in data['api_keys'].items():
-                    print(f"    - {key_name}: {status}")
-            elif isinstance(data, list):
-                print(f"  🔑 Found {len(data)} API key configurations")
+                for key_name, status in data['api_keys_status'].items():
+                    configured = status.get('configured', False)
+                    status_text = "✅ Configured" if configured else "❌ Not configured"
+                    print(f"    - {key_name}: {status_text}")
+            else:
+                print(f"  🔑 API Keys status response: {data}")
         
-        # Test API key validation
-        self.run_test("Validate API Keys", "GET", "admin/api-keys/validate", 200)
+        # Test API key update (POST)
+        test_keys = {"OPENAI_API_KEY": "test_key_123"}
+        self.run_test("Update API Keys", "POST", "admin/api-keys", 200, test_keys)
 
     def test_generation_features(self):
         """Test content generation features"""
