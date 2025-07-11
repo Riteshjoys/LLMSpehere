@@ -753,6 +753,9 @@ if __name__ == "__main__":
     # Add Code Generation tests
     suite.addTests(loader.loadTestsFromTestCase(CodeGenerationAPITest))
     
+    # Add Workflow tests
+    suite.addTests(loader.loadTestsFromTestCase(WorkflowAPITest))
+    
     # Add Social Media tests
     suite.addTests(loader.loadTestsFromTestCase(SocialMediaAPITest))
     
