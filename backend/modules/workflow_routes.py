@@ -253,7 +253,7 @@ async def get_workflow_analytics(
 
 @router.get("/analytics/dashboard")
 async def get_workflow_dashboard(
-    current_user: dict = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Get workflow dashboard analytics for the current user"""
     return await execution_service.get_user_dashboard(
