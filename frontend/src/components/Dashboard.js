@@ -60,7 +60,7 @@ const Dashboard = () => {
       icon: Share2,
       path: '/social-media',
       color: 'bg-pink-500',
-      available: false
+      available: true
     },
     {
       name: 'Presentations',
