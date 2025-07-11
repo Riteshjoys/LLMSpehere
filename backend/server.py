@@ -41,6 +41,7 @@ app.include_router(workflow_router)
 app.include_router(scheduler_router)
 app.include_router(monitoring_router)
 app.include_router(dashboard_router)
+app.include_router(admin_api_keys_router)
 
 # Health check
 @app.get("/api/health")
