@@ -25,6 +25,12 @@ class WorkflowStatus(str, Enum):
     FAILED = "failed"
     PAUSED = "paused"
 
+class ScheduleStatus(str, Enum):
+    ACTIVE = "active"
+    PAUSED = "paused"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
 class WorkflowStep(BaseModel):
     step_id: str
     step_type: WorkflowStepType
@@ -113,6 +119,54 @@ class WorkflowResponse(BaseModel):
     user_id: str
     executions_count: int = 0
     last_execution_at: Optional[datetime] = None
+
+# Workflow Scheduling Models
+class WorkflowSchedule(BaseModel):
+    schedule_id: str
+    workflow_id: str
+    user_id: str
+    name: str
+    description: Optional[str] = None
+    cron_expression: str  # Cron expression for scheduling
+    timezone: str = "UTC"
+    status: ScheduleStatus
+    input_variables: Dict[str, Any] = {}
+    max_runs: Optional[int] = None  # Maximum number of runs (None = unlimited)
+    runs_count: int = 0
+    next_run_at: Optional[datetime] = None
+    last_run_at: Optional[datetime] = None
+    created_at: datetime
+    updated_at: datetime
+    created_by: str
+
+class ScheduledWorkflow(BaseModel):
+    workflow_id: str
+    schedule_id: str
+    user_id: str
+    name: str
+    description: Optional[str] = None
+    cron_expression: str
+    status: ScheduleStatus
+    next_run_at: Optional[datetime] = None
+    last_run_at: Optional[datetime] = None
+
+class WorkflowScheduleCreate(BaseModel):
+    workflow_id: str
+    name: str
+    description: Optional[str] = None
+    cron_expression: str
+    timezone: str = "UTC"
+    input_variables: Dict[str, Any] = {}
+    max_runs: Optional[int] = None
+
+class WorkflowScheduleUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    cron_expression: Optional[str] = None
+    timezone: Optional[str] = None
+    input_variables: Optional[Dict[str, Any]] = None
+    max_runs: Optional[int] = None
+    status: Optional[ScheduleStatus] = None
 
 class TextGenerationRequest(BaseModel):
     provider_name: str
