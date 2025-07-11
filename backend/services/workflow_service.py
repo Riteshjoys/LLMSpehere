@@ -88,7 +88,7 @@ class WorkflowService:
                 "last_execution_at": None
             }
             
-            await self.workflows_collection.insert_one(workflow_data)
+            self.workflows_collection.insert_one(workflow_data)
             
             return WorkflowResponse(
                 workflow_id=workflow_id,
