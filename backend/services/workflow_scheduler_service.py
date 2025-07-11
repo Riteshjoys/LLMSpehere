@@ -115,7 +115,7 @@ class WorkflowSchedulerService:
             if "cron_expression" in update_data:
                 update_doc["next_run_at"] = self._calculate_next_run(update_data["cron_expression"])
             
-            result = await self.schedules_collection.update_one(
+            result = self.schedules_collection.update_one(
                 {"_id": schedule_id, "user_id": user_id},
                 {"$set": update_doc}
             )
