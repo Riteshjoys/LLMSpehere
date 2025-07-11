@@ -312,6 +312,16 @@ const AdminPanel = () => {
               >
                 Image Providers ({imageProviders.length})
               </button>
+              <button
+                onClick={() => setActiveTab('api-keys')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'api-keys'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                API Keys
+              </button>
             </nav>
           </div>
         </div>
