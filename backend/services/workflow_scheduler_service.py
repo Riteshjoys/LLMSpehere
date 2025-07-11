@@ -233,7 +233,7 @@ class WorkflowSchedulerService:
                     if execution:
                         # Update schedule with last run info
                         next_run = self._calculate_next_run(schedule.cron_expression)
-                        await self.schedules_collection.update_one(
+                        self.schedules_collection.update_one(
                             {"_id": schedule.schedule_id},
                             {"$set": {
                                 "last_run_at": datetime.now(timezone.utc),
