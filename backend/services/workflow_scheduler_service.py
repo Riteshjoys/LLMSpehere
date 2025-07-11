@@ -93,7 +93,7 @@ class WorkflowSchedulerService:
     async def get_schedule(self, schedule_id: str, user_id: str) -> Optional[WorkflowSchedule]:
         """Get a specific schedule"""
         try:
-            schedule = await self.schedules_collection.find_one({"_id": schedule_id, "user_id": user_id})
+            schedule = self.schedules_collection.find_one({"_id": schedule_id, "user_id": user_id})
             if schedule:
                 schedule["schedule_id"] = str(schedule.pop("_id"))
                 return WorkflowSchedule(**schedule)
