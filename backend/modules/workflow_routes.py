@@ -86,7 +86,7 @@ async def get_workflow(
     """Get a specific workflow"""
     workflow = await workflow_service.get_workflow(
         workflow_id=workflow_id,
-        user_id=current_user["user_id"]
+        user_id=current_user
     )
     if not workflow:
         raise HTTPException(
