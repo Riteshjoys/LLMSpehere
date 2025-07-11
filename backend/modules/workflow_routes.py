@@ -179,7 +179,7 @@ async def get_workflow_executions(
     """Get execution history for a workflow"""
     return await execution_service.get_workflow_executions(
         workflow_id=workflow_id,
-        user_id=current_user["user_id"],
+        user_id=current_user,
         limit=limit,
         offset=offset
     )
