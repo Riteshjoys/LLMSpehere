@@ -250,13 +250,47 @@ const Dashboard = () => {
           <div className="card-header">
             <h2 className="text-xl font-semibold text-gray-900">Recent Activity</h2>
           </div>
-          <div className="text-center py-8">
-            <Sparkles className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No recent activity</p>
-            <p className="text-sm text-gray-500 mt-2">
-              Start generating content to see your activity here
-            </p>
-          </div>
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="loading-dots">
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+              <p className="mt-4 text-gray-600">Loading activity...</p>
+            </div>
+          ) : recentActivity.length > 0 ? (
+            <div className="space-y-4">
+              {recentActivity.map((activity, index) => (
+                <div key={index} className="border-b border-gray-200 pb-4 last:border-b-0">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">
+                        Text Generation
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1 truncate">
+                        {activity.prompt || 'Generated content'}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        {activity.provider_name} • {new Date(activity.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      Completed
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Sparkles className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">No recent activity</p>
+              <p className="text-sm text-gray-500 mt-2">
+                Start generating content to see your activity here
+              </p>
+            </div>
+          )}
         </div>
       </main>
     </div>
