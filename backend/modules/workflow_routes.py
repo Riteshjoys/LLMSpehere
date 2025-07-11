@@ -99,7 +99,7 @@ async def get_workflow(
 async def update_workflow(
     workflow_id: str,
     workflow_update: WorkflowUpdate,
-    current_user: dict = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Update a workflow"""
     workflow = await workflow_service.update_workflow(
