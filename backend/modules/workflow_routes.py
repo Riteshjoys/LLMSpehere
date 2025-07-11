@@ -37,12 +37,12 @@ async def get_workflow_template(template_id: str):
 async def create_workflow_from_template(
     template_id: str,
     variables: Dict[str, Any],
-    current_user: dict = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Create a new workflow from a template"""
     workflow = await workflow_service.create_from_template(
         template_id=template_id,
-        user_id=current_user["user_id"],
+        user_id=current_user,
         variables=variables
     )
     if not workflow:
