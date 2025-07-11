@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime
 from utils.database import users_collection, providers_collection
 from utils.auth_utils import get_password_hash
+from services.workflow_service import WorkflowService
 
 async def initialize_default_data():
     """Initialize default providers and admin user if they don't exist"""
