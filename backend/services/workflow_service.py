@@ -19,7 +19,7 @@ class WorkflowService:
         """Get all available workflow templates"""
         try:
             templates = []
-            async for template in self.templates_collection.find():
+            for template in self.templates_collection.find():
                 template["template_id"] = str(template.pop("_id"))
                 templates.append(WorkflowTemplate(**template))
             return templates
@@ -30,7 +30,7 @@ class WorkflowService:
     async def get_template(self, template_id: str) -> Optional[WorkflowTemplate]:
         """Get a specific workflow template"""
         try:
-            template = await self.templates_collection.find_one({"_id": template_id})
+            template = self.templates_collection.find_one({"_id": template_id})
             if template:
                 template["template_id"] = str(template.pop("_id"))
                 return WorkflowTemplate(**template)
