@@ -206,7 +206,7 @@ async def get_workflow_execution(
 async def stop_workflow_execution(
     workflow_id: str,
     execution_id: str,
-    current_user: dict = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Stop a running workflow execution"""
     success = await execution_service.stop_execution(
