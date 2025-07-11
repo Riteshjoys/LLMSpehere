@@ -171,7 +171,7 @@ class WorkflowService:
             
             update_data["updated_at"] = datetime.now(timezone.utc)
             
-            result = await self.workflows_collection.update_one(
+            result = self.workflows_collection.update_one(
                 {"_id": workflow_id, "user_id": user_id},
                 {"$set": update_data}
             )
