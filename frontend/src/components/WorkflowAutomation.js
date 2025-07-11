@@ -438,6 +438,10 @@ const WorkflowAutomation = () => {
           </div>
         )}
 
+        {activeTab === 'schedules' && (
+          <WorkflowScheduler workflows={workflows} />
+        )}
+
         {activeTab === 'templates' && (
           <div>
             <div className="mb-6">
