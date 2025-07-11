@@ -185,3 +185,7 @@ async def initialize_default_data():
     for provider in default_text_providers + default_image_providers + default_video_providers:
         if not providers_collection.find_one({"provider_id": provider["provider_id"]}):
             providers_collection.insert_one(provider)
+    
+    # Initialize workflow templates
+    workflow_service = WorkflowService()
+    await workflow_service.initialize_templates()
