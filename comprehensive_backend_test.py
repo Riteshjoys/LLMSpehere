@@ -192,35 +192,41 @@ class ComprehensiveAPITester:
         print("TESTING CONTENT GENERATION")
         print("="*50)
         
-        # Test text generation providers
-        self.run_test("Text Generation Providers", "GET", "generation/text/providers", 200)
-        
-        # Test image generation providers  
-        self.run_test("Image Generation Providers", "GET", "generation/image/providers", 200)
-        
-        # Test video generation providers
-        self.run_test("Video Generation Providers", "GET", "generation/video/providers", 200)
-        
         # Test text generation (will likely fail due to API keys, but endpoint should work)
         text_gen_data = {
-            "provider": "openai",
+            "provider_name": "openai",
             "model": "gpt-4o-mini",
             "prompt": "Write a short test message",
             "max_tokens": 100
         }
-        success, response = self.run_test("Text Generation", "POST", "generation/text", [200, 500], text_gen_data)
+        success, response = self.run_test("Text Generation", "POST", "generate/text", [200, 500], text_gen_data)
         if not success and response.get('detail'):
             print(f"  ℹ️ Expected failure due to API key: {response['detail']}")
         
         # Test image generation
         image_gen_data = {
-            "provider": "openai",
+            "provider_name": "openai",
             "prompt": "A simple test image",
             "size": "1024x1024"
         }
-        success, response = self.run_test("Image Generation", "POST", "generation/image", [200, 500], image_gen_data)
+        success, response = self.run_test("Image Generation", "POST", "generate/image", [200, 500], image_gen_data)
         if not success and response.get('detail'):
             print(f"  ℹ️ Expected failure due to API key: {response['detail']}")
+        
+        # Test video generation
+        video_gen_data = {
+            "provider_name": "luma",
+            "prompt": "A simple test video"
+        }
+        success, response = self.run_test("Video Generation", "POST", "generate/video", [200, 500], video_gen_data)
+        if not success and response.get('detail'):
+            print(f"  ℹ️ Expected failure due to API key: {response['detail']}")
+        
+        # Test get user generations
+        self.run_test("Get Text Generations", "GET", "generations", 200)
+        self.run_test("Get Image Generations", "GET", "generations/images", 200)
+        self.run_test("Get Video Generations", "GET", "generations/videos", 200)
+        self.run_test("Get Conversations", "GET", "conversations", 200)
 
     def test_workflow_features(self):
         """Test workflow automation features"""
