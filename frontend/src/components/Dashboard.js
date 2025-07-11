@@ -63,6 +63,14 @@ const Dashboard = () => {
       available: true
     },
     {
+      name: 'Workflow Automation',
+      description: 'Create multi-step automated workflows',
+      icon: Zap,
+      path: '/workflows',
+      color: 'bg-yellow-500',
+      available: true
+    },
+    {
       name: 'Presentations',
       description: 'Generate professional presentations',
       icon: Presentation,
