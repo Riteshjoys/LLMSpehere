@@ -195,7 +195,7 @@ class WorkflowSchedulerService:
             now = datetime.now(timezone.utc)
             schedules = []
             
-            async for schedule in self.schedules_collection.find({
+            for schedule in self.schedules_collection.find({
                 "status": ScheduleStatus.ACTIVE,
                 "next_run_at": {"$lte": now}
             }):
