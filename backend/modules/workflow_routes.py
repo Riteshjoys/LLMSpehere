@@ -242,7 +242,7 @@ async def get_workflow_analytics(
     """Get analytics for a workflow"""
     analytics = await execution_service.get_workflow_analytics(
         workflow_id=workflow_id,
-        user_id=current_user["user_id"]
+        user_id=current_user
     )
     if not analytics:
         raise HTTPException(
