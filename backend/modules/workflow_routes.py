@@ -134,7 +134,7 @@ async def delete_workflow(
 @router.post("/{workflow_id}/duplicate", response_model=WorkflowResponse)
 async def duplicate_workflow(
     workflow_id: str,
-    current_user: dict = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Duplicate a workflow"""
     workflow = await workflow_service.duplicate_workflow(
