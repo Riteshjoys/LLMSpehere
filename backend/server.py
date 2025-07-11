@@ -35,6 +35,7 @@ app.include_router(generation_router)
 app.include_router(code_router)
 app.include_router(social_media_router)
 app.include_router(workflow_router)
+app.include_router(scheduler_router)
 
 # Health check
 @app.get("/api/health")
