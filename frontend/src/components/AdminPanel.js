@@ -400,6 +400,60 @@ const AdminPanel = () => {
             })()}
           </div>
         </div>
+        
+        {/* API Keys Section */}
+        {activeTab === 'api-keys' && (
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg leading-6 font-medium text-gray-900">API Keys Configuration</h3>
+                <button
+                  onClick={() => setShowApiKeyModal(true)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+                >
+                  <CodeBracketIcon className="h-4 w-4 mr-2" />
+                  Configure Keys
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Object.entries(apiKeys).map(([key, value]) => (
+                  <div key={key} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-sm font-medium text-gray-900">{key.replace('_', ' ')}</h4>
+                      <div className="flex items-center">
+                        {value && value !== 'YOUR_' + key ? (
+                          <CheckCircleIcon className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <XCircleIcon className="h-4 w-4 text-red-500" />
+                        )}
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-600 mb-2">
+                      {value && value !== 'YOUR_' + key ? 'Configured' : 'Not configured'}
+                    </p>
+                    <div className="text-xs text-gray-500">
+                      {value && value !== 'YOUR_' + key ? 
+                        `${value.substring(0, 8)}...` : 
+                        'Please configure this API key to enable provider'
+                      }
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h4 className="text-sm font-medium text-yellow-800 mb-2">⚠️ Important Notes</h4>
+                <ul className="text-xs text-yellow-700 space-y-1">
+                  <li>• API keys are stored securely and only visible to administrators</li>
+                  <li>• You need to configure these keys to enable the respective AI providers</li>
+                  <li>• Keys are loaded from environment variables and provider configurations</li>
+                  <li>• Changes require a server restart to take effect</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Add/Edit Provider Modal */}
