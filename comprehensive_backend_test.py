@@ -278,16 +278,18 @@ class ComprehensiveAPITester:
         print("="*50)
         
         # Test monitoring dashboard
-        self.run_test("Monitoring Dashboard", "GET", "monitoring/dashboard", 200)
+        success, data = self.run_test("Monitoring Dashboard", "GET", "workflow-monitoring/dashboard", 200)
+        if success:
+            print(f"  📊 Monitoring dashboard data keys: {list(data.keys())}")
         
         # Test workflow executions
         self.run_test("Workflow Executions", "GET", "workflows/executions/", 200)
         
-        # Test monitoring metrics
-        self.run_test("Monitoring Metrics", "GET", "monitoring/metrics", 200)
+        # Test real-time status
+        self.run_test("Real-time Status", "GET", "workflow-monitoring/real-time-status", 200)
         
-        # Test system status
-        self.run_test("System Status", "GET", "monitoring/status", 200)
+        # Test system health check
+        self.run_test("System Health Check", "GET", "workflow-monitoring/health-check", 200)
 
     def test_error_handling(self):
         """Test error handling scenarios"""
