@@ -55,12 +55,12 @@ async def create_workflow_from_template(
 @router.post("/", response_model=WorkflowResponse)
 async def create_workflow(
     workflow: WorkflowCreate,
-    current_user: dict = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Create a new workflow"""
     return await workflow_service.create_workflow(
         workflow=workflow,
-        user_id=current_user["user_id"]
+        user_id=current_user
     )
 
 @router.get("/", response_model=List[WorkflowResponse])
