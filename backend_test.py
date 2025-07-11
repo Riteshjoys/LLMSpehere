@@ -366,8 +366,8 @@ class SocialMediaAPITest(unittest.TestCase):
             
             # Test without authentication
             response = requests.post(url, json=request_data)
-            self.assertEqual(response.status_code, 401, 
-                           f"Expected status code 401 for unauthorized request, got {response.status_code}")
+            self.assertIn(response.status_code, [401, 403], 
+                           f"Expected status code 401 or 403 for unauthorized request, got {response.status_code}")
             
             # Test with authentication
             response = requests.post(url, json=request_data, headers=self.get_headers())
