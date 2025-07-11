@@ -214,6 +214,255 @@ class CodeGenerationAPITest(unittest.TestCase):
         else:
             print("  No history items found (this is normal if no code has been generated yet)")
 
+class WorkflowAPITest(unittest.TestCase):
+    """Test suite for Workflow Automation API endpoints"""
+    
+    def setUp(self):
+        """Set up test environment"""
+        self.base_url = f"{BACKEND_URL}/api"
+        self.auth_token = None
+        self.login()
+    
+    def login(self):
+        """Login to get authentication token"""
+        login_url = f"{self.base_url}/auth/login"
+        login_data = {
+            "username": "admin",
+            "password": "admin123"
+        }
+        
+        response = requests.post(login_url, json=login_data)
+        if response.status_code == 200:
+            data = response.json()
+            self.auth_token = data.get("access_token")
+            print(f"Successfully logged in as admin. Token: {self.auth_token[:10]}...")
+        else:
+            print(f"Failed to login: {response.status_code} - {response.text}")
+            self.fail("Login failed")
+    
+    def get_headers(self) -> Dict[str, str]:
+        """Get headers with authentication token"""
+        return {
+            "Authorization": f"Bearer {self.auth_token}",
+            "Content-Type": "application/json"
+        }
+    
+    def test_01_get_workflow_templates(self):
+        """Test GET /api/workflows/templates endpoint"""
+        print("\n=== Testing GET /api/workflows/templates ===")
+        url = f"{self.base_url}/workflows/templates"
+        response = requests.get(url, headers=self.get_headers())
+        
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIsInstance(data, list, "Response should be a list")
+        
+        # Check for expected templates
+        expected_templates = ["Content Marketing Pipeline", "Product Launch Workflow", "Code Documentation Workflow"]
+        template_names = [template.get("name", "") for template in data]
+        
+        print(f"✅ GET /api/workflows/templates returned {len(data)} templates")
+        for template in data:
+            print(f"  - {template.get('name', 'Unknown')}: {len(template.get('steps', []))} steps")
+            
+            # Check template structure
+            required_fields = ["template_id", "name", "description", "category", "steps", "variables", "tags"]
+            for field in required_fields:
+                self.assertIn(field, template, f"Template should have '{field}' field")
+        
+        # Verify at least some expected templates exist
+        found_templates = [name for name in expected_templates if any(name in template_name for template_name in template_names)]
+        self.assertGreater(len(found_templates), 0, "Should find at least one expected template")
+    
+    def test_02_get_specific_template(self):
+        """Test GET /api/workflows/templates/{template_id} endpoint"""
+        print("\n=== Testing GET /api/workflows/templates/{template_id} ===")
+        
+        # First get all templates to get a valid template_id
+        templates_response = requests.get(f"{self.base_url}/workflows/templates", headers=self.get_headers())
+        self.assertEqual(templates_response.status_code, 200)
+        templates = templates_response.json()
+        
+        if len(templates) > 0:
+            template_id = templates[0]["template_id"]
+            url = f"{self.base_url}/workflows/templates/{template_id}"
+            response = requests.get(url, headers=self.get_headers())
+            
+            self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+            
+            data = response.json()
+            self.assertEqual(data["template_id"], template_id, "Template ID should match requested ID")
+            
+            print(f"✅ GET /api/workflows/templates/{template_id} returned template: {data['name']}")
+        else:
+            print("⚠️ No templates available to test specific template endpoint")
+    
+    def test_03_create_workflow_from_template(self):
+        """Test POST /api/workflows/from-template/{template_id} endpoint"""
+        print("\n=== Testing POST /api/workflows/from-template/{template_id} ===")
+        
+        # First get templates
+        templates_response = requests.get(f"{self.base_url}/workflows/templates", headers=self.get_headers())
+        self.assertEqual(templates_response.status_code, 200)
+        templates = templates_response.json()
+        
+        if len(templates) > 0:
+            template = templates[0]
+            template_id = template["template_id"]
+            
+            # Create variables based on template requirements
+            variables = {}
+            for var_name, var_value in template.get("variables", {}).items():
+                variables[var_name] = f"test_{var_name}_value"
+            
+            url = f"{self.base_url}/workflows/from-template/{template_id}"
+            response = requests.post(url, json=variables, headers=self.get_headers())
+            
+            self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+            
+            data = response.json()
+            required_fields = ["workflow_id", "name", "description", "category", "steps", "status"]
+            for field in required_fields:
+                self.assertIn(field, data, f"Response should have '{field}' field")
+            
+            print(f"✅ Created workflow from template: {data['name']} (ID: {data['workflow_id']})")
+            
+            # Store workflow_id for later tests
+            self.created_workflow_id = data['workflow_id']
+        else:
+            print("⚠️ No templates available to test workflow creation")
+    
+    def test_04_get_user_workflows(self):
+        """Test GET /api/workflows/ endpoint"""
+        print("\n=== Testing GET /api/workflows/ ===")
+        url = f"{self.base_url}/workflows/"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.get(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIsInstance(data, list, "Response should be a list")
+        
+        print(f"✅ GET /api/workflows/ returned {len(data)} workflows")
+        
+        for workflow in data:
+            required_fields = ["workflow_id", "name", "description", "category", "steps", "status"]
+            for field in required_fields:
+                self.assertIn(field, workflow, f"Workflow should have '{field}' field")
+    
+    def test_05_execute_workflow(self):
+        """Test POST /api/workflows/{workflow_id}/execute endpoint"""
+        print("\n=== Testing POST /api/workflows/{workflow_id}/execute ===")
+        
+        # Get workflows to find one to execute
+        workflows_response = requests.get(f"{self.base_url}/workflows/", headers=self.get_headers())
+        self.assertEqual(workflows_response.status_code, 200)
+        workflows = workflows_response.json()
+        
+        if len(workflows) > 0:
+            workflow = workflows[0]
+            workflow_id = workflow["workflow_id"]
+            
+            # Prepare execution request
+            execution_data = {
+                "input_variables": {},
+                "run_name": f"Test execution {datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            }
+            
+            # Add any required variables
+            for var_name in workflow.get("variables", {}):
+                execution_data["input_variables"][var_name] = f"test_value_for_{var_name}"
+            
+            url = f"{self.base_url}/workflows/{workflow_id}/execute"
+            response = requests.post(url, json=execution_data, headers=self.get_headers())
+            
+            # Note: Execution might fail due to missing API keys, but endpoint should process request
+            self.assertIn(response.status_code, [200, 500], 
+                         f"Expected status code 200 or 500, got {response.status_code}")
+            
+            data = response.json()
+            
+            if response.status_code == 200:
+                required_fields = ["execution_id", "workflow_id", "status", "started_at"]
+                for field in required_fields:
+                    self.assertIn(field, data, f"Response should have '{field}' field")
+                
+                print(f"✅ Workflow execution started: {data['execution_id']}")
+                self.execution_id = data['execution_id']
+            else:
+                print(f"⚠️ Workflow execution failed (likely due to missing API keys): {data.get('detail', 'Unknown error')}")
+        else:
+            print("⚠️ No workflows available to test execution")
+    
+    def test_06_get_workflow_executions(self):
+        """Test GET /api/workflows/executions/ endpoint"""
+        print("\n=== Testing GET /api/workflows/executions/ ===")
+        url = f"{self.base_url}/workflows/executions/"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.get(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIsInstance(data, list, "Response should be a list")
+        
+        print(f"✅ GET /api/workflows/executions/ returned {len(data)} executions")
+        
+        for execution in data:
+            required_fields = ["execution_id", "workflow_id", "status", "started_at"]
+            for field in required_fields:
+                self.assertIn(field, execution, f"Execution should have '{field}' field")
+    
+    def test_07_workflow_management(self):
+        """Test workflow management endpoints (get, update, delete)"""
+        print("\n=== Testing Workflow Management Endpoints ===")
+        
+        # Get workflows
+        workflows_response = requests.get(f"{self.base_url}/workflows/", headers=self.get_headers())
+        self.assertEqual(workflows_response.status_code, 200)
+        workflows = workflows_response.json()
+        
+        if len(workflows) > 0:
+            workflow_id = workflows[0]["workflow_id"]
+            
+            # Test GET specific workflow
+            get_url = f"{self.base_url}/workflows/{workflow_id}"
+            get_response = requests.get(get_url, headers=self.get_headers())
+            self.assertEqual(get_response.status_code, 200, f"Expected status code 200 for GET workflow, got {get_response.status_code}")
+            
+            workflow_data = get_response.json()
+            self.assertEqual(workflow_data["workflow_id"], workflow_id, "Workflow ID should match")
+            print(f"✅ GET /api/workflows/{workflow_id} successful")
+            
+            # Test duplicate workflow
+            duplicate_url = f"{self.base_url}/workflows/{workflow_id}/duplicate"
+            duplicate_response = requests.post(duplicate_url, headers=self.get_headers())
+            self.assertEqual(duplicate_response.status_code, 200, f"Expected status code 200 for duplicate, got {duplicate_response.status_code}")
+            
+            duplicate_data = duplicate_response.json()
+            self.assertNotEqual(duplicate_data["workflow_id"], workflow_id, "Duplicated workflow should have different ID")
+            print(f"✅ POST /api/workflows/{workflow_id}/duplicate successful")
+            
+            # Clean up - delete the duplicated workflow
+            delete_url = f"{self.base_url}/workflows/{duplicate_data['workflow_id']}"
+            delete_response = requests.delete(delete_url, headers=self.get_headers())
+            self.assertEqual(delete_response.status_code, 200, f"Expected status code 200 for delete, got {delete_response.status_code}")
+            print(f"✅ DELETE /api/workflows/{duplicate_data['workflow_id']} successful")
+        else:
+            print("⚠️ No workflows available to test management endpoints")
+
 class SocialMediaAPITest(unittest.TestCase):
     """Test suite for Social Media Generation API endpoints"""
     
