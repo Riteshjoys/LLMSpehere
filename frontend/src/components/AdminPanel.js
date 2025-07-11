@@ -25,6 +25,17 @@ const AdminPanel = () => {
   const [showCurlModal, setShowCurlModal] = useState(false);
   const [editingProvider, setEditingProvider] = useState(null);
   const [activeTab, setActiveTab] = useState('providers');
+  const [apiKeys, setApiKeys] = useState({
+    OPENAI_API_KEY: '',
+    FAL_API_KEY: '',
+    LUMA_API_KEY: '',
+    PIKA_API_KEY: '',
+    GROQ_API_KEY: '',
+    ANTHROPIC_API_KEY: '',
+    GOOGLE_API_KEY: '',
+    STABILITY_API_KEY: ''
+  });
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
