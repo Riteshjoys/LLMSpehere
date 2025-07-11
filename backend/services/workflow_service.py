@@ -137,7 +137,7 @@ class WorkflowService:
     async def get_workflow(self, workflow_id: str, user_id: str) -> Optional[WorkflowResponse]:
         """Get a specific workflow"""
         try:
-            workflow = await self.workflows_collection.find_one({"_id": workflow_id, "user_id": user_id})
+            workflow = self.workflows_collection.find_one({"_id": workflow_id, "user_id": user_id})
             if workflow:
                 workflow["workflow_id"] = str(workflow.pop("_id"))
                 workflow["steps"] = [WorkflowStep(**step) for step in workflow["steps"]]
