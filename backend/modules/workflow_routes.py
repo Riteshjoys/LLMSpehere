@@ -211,7 +211,7 @@ async def stop_workflow_execution(
     """Stop a running workflow execution"""
     success = await execution_service.stop_execution(
         execution_id=execution_id,
-        user_id=current_user["user_id"]
+        user_id=current_user
     )
     if not success:
         raise HTTPException(
