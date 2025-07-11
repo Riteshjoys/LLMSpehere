@@ -82,7 +82,7 @@ class WorkflowSchedulerService:
         """Get all schedules for a user"""
         try:
             schedules = []
-            async for schedule in self.schedules_collection.find({"user_id": user_id}).sort("created_at", -1):
+            for schedule in self.schedules_collection.find({"user_id": user_id}).sort("created_at", -1):
                 schedule["schedule_id"] = str(schedule.pop("_id"))
                 schedules.append(WorkflowSchedule(**schedule))
             return schedules
