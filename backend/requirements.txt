@@ -34,3 +34,4 @@ aiohappyeyeballs
 openai
 tiktoken
 tokenizers
+markupsafe
