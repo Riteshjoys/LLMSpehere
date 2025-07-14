@@ -30,3 +30,4 @@ attrs
 aiosignal
 frozenlist
 propcache
+aiohappyeyeballs
