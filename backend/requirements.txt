@@ -31,3 +31,4 @@ aiosignal
 frozenlist
 propcache
 aiohappyeyeballs
+openai
