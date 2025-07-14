@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Dict, Any
 
 # Get the backend URL from the frontend .env file
-BACKEND_URL = "https://97b6eb44-d3cb-4153-a43b-711c8cbdf8d6.preview.emergentagent.com"
+BACKEND_URL = "https://e2784515-51f3-42e7-9646-ede350249b19.preview.emergentagent.com"
 
 class ComprehensiveAPITester:
     """Comprehensive test suite for ContentForge AI API endpoints"""

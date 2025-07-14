@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 # Backend URL
-BACKEND_URL = "https://97b6eb44-d3cb-4153-a43b-711c8cbdf8d6.preview.emergentagent.com"
+BACKEND_URL = "https://e2784515-51f3-42e7-9646-ede350249b19.preview.emergentagent.com"
 
 def login():
     """Login and get token"""
