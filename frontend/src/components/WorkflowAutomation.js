@@ -18,7 +18,7 @@ const WorkflowAutomation = () => {
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
 
-  const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
   useEffect(() => {
     loadWorkflows();
