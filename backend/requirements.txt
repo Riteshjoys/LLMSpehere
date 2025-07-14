@@ -26,3 +26,7 @@ litellm
 croniter
 aiohttpmultidict
 attrs
+-e yarl
+aiosignal
+frozenlist
+propcache
