@@ -121,7 +121,7 @@ const WorkflowAutomation = () => {
   };
 
   const deleteWorkflow = async (workflowId) => {
-    if (!confirm('Are you sure you want to delete this workflow?')) return;
+    if (!window.confirm('Are you sure you want to delete this workflow?')) return;
     
     try {
       setLoading(true);
