@@ -41,6 +41,7 @@ const SocialMediaGeneration = () => {
   const [generatedContent, setGeneratedContent] = useState(null);
   const [contentHistory, setContentHistory] = useState([]);
   const [platformConfigs, setPlatformConfigs] = useState({});
+  const [templates, setTemplates] = useState({});
   const [analytics, setAnalytics] = useState({});
 
   // Platform icons mapping
