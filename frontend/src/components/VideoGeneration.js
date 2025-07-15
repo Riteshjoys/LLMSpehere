@@ -19,7 +19,6 @@ const VideoGeneration = () => {
   const [aspectRatio, setAspectRatio] = useState('16:9');
   const [resolution, setResolution] = useState('720p');
 
-  // Fetch video providers
   useEffect(() => {
     fetchProviders();
     fetchVideoHistory();
