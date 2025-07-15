@@ -26,7 +26,7 @@ const WorkflowScheduler = ({ workflows = [] }) => {
   useEffect(() => {
     loadSchedules();
   }, []);
-  
+
   const loadSchedules = async () => {
     try {
       setLoading(true);
