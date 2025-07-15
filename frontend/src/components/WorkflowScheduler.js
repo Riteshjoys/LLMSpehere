@@ -63,7 +63,7 @@ const WorkflowScheduler = ({ workflows = [] }) => {
   const updateSchedule = async (scheduleId, updateData) => {
     try {
       setLoading(true);
-      const response = await axios.put(`${backendUrl}/api/workflow-schedules/${scheduleId}`, updateData, {
+      await axios.put(`${backendUrl}/api/workflow-schedules/${scheduleId}`, updateData, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       
