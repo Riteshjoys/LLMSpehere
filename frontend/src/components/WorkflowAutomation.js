@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { PlayIcon, StopIcon, PlusIcon, DocumentDuplicateIcon, TrashIcon, EyeIcon, PencilIcon, ClockIcon, ChartBarIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import { PlayIcon, StopIcon, PlusIcon, DocumentDuplicateIcon, TrashIcon, EyeIcon, ClockIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 import WorkflowScheduler from './WorkflowScheduler';
 
 const WorkflowAutomation = () => {
