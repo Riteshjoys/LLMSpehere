@@ -15,7 +15,6 @@ import {
 } from '@heroicons/react/24/outline';
 
 const WorkflowScheduler = ({ workflows = [] }) => {
-  const { user } = useAuth();
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
