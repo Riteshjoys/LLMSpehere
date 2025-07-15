@@ -11,7 +11,7 @@ const WorkflowAutomation = () => {
   const [workflows, setWorkflows] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [executions, setExecutions] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showExecuteModal, setShowExecuteModal] = useState(false);
