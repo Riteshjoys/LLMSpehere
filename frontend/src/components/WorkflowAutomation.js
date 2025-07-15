@@ -106,7 +106,7 @@ const WorkflowAutomation = () => {
   const duplicateWorkflow = async (workflowId) => {
     try {
       setLoading(true);
-      const response = await axios.post(`${backendUrl}/api/workflows/${workflowId}/duplicate`, {}, {
+      await axios.post(`${backendUrl}/api/workflows/${workflowId}/duplicate`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       
