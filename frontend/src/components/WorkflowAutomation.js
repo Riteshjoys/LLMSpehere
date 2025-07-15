@@ -65,7 +65,7 @@ const WorkflowAutomation = () => {
   const executeWorkflow = async (workflowId, inputVariables = {}) => {
     try {
       setLoading(true);
-      const response = await axios.post(`${backendUrl}/api/workflows/${workflowId}/execute`, {
+      await axios.post(`${backendUrl}/api/workflows/${workflowId}/execute`, {
         workflow_id: workflowId,
         input_variables: inputVariables,
         run_name: `Manual run ${new Date().toLocaleString()}`
