@@ -6,7 +6,7 @@ import sys
 from typing import Dict, Any
 
 # Get the backend URL from the frontend .env file
-BACKEND_URL = "https://e2784515-51f3-42e7-9646-ede350249b19.preview.emergentagent.com"
+BACKEND_URL = "https://bc6ec429-a847-41d0-983c-939984f115b6.preview.emergentagent.com"
 
 class SocialMediaAPITest(unittest.TestCase):
     """Test suite for Social Media Generation API endpoints"""
