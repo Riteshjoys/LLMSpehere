@@ -11,7 +11,6 @@ import {
   Sparkles,
   Settings,
   History,
-  Calendar,
   BarChart3,
   RefreshCw,
   Twitter,
