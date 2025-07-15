@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { Video, Play, Download, History, Settings, ArrowLeft, Clock } from 'lucide-react';
 
 const VideoGeneration = () => {
-  const { user, token } = useAuth();
+  const { token } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('generate');
   const [providers, setProviders] = useState([]);
