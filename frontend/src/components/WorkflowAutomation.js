@@ -87,7 +87,7 @@ const WorkflowAutomation = () => {
   const createFromTemplate = async (templateId, variables) => {
     try {
       setLoading(true);
-      const response = await axios.post(`${backendUrl}/api/workflows/from-template/${templateId}`, 
+      await axios.post(`${backendUrl}/api/workflows/from-template/${templateId}`, 
         variables, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
