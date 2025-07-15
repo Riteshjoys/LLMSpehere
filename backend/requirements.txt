@@ -35,3 +35,4 @@ openai
 tiktoken
 tokenizers
 markupsafe
+aiohttp
