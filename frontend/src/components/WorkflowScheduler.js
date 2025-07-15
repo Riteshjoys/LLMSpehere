@@ -4,13 +4,11 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { 
   CalendarIcon, 
-  ClockIcon, 
   PlayIcon, 
   PauseIcon, 
   TrashIcon, 
   PencilIcon,
   PlusIcon,
-  StopIcon,
   CheckCircleIcon,
   XCircleIcon,
   ExclamationCircleIcon
