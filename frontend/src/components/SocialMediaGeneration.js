@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 
 const SocialMediaGeneration = () => {
-  const { user, token } = useAuth();
+  const { token } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('generate');
   const [providers, setProviders] = useState([]);
@@ -41,7 +41,6 @@ const SocialMediaGeneration = () => {
   const [generatedContent, setGeneratedContent] = useState(null);
   const [contentHistory, setContentHistory] = useState([]);
   const [platformConfigs, setPlatformConfigs] = useState({});
-  const [templates, setTemplates] = useState({});
   const [analytics, setAnalytics] = useState({});
 
   // Platform icons mapping
