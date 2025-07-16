@@ -7,7 +7,7 @@ from typing import Dict, Any
 from datetime import datetime
 
 # Get the backend URL from the frontend .env file
-BACKEND_URL = "https://64da74bf-94ba-49b1-85f1-316413dd653f.preview.emergentagent.com"
+BACKEND_URL = "https://c47e1663-87a3-4560-a4b1-edcc58a46099.preview.emergentagent.com"
 
 class FocusedUserManagementAndAnalyticsTest(unittest.TestCase):
     """Focused test suite for new User Management and Analytics API endpoints"""
