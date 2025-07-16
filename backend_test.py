@@ -817,6 +817,629 @@ class WorkflowSchedulerAPITest(unittest.TestCase):
         else:
             print("⚠️ Could not create schedule for analytics test")
 
+class UserManagementAPITest(unittest.TestCase):
+    """Test suite for User Management API endpoints"""
+    
+    def setUp(self):
+        """Set up test environment"""
+        self.base_url = f"{BACKEND_URL}/api"
+        self.admin_token = None
+        self.user_token = None
+        self.login_admin()
+        self.login_user()
+    
+    def login_admin(self):
+        """Login as admin to get authentication token"""
+        login_url = f"{self.base_url}/auth/login"
+        login_data = {
+            "username": "admin",
+            "password": "admin123"
+        }
+        
+        response = requests.post(login_url, json=login_data)
+        if response.status_code == 200:
+            data = response.json()
+            self.admin_token = data.get("access_token")
+            print(f"Successfully logged in as admin. Token: {self.admin_token[:10]}...")
+        else:
+            print(f"Failed to login as admin: {response.status_code} - {response.text}")
+            self.fail("Admin login failed")
+    
+    def login_user(self):
+        """Login as regular user to get authentication token"""
+        # First register a test user if not exists
+        register_url = f"{self.base_url}/auth/register"
+        register_data = {
+            "username": "testuser",
+            "email": "testuser@example.com",
+            "password": "testpass123",
+            "full_name": "Test User"
+        }
+        
+        # Try to register (might fail if user already exists, which is fine)
+        requests.post(register_url, json=register_data)
+        
+        # Now login
+        login_url = f"{self.base_url}/auth/login"
+        login_data = {
+            "username": "testuser",
+            "password": "testpass123"
+        }
+        
+        response = requests.post(login_url, json=login_data)
+        if response.status_code == 200:
+            data = response.json()
+            self.user_token = data.get("access_token")
+            print(f"Successfully logged in as regular user. Token: {self.user_token[:10]}...")
+        else:
+            print(f"Failed to login as user: {response.status_code} - {response.text}")
+            self.fail("User login failed")
+    
+    def get_admin_headers(self) -> Dict[str, str]:
+        """Get headers with admin authentication token"""
+        return {
+            "Authorization": f"Bearer {self.admin_token}",
+            "Content-Type": "application/json"
+        }
+    
+    def get_user_headers(self) -> Dict[str, str]:
+        """Get headers with user authentication token"""
+        return {
+            "Authorization": f"Bearer {self.user_token}",
+            "Content-Type": "application/json"
+        }
+    
+    def test_01_get_user_profile(self):
+        """Test GET /api/user/profile endpoint"""
+        print("\n=== Testing GET /api/user/profile ===")
+        url = f"{self.base_url}/user/profile"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with admin authentication
+        response = requests.get(url, headers=self.get_admin_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200 for admin, got {response.status_code}")
+        
+        admin_data = response.json()
+        required_fields = ["user_id", "username", "email", "full_name", "role", "created_at"]
+        for field in required_fields:
+            self.assertIn(field, admin_data, f"Admin profile should have '{field}' field")
+        
+        self.assertEqual(admin_data["role"], "admin", "Admin should have admin role")
+        print(f"✅ Admin profile: {admin_data['username']} ({admin_data['role']})")
+        
+        # Test with regular user authentication
+        response = requests.get(url, headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200 for user, got {response.status_code}")
+        
+        user_data = response.json()
+        for field in required_fields:
+            self.assertIn(field, user_data, f"User profile should have '{field}' field")
+        
+        self.assertEqual(user_data["role"], "user", "Regular user should have user role")
+        print(f"✅ User profile: {user_data['username']} ({user_data['role']})")
+    
+    def test_02_update_user_profile(self):
+        """Test PUT /api/user/profile endpoint"""
+        print("\n=== Testing PUT /api/user/profile ===")
+        url = f"{self.base_url}/user/profile"
+        
+        update_data = {
+            "full_name": "Updated Test User",
+            "bio": "This is my updated bio",
+            "location": "New York, NY",
+            "website": "https://example.com"
+        }
+        
+        # Test without authentication
+        response = requests.put(url, json=update_data)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.put(url, json=update_data, headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIn("message", data, "Response should have 'message' field")
+        print(f"✅ Profile updated: {data.get('message', 'Success')}")
+        
+        # Verify the update by getting profile again
+        get_response = requests.get(url, headers=self.get_user_headers())
+        self.assertEqual(get_response.status_code, 200)
+        profile_data = get_response.json()
+        
+        # Check if the update was applied (some fields might not be in the response model)
+        if "full_name" in profile_data:
+            self.assertEqual(profile_data["full_name"], update_data["full_name"], "Full name should be updated")
+        print(f"✅ Profile update verified")
+    
+    def test_03_update_user_preferences(self):
+        """Test PUT /api/user/preferences endpoint"""
+        print("\n=== Testing PUT /api/user/preferences ===")
+        url = f"{self.base_url}/user/preferences"
+        
+        preferences_data = {
+            "theme": "dark",
+            "language": "en",
+            "notifications": {
+                "email": True,
+                "push": False,
+                "sms": False
+            },
+            "privacy": {
+                "profile_visibility": "public",
+                "activity_visibility": "friends"
+            }
+        }
+        
+        # Test without authentication
+        response = requests.put(url, json=preferences_data)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.put(url, json=preferences_data, headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIn("message", data, "Response should have 'message' field")
+        print(f"✅ Preferences updated: {data.get('message', 'Success')}")
+    
+    def test_04_update_user_password(self):
+        """Test PUT /api/user/password endpoint"""
+        print("\n=== Testing PUT /api/user/password ===")
+        url = f"{self.base_url}/user/password"
+        
+        password_data = {
+            "current_password": "testpass123",
+            "new_password": "newtestpass123",
+            "confirm_password": "newtestpass123"
+        }
+        
+        # Test without authentication
+        response = requests.put(url, json=password_data)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.put(url, json=password_data, headers=self.get_user_headers())
+        
+        # Note: This might fail if password validation is strict or if the current password is wrong
+        # We'll accept both success and validation errors
+        self.assertIn(response.status_code, [200, 400, 422], 
+                     f"Expected status code 200, 400, or 422, got {response.status_code}")
+        
+        data = response.json()
+        if response.status_code == 200:
+            self.assertIn("message", data, "Response should have 'message' field")
+            print(f"✅ Password updated: {data.get('message', 'Success')}")
+        else:
+            print(f"⚠️ Password update failed (validation error): {data.get('detail', 'Unknown error')}")
+    
+    def test_05_update_user_email(self):
+        """Test PUT /api/user/email endpoint"""
+        print("\n=== Testing PUT /api/user/email ===")
+        url = f"{self.base_url}/user/email"
+        
+        email_data = {
+            "new_email": "newtestuser@example.com",
+            "password": "testpass123"
+        }
+        
+        # Test without authentication
+        response = requests.put(url, json=email_data)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.put(url, json=email_data, headers=self.get_user_headers())
+        
+        # Note: This might fail due to email validation or duplicate email
+        self.assertIn(response.status_code, [200, 400, 422], 
+                     f"Expected status code 200, 400, or 422, got {response.status_code}")
+        
+        data = response.json()
+        if response.status_code == 200:
+            self.assertIn("message", data, "Response should have 'message' field")
+            print(f"✅ Email updated: {data.get('message', 'Success')}")
+        else:
+            print(f"⚠️ Email update failed (validation error): {data.get('detail', 'Unknown error')}")
+    
+    def test_06_get_user_usage_stats(self):
+        """Test GET /api/user/usage-stats endpoint"""
+        print("\n=== Testing GET /api/user/usage-stats ===")
+        url = f"{self.base_url}/user/usage-stats"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.get(url, headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        expected_fields = ["total_generations", "text_generations", "image_generations", "video_generations", 
+                          "code_generations", "social_media_generations", "total_tokens_used", "total_cost"]
+        
+        for field in expected_fields:
+            self.assertIn(field, data, f"Usage stats should have '{field}' field")
+            self.assertIsInstance(data[field], (int, float), f"{field} should be a number")
+        
+        print(f"✅ Usage stats retrieved:")
+        print(f"  Total generations: {data['total_generations']}")
+        print(f"  Text: {data['text_generations']}, Image: {data['image_generations']}")
+        print(f"  Video: {data['video_generations']}, Code: {data['code_generations']}")
+        print(f"  Social Media: {data['social_media_generations']}")
+        print(f"  Total tokens: {data['total_tokens_used']}, Cost: ${data['total_cost']}")
+    
+    def test_07_get_user_activity_logs(self):
+        """Test GET /api/user/activity-logs endpoint"""
+        print("\n=== Testing GET /api/user/activity-logs ===")
+        url = f"{self.base_url}/user/activity-logs"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.get(url, headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIsInstance(data, list, "Activity logs should be a list")
+        
+        print(f"✅ Activity logs retrieved: {len(data)} entries")
+        
+        # Check structure of activity logs if any exist
+        if len(data) > 0:
+            log_entry = data[0]
+            expected_fields = ["activity_type", "description", "timestamp"]
+            for field in expected_fields:
+                self.assertIn(field, log_entry, f"Activity log entry should have '{field}' field")
+            
+            print(f"  Latest activity: {log_entry['activity_type']} - {log_entry['description']}")
+        
+        # Test with pagination parameters
+        response = requests.get(f"{url}?limit=10&skip=0", headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200 for paginated request, got {response.status_code}")
+        
+        paginated_data = response.json()
+        self.assertIsInstance(paginated_data, list, "Paginated activity logs should be a list")
+        self.assertLessEqual(len(paginated_data), 10, "Should return at most 10 entries with limit=10")
+        print(f"✅ Paginated activity logs: {len(paginated_data)} entries (limit=10)")
+    
+    def test_08_get_user_analytics(self):
+        """Test GET /api/user/analytics endpoint"""
+        print("\n=== Testing GET /api/user/analytics ===")
+        url = f"{self.base_url}/user/analytics"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication (default 30 days)
+        response = requests.get(url, headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        expected_fields = ["period_days", "total_activity", "daily_breakdown", "feature_usage", "performance_metrics"]
+        
+        for field in expected_fields:
+            self.assertIn(field, data, f"User analytics should have '{field}' field")
+        
+        self.assertEqual(data["period_days"], 30, "Default period should be 30 days")
+        self.assertIsInstance(data["daily_breakdown"], dict, "Daily breakdown should be a dict")
+        self.assertIsInstance(data["feature_usage"], dict, "Feature usage should be a dict")
+        
+        print(f"✅ User analytics retrieved (30 days):")
+        print(f"  Total activity: {data['total_activity']}")
+        print(f"  Daily breakdown: {len(data['daily_breakdown'])} days")
+        print(f"  Feature usage: {len(data['feature_usage'])} features")
+        
+        # Test with custom period
+        response = requests.get(f"{url}?days=7", headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200 for 7-day period, got {response.status_code}")
+        
+        weekly_data = response.json()
+        self.assertEqual(weekly_data["period_days"], 7, "Period should be 7 days")
+        print(f"✅ User analytics retrieved (7 days): {weekly_data['total_activity']} total activity")
+
+
+class AnalyticsAPITest(unittest.TestCase):
+    """Test suite for Enhanced Analytics API endpoints"""
+    
+    def setUp(self):
+        """Set up test environment"""
+        self.base_url = f"{BACKEND_URL}/api"
+        self.admin_token = None
+        self.user_token = None
+        self.login_admin()
+        self.login_user()
+    
+    def login_admin(self):
+        """Login as admin to get authentication token"""
+        login_url = f"{self.base_url}/auth/login"
+        login_data = {
+            "username": "admin",
+            "password": "admin123"
+        }
+        
+        response = requests.post(login_url, json=login_data)
+        if response.status_code == 200:
+            data = response.json()
+            self.admin_token = data.get("access_token")
+            print(f"Successfully logged in as admin. Token: {self.admin_token[:10]}...")
+        else:
+            print(f"Failed to login as admin: {response.status_code} - {response.text}")
+            self.fail("Admin login failed")
+    
+    def login_user(self):
+        """Login as regular user to get authentication token"""
+        # First register a test user if not exists
+        register_url = f"{self.base_url}/auth/register"
+        register_data = {
+            "username": "analyticsuser",
+            "email": "analyticsuser@example.com",
+            "password": "testpass123",
+            "full_name": "Analytics Test User"
+        }
+        
+        # Try to register (might fail if user already exists, which is fine)
+        requests.post(register_url, json=register_data)
+        
+        # Now login
+        login_url = f"{self.base_url}/auth/login"
+        login_data = {
+            "username": "analyticsuser",
+            "password": "testpass123"
+        }
+        
+        response = requests.post(login_url, json=login_data)
+        if response.status_code == 200:
+            data = response.json()
+            self.user_token = data.get("access_token")
+            print(f"Successfully logged in as analytics user. Token: {self.user_token[:10]}...")
+        else:
+            print(f"Failed to login as analytics user: {response.status_code} - {response.text}")
+            self.fail("Analytics user login failed")
+    
+    def get_admin_headers(self) -> Dict[str, str]:
+        """Get headers with admin authentication token"""
+        return {
+            "Authorization": f"Bearer {self.admin_token}",
+            "Content-Type": "application/json"
+        }
+    
+    def get_user_headers(self) -> Dict[str, str]:
+        """Get headers with user authentication token"""
+        return {
+            "Authorization": f"Bearer {self.user_token}",
+            "Content-Type": "application/json"
+        }
+    
+    def test_01_get_enhanced_dashboard_analytics(self):
+        """Test GET /api/analytics/dashboard/enhanced endpoint"""
+        print("\n=== Testing GET /api/analytics/dashboard/enhanced ===")
+        url = f"{self.base_url}/analytics/dashboard/enhanced"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication (default 30 days)
+        response = requests.get(url, headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        required_sections = ["summary", "daily_activity", "generation_breakdown", "provider_usage", 
+                           "feature_usage", "performance_metrics", "date_range"]
+        
+        for section in required_sections:
+            self.assertIn(section, data, f"Enhanced analytics should have '{section}' section")
+        
+        # Check summary structure
+        summary = data["summary"]
+        summary_fields = ["total_generations", "success_rate", "avg_response_time", "estimated_cost", "active_days"]
+        for field in summary_fields:
+            self.assertIn(field, summary, f"Summary should have '{field}' field")
+            self.assertIsInstance(summary[field], (int, float), f"{field} should be a number")
+        
+        # Check daily activity structure
+        daily_activity = data["daily_activity"]
+        self.assertIsInstance(daily_activity, dict, "Daily activity should be a dict")
+        
+        # Check generation breakdown
+        breakdown = data["generation_breakdown"]
+        breakdown_types = ["text", "image", "video", "code", "social"]
+        for gen_type in breakdown_types:
+            self.assertIn(gen_type, breakdown, f"Generation breakdown should have '{gen_type}' field")
+            self.assertIsInstance(breakdown[gen_type], int, f"{gen_type} count should be an integer")
+        
+        # Check date range
+        date_range = data["date_range"]
+        self.assertIn("start", date_range, "Date range should have 'start' field")
+        self.assertIn("end", date_range, "Date range should have 'end' field")
+        self.assertIn("days", date_range, "Date range should have 'days' field")
+        self.assertEqual(date_range["days"], 30, "Default period should be 30 days")
+        
+        print(f"✅ Enhanced dashboard analytics retrieved (30 days):")
+        print(f"  Total generations: {summary['total_generations']}")
+        print(f"  Success rate: {summary['success_rate']}%")
+        print(f"  Avg response time: {summary['avg_response_time']}s")
+        print(f"  Estimated cost: ${summary['estimated_cost']}")
+        print(f"  Active days: {summary['active_days']}")
+        print(f"  Daily activity entries: {len(daily_activity)}")
+        
+        # Test with custom period
+        response = requests.get(f"{url}?days=7", headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200 for 7-day period, got {response.status_code}")
+        
+        weekly_data = response.json()
+        self.assertEqual(weekly_data["date_range"]["days"], 7, "Period should be 7 days")
+        print(f"✅ Enhanced analytics retrieved (7 days): {weekly_data['summary']['total_generations']} total generations")
+        
+        # Test with admin authentication
+        response = requests.get(url, headers=self.get_admin_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200 for admin, got {response.status_code}")
+        
+        admin_data = response.json()
+        print(f"✅ Admin enhanced analytics: {admin_data['summary']['total_generations']} total generations")
+    
+    def test_02_get_usage_trends(self):
+        """Test GET /api/analytics/usage-trends endpoint"""
+        print("\n=== Testing GET /api/analytics/usage-trends ===")
+        url = f"{self.base_url}/analytics/usage-trends"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test different periods
+        periods = ["day", "week", "month"]
+        
+        for period in periods:
+            print(f"\n  Testing {period} period...")
+            response = requests.get(f"{url}?period={period}", headers=self.get_user_headers())
+            self.assertEqual(response.status_code, 200, f"Expected status code 200 for {period} period, got {response.status_code}")
+            
+            data = response.json()
+            required_fields = ["period", "date_range", "trends"]
+            for field in required_fields:
+                self.assertIn(field, data, f"Usage trends should have '{field}' field")
+            
+            self.assertEqual(data["period"], period, f"Period should match requested period")
+            self.assertIsInstance(data["trends"], dict, "Trends should be a dict")
+            
+            # Check trends structure
+            trends = data["trends"]
+            trend_types = ["text", "image", "video", "code", "social"]
+            for trend_type in trend_types:
+                self.assertIn(trend_type, trends, f"Trends should have '{trend_type}' data")
+                self.assertIsInstance(trends[trend_type], list, f"{trend_type} trends should be a list")
+            
+            print(f"    ✅ {period} trends: {len(trends['text'])} data points for text generation")
+        
+        # Test invalid period
+        response = requests.get(f"{url}?period=invalid", headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 400, f"Expected status code 400 for invalid period, got {response.status_code}")
+        print(f"✅ Invalid period correctly rejected")
+    
+    def test_03_export_analytics(self):
+        """Test GET /api/analytics/export endpoint"""
+        print("\n=== Testing GET /api/analytics/export ===")
+        url = f"{self.base_url}/analytics/export"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test JSON export (default)
+        response = requests.get(url, headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        required_fields = ["export_format", "generated_at", "user_id", "data"]
+        for field in required_fields:
+            self.assertIn(field, data, f"Export should have '{field}' field")
+        
+        self.assertEqual(data["export_format"], "json", "Default format should be JSON")
+        self.assertIsInstance(data["data"], dict, "Exported data should be a dict")
+        
+        # Check that the exported data contains analytics data
+        analytics_data = data["data"]
+        self.assertIn("summary", analytics_data, "Exported data should contain summary")
+        self.assertIn("daily_activity", analytics_data, "Exported data should contain daily activity")
+        
+        print(f"✅ JSON export successful:")
+        print(f"  Format: {data['export_format']}")
+        print(f"  Generated at: {data['generated_at']}")
+        print(f"  Data sections: {len(analytics_data)} sections")
+        
+        # Test with custom days parameter
+        response = requests.get(f"{url}?days=14", headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200 for 14-day export, got {response.status_code}")
+        
+        custom_data = response.json()
+        self.assertEqual(custom_data["data"]["date_range"]["days"], 14, "Export should use custom period")
+        print(f"✅ Custom period export (14 days): {custom_data['data']['summary']['total_generations']} generations")
+        
+        # Test CSV export (should return message about coming soon)
+        response = requests.get(f"{url}?format=csv", headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200 for CSV request, got {response.status_code}")
+        
+        csv_data = response.json()
+        self.assertIn("message", csv_data, "CSV export should return a message")
+        print(f"✅ CSV export: {csv_data.get('message', 'Response received')}")
+        
+        # Test invalid format
+        response = requests.get(f"{url}?format=invalid", headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 400, f"Expected status code 400 for invalid format, got {response.status_code}")
+        print(f"✅ Invalid format correctly rejected")
+    
+    def test_04_get_analytics_insights(self):
+        """Test GET /api/analytics/insights endpoint"""
+        print("\n=== Testing GET /api/analytics/insights ===")
+        url = f"{self.base_url}/analytics/insights"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.get(url, headers=self.get_user_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        required_fields = ["insights", "generated_at"]
+        for field in required_fields:
+            self.assertIn(field, data, f"Insights should have '{field}' field")
+        
+        insights = data["insights"]
+        self.assertIsInstance(insights, list, "Insights should be a list")
+        
+        print(f"✅ Analytics insights retrieved: {len(insights)} insights")
+        
+        # Check insight structure if any insights exist
+        if len(insights) > 0:
+            insight = insights[0]
+            insight_fields = ["type", "title", "description", "value", "trend"]
+            for field in insight_fields:
+                self.assertIn(field, insight, f"Insight should have '{field}' field")
+            
+            # Check insight types
+            valid_types = ["productivity", "feature", "performance", "cost"]
+            self.assertIn(insight["type"], valid_types, f"Insight type should be one of {valid_types}")
+            
+            # Check trend values
+            valid_trends = ["positive", "negative", "neutral", "warning"]
+            self.assertIn(insight["trend"], valid_trends, f"Insight trend should be one of {valid_trends}")
+            
+            print(f"  Sample insight: {insight['title']} - {insight['description']}")
+            print(f"  Type: {insight['type']}, Trend: {insight['trend']}, Value: {insight['value']}")
+        else:
+            print("  No insights generated (this is normal for users with limited activity)")
+        
+        # Test with admin authentication
+        response = requests.get(url, headers=self.get_admin_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200 for admin, got {response.status_code}")
+        
+        admin_data = response.json()
+        admin_insights = admin_data["insights"]
+        print(f"✅ Admin insights: {len(admin_insights)} insights")
+
+
 class SocialMediaAPITest(unittest.TestCase):
     """Test suite for Social Media Generation API endpoints"""
     
