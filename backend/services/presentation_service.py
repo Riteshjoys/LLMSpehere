@@ -419,7 +419,7 @@ class PresentationService:
         """Get presentation statistics for user"""
         try:
             # Count total presentations
-            total_presentations = await db[self.presentations_collection].count_documents({"user_id": user_id})
+            total_presentations = db[self.presentations_collection].count_documents({"user_id": user_id})
             
             # Count by template type
             pipeline = [
@@ -427,12 +427,12 @@ class PresentationService:
                 {"$group": {"_id": "$template_id", "count": {"$sum": 1}}}
             ]
             type_counts = {}
-            async for result in db[self.presentations_collection].aggregate(pipeline):
+            for result in db[self.presentations_collection].aggregate(pipeline):
                 type_counts[result["_id"]] = result["count"]
             
             # Recent activity
             recent_activity = []
-            async for item in db[self.history_collection].find({"user_id": user_id}).sort("created_at", -1).limit(10):
+            for item in db[self.history_collection].find({"user_id": user_id}).sort("created_at", -1).limit(10):
                 item['_id'] = str(item['_id'])
                 recent_activity.append(item)
             
