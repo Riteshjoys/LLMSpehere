@@ -2267,6 +2267,9 @@ if __name__ == "__main__":
     # Add Social Media tests
     suite.addTests(loader.loadTestsFromTestCase(SocialMediaAPITest))
     
+    # Add Presentation Generator tests
+    suite.addTests(loader.loadTestsFromTestCase(PresentationGeneratorAPITest))
+    
     # Run tests
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
