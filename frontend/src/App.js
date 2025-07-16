@@ -37,10 +37,20 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/" element={
               <ProtectedRoute>
-                <Dashboard />
+                <EnhancedDashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <EnhancedDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <UserProfile />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/simple" element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
