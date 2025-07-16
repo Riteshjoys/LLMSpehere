@@ -293,7 +293,7 @@ class PresentationService:
     async def delete_presentation(self, db, presentation_id: str):
         """Delete a presentation"""
         try:
-            result = await db[self.presentations_collection].delete_one({"id": presentation_id})
+            result = db[self.presentations_collection].delete_one({"id": presentation_id})
             return result.deleted_count > 0
         except Exception as e:
             raise Exception(f"Error deleting presentation: {str(e)}")
