@@ -883,7 +883,7 @@ class PresentationService:
                 "created_at": datetime.utcnow()
             }
             
-            await db[self.history_collection].insert_one(history_doc)
+            db[self.history_collection].insert_one(history_doc)
         except Exception as e:
             # Don't raise exception for history logging failures
             print(f"Error saving to history: {str(e)}")
