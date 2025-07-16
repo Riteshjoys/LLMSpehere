@@ -15,6 +15,7 @@ import VideoGeneration from './components/VideoGeneration';
 import CodeGeneration from './components/CodeGeneration';
 import SocialMediaGeneration from './components/SocialMediaGeneration';
 import WorkflowAutomation from './components/WorkflowAutomation';
+import PresentationGenerator from './components/PresentationGenerator';
 import AdminPanel from './components/AdminPanel';
 import './App.css';
 
