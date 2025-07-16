@@ -960,32 +960,3 @@ class PresentationService:
         except Exception as e:
             print(f"Failed to delete presentation: {e}")
             return False
-
-    async def get_templates(self) -> List[PresentationTemplate]:
-        """Get available presentation templates"""
-        # This would load from database or config
-        # For now, return sample templates
-        return [
-            PresentationTemplate(
-                template_id="business_template",
-                name="Business Professional",
-                description="Clean and professional template for business presentations",
-                theme=PresentationTheme.BUSINESS,
-                category="business",
-                slides=[],
-                color_scheme={"primary": "#1f2937", "secondary": "#3b82f6", "accent": "#10b981"},
-                font_settings={"heading": "Arial", "body": "Arial"},
-                thumbnail_url="/templates/business_thumb.png"
-            ),
-            PresentationTemplate(
-                template_id="creative_template",
-                name="Creative Modern",
-                description="Vibrant and creative template for innovative presentations",
-                theme=PresentationTheme.CREATIVE,
-                category="creative",
-                slides=[],
-                color_scheme={"primary": "#7c3aed", "secondary": "#f59e0b", "accent": "#ef4444"},
-                font_settings={"heading": "Helvetica", "body": "Helvetica"},
-                thumbnail_url="/templates/creative_thumb.png"
-            )
-        ]
