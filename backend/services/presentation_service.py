@@ -271,7 +271,7 @@ class PresentationService:
     async def get_presentation(self, db, presentation_id: str):
         """Get a specific presentation by ID"""
         try:
-            presentation = await db[self.presentations_collection].find_one({"id": presentation_id})
+            presentation = db[self.presentations_collection].find_one({"id": presentation_id})
             if presentation:
                 presentation['_id'] = str(presentation['_id'])
             return presentation
