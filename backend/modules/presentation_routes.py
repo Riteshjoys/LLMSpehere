@@ -220,7 +220,8 @@ async def get_presentation_history(current_user: str = Depends(get_current_user)
 async def get_presentation_stats(current_user: str = Depends(get_current_user)):
     """Get presentation statistics for the current user"""
     try:
-        from utils.database import db
+        from utils.database import get_database
+        db = get_database()
         stats = await presentation_service.get_presentation_stats(db, current_user)
         return {"stats": stats}
     except Exception as e:
