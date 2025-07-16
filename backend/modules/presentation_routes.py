@@ -41,7 +41,8 @@ async def create_template(
         if not AuthService.is_admin(current_user):
             raise HTTPException(status_code=403, detail="Only admins can create templates")
         
-        from utils.database import db
+        from utils.database import get_database
+        db = get_database()
         template_id = await presentation_service.create_template(
             db, name, description, template_type, file, current_user
         )
