@@ -216,7 +216,7 @@ class PresentationService:
                     return template
             
             # Check custom templates
-            template = await db[self.templates_collection].find_one({"id": template_id})
+            template = db[self.templates_collection].find_one({"id": template_id})
             if template:
                 template['_id'] = str(template['_id'])
                 return template
