@@ -248,7 +248,7 @@ class PresentationService:
             }
             
             # Insert into database
-            result = await db[self.presentations_collection].insert_one(presentation_doc)
+            result = db[self.presentations_collection].insert_one(presentation_doc)
             
             # Save to history
             await self._save_to_history(db, presentation_doc["id"], user_id, "created")
