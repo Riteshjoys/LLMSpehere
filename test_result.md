@@ -308,20 +308,35 @@ backend:
         agent: "main"
         comment: "Added comprehensive unit and functional test suites"
         
-  - task: "Code Generation API"
+  - task: "Enhanced User Management APIs"
     implemented: true
     working: true
-    file: "/app/backend/modules/code_generation_routes.py"
+    file: "/app/backend/modules/user_routes.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
       - working: "NA"
         agent: "testing"
-        comment: "Initial test needed for code generation API endpoints"
+        comment: "Initial test needed for enhanced user management endpoints"
       - working: true
         agent: "testing"
-        comment: "Code Generation API endpoints are working correctly. Successfully tested GET /api/code/providers, GET /api/code/languages, and GET /api/code/request-types which all return the expected data. The POST /api/code/generate endpoint requires authentication and returns an error due to missing API keys, which is expected in the test environment. The GET /api/code/history endpoint also requires authentication and returns an empty array as expected since no code has been generated yet."
+        comment: "Enhanced User Management APIs are working correctly. Successfully tested GET /api/user/profile (returns user profile with enhanced data including usage stats), PUT /api/user/profile (updates user profile information), PUT /api/user/preferences (updates user preferences), PUT /api/user/password (updates user password with validation), PUT /api/user/email (updates user email with validation), GET /api/user/usage-stats (returns comprehensive usage statistics), GET /api/user/activity-logs (returns user activity logs with pagination), and GET /api/user/analytics (returns user analytics data for specified time periods). All endpoints require proper authentication and work correctly for both admin and regular users."
+
+  - task: "Enhanced Analytics Dashboard APIs"
+    implemented: true
+    working: true
+    file: "/app/backend/modules/analytics_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial test needed for enhanced analytics dashboard endpoints"
+      - working: true
+        agent: "testing"
+        comment: "Enhanced Analytics Dashboard APIs are working correctly. Successfully tested GET /api/analytics/dashboard/enhanced (returns comprehensive dashboard analytics with charts, daily activity, generation breakdown, provider usage, feature usage, and performance metrics), GET /api/analytics/usage-trends (returns usage trends over different time periods - day, week, month), GET /api/analytics/export (exports analytics data in JSON format with option for CSV), and GET /api/analytics/insights (returns AI-powered insights about user usage patterns). All endpoints support custom time periods and provide rich analytics data for dashboard visualization."
 
 frontend:
   - task: "Authentication Flow"
