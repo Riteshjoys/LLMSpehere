@@ -60,12 +60,26 @@ class AuthService:
         if not user_doc:
             raise HTTPException(status_code=404, detail="User not found")
         
+        # Get usage stats for the user
+        from services.user_service import UserService
+        try:
+            usage_stats = await UserService.get_user_usage_stats(user_doc["user_id"])
+            usage_stats_dict = usage_stats.dict()
+        except:
+            usage_stats_dict = None
+        
         return UserResponse(
             user_id=user_doc["user_id"],
             username=user_doc["username"],
             email=user_doc["email"],
             is_admin=user_doc.get("is_admin", False),
-            created_at=user_doc["created_at"]
+            created_at=user_doc["created_at"],
+            profile=user_doc.get("profile", {}),
+            preferences=user_doc.get("preferences", {}),
+            plan=user_doc.get("plan", "free"),
+            role=user_doc.get("role", "user"),
+            last_login=user_doc.get("last_login"),
+            usage_stats=usage_stats_dict
         )
     
     @staticmethod
