@@ -127,6 +127,14 @@ const EnhancedDashboard = () => {
       available: true
     },
     {
+      name: 'Presentations',
+      description: 'Create professional presentations with AI',
+      icon: Presentation,
+      path: '/presentations',
+      color: 'bg-indigo-500',
+      available: true
+    },
+    {
       name: 'Workflow Automation',
       description: 'Create multi-step automated workflows',
       icon: Zap,
