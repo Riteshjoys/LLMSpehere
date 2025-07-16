@@ -296,7 +296,20 @@ backend:
         agent: "testing"
         comment: "Groq integration is working correctly. Successfully tested text generation with Groq models llama3-8b-8192 and llama3-70b-8192. The mixtral-8x7b-32768 and gemma-7b-it models are decommissioned according to Groq API. Conversation history and user generations with Groq are working properly."
 
-  - task: "Unit and Functional Testing"
+  - task: "Presentation Generator - Backend Testing"
+    implemented: true
+    working: true
+    file: "/app/backend/modules/presentation_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Testing presentation generator backend functionality"
+      - working: true
+        agent: "testing"
+        comment: "Presentation Generator core functionality working. Templates (3 default templates), presentation creation, and basic CRUD operations tested successfully. Fixed database async/sync issues. Export functionality needs further testing with proper dependencies."
     implemented: true
     working: true
     file: "/app/tests/"
