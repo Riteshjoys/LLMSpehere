@@ -51,6 +51,11 @@ function App() {
                 <UserProfile />
               </ProtectedRoute>
             } />
+            <Route path="/activity-logs" element={
+              <ProtectedRoute>
+                <UserActivityLogs />
+              </ProtectedRoute>
+            } />
             <Route path="/dashboard/simple" element={
               <ProtectedRoute>
                 <Dashboard />
