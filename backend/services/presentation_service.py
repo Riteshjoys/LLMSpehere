@@ -408,7 +408,7 @@ class PresentationService:
         """Get presentation history for user"""
         try:
             history = []
-            async for item in db[self.history_collection].find({"user_id": user_id}).sort("created_at", -1):
+            for item in db[self.history_collection].find({"user_id": user_id}).sort("created_at", -1):
                 item['_id'] = str(item['_id'])
                 history.append(item)
             return history
