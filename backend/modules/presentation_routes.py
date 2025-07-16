@@ -20,7 +20,8 @@ presentation_service = PresentationService()
 async def get_templates(current_user: str = Depends(get_current_user)):
     """Get all available presentation templates"""
     try:
-        from utils.database import db
+        from utils.database import get_database
+        db = get_database()
         templates = await presentation_service.get_templates(db)
         return {"templates": templates}
     except Exception as e:
