@@ -73,7 +73,8 @@ async def create_presentation(
 ):
     """Create a new presentation from template"""
     try:
-        from utils.database import db
+        from utils.database import get_database
+        db = get_database()
         presentation_id = await presentation_service.create_presentation(
             db, 
             template_id=request.get('template_id'),
