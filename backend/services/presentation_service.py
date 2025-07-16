@@ -282,7 +282,7 @@ class PresentationService:
         """Update a presentation"""
         try:
             updates["updated_at"] = datetime.utcnow()
-            result = await db[self.presentations_collection].update_one(
+            result = db[self.presentations_collection].update_one(
                 {"id": presentation_id}, 
                 {"$set": updates}
             )
