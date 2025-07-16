@@ -419,6 +419,8 @@ metadata:
   version: "1.0"
   test_sequence: 0
   run_ui: false
+  last_sync: "2025-01-16"
+  status: "operational"
 
 test_plan:
   current_focus: []
