@@ -47,6 +47,7 @@ app.include_router(dashboard_router)
 app.include_router(admin_api_keys_router)
 app.include_router(user_router)
 app.include_router(analytics_router)
+app.include_router(presentation_router)
 
 # Health check
 @app.get("/api/health")
