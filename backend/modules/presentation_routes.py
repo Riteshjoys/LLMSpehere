@@ -126,7 +126,8 @@ async def update_presentation(
 ):
     """Update a presentation"""
     try:
-        from utils.database import db
+        from utils.database import get_database
+        db = get_database()
         # Check if user owns this presentation
         presentation = await presentation_service.get_presentation(db, presentation_id)
         if not presentation:
