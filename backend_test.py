@@ -1718,7 +1718,7 @@ class SocialMediaAPITest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # Run both test suites
+    # Run all test suites
     print("=" * 80)
     print("RUNNING CONTENTFORGE AI API TESTS")
     print("=" * 80)
@@ -1726,6 +1726,12 @@ if __name__ == "__main__":
     # Create test suite
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
+    
+    # Add User Management tests
+    suite.addTests(loader.loadTestsFromTestCase(UserManagementAPITest))
+    
+    # Add Analytics tests
+    suite.addTests(loader.loadTestsFromTestCase(AnalyticsAPITest))
     
     # Add Code Generation tests
     suite.addTests(loader.loadTestsFromTestCase(CodeGenerationAPITest))
