@@ -90,7 +90,8 @@ async def create_presentation(
 async def get_presentations(current_user: str = Depends(get_current_user)):
     """Get all presentations for the current user"""
     try:
-        from utils.database import db
+        from utils.database import get_database
+        db = get_database()
         presentations = await presentation_service.get_user_presentations(db, current_user)
         return {"presentations": presentations}
     except Exception as e:
