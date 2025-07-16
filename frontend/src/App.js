@@ -8,6 +8,7 @@ import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import EnhancedDashboard from './components/EnhancedDashboard';
 import UserProfile from './components/UserProfile';
+import UserActivityLogs from './components/UserActivityLogs';
 import TextGeneration from './components/TextGeneration';
 import ImageGeneration from './components/ImageGeneration';
 import VideoGeneration from './components/VideoGeneration';
