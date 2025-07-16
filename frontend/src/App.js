@@ -6,6 +6,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
+import EnhancedDashboard from './components/EnhancedDashboard';
+import UserProfile from './components/UserProfile';
 import TextGeneration from './components/TextGeneration';
 import ImageGeneration from './components/ImageGeneration';
 import VideoGeneration from './components/VideoGeneration';
