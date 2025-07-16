@@ -443,6 +443,21 @@ test_plan:
   test_all: true
   test_priority: "high_first"
 
+  - task: "Presentation Generator functionality"
+    implemented: true
+    working: false
+    file: "/app/backend/modules/presentation_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial test needed for Presentation Generator API endpoints"
+      - working: false
+        agent: "testing"
+        comment: "Presentation Generator API partially working. Templates endpoints (GET /api/presentations/templates, GET /api/presentations/templates/{id}) are working correctly and return 3 default templates (business_pitch, marketing_report, product_demo). Presentation creation (POST /api/presentations/create) works and creates presentations successfully. However, several critical endpoints are failing: GET /api/presentations/history returns 500 error, GET /api/presentations/stats returns 500 error, all export endpoints (POST /api/presentations/{id}/export/{format}) return 500 errors for pptx, pdf, and google-slides formats. The main issues appear to be related to database operations and missing dependencies for export functionality (matplotlib/reportlab compatibility issues). Admin-only template creation endpoint and CRUD operations for presentations need further testing."
+
 agent_communication:
   - agent: "testing"
     message: "Starting comprehensive testing of all backend API endpoints"
@@ -472,3 +487,5 @@ agent_communication:
     message: "Completed testing of the Code Generation API endpoints. The public endpoints (GET /api/code/providers, GET /api/code/languages, GET /api/code/request-types) are working correctly and return the expected data. The protected endpoints (POST /api/code/generate, GET /api/code/history) require authentication and work as expected. The code generation endpoint returns an error due to missing API keys, which is expected in the test environment. The history endpoint returns an empty array as expected since no code has been generated yet."
   - agent: "testing"
     message: "Completed comprehensive testing of the new Enhanced User Management and Analytics APIs as requested. All 12 new endpoints are working correctly: User Management APIs (GET /api/user/profile, PUT /api/user/profile, PUT /api/user/preferences, PUT /api/user/password, PUT /api/user/email, GET /api/user/usage-stats, GET /api/user/activity-logs, GET /api/user/analytics) and Enhanced Analytics APIs (GET /api/analytics/dashboard/enhanced, GET /api/analytics/usage-trends, GET /api/analytics/export, GET /api/analytics/insights). Authentication is working properly for both admin and regular users. All CRUD operations for user profile management are functional. Analytics data is being calculated correctly with comprehensive metrics, charts, and insights. Activity logging is working and tracking user actions. Error handling for invalid requests is appropriate. The new features provide rich dashboard analytics and comprehensive user management capabilities as requested."
+  - agent: "testing"
+    message: "Completed testing of Presentation Generator API endpoints. Templates endpoints are working correctly - GET /api/presentations/templates returns 3 default templates (business_pitch, marketing_report, product_demo) and GET /api/presentations/templates/{id} retrieves specific templates successfully. Presentation creation (POST /api/presentations/create) works and creates presentations in the database. However, several critical endpoints are failing with 500 errors: presentation history, stats, and all export functionality (pptx, pdf, google-slides). The main issues appear to be related to database operations using synchronous PyMongo instead of async operations, and missing dependencies for export functionality. Fixed numpy compatibility issue (downgraded from 2.x to 1.26.4) to resolve matplotlib import errors. The core template and creation functionality is working, but CRUD operations and export features need fixes."
