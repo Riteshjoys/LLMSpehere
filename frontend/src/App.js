@@ -92,6 +92,11 @@ function App() {
                 <WorkflowAutomation />
               </ProtectedRoute>
             } />
+            <Route path="/presentations" element={
+              <ProtectedRoute>
+                <PresentationGenerator />
+              </ProtectedRoute>
+            } />
             <Route path="/admin" element={
               <ProtectedRoute>
                 <AdminPanel />
