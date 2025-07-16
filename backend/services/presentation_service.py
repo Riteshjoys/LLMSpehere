@@ -261,7 +261,7 @@ class PresentationService:
         """Get all presentations for a user"""
         try:
             presentations = []
-            async for presentation in db[self.presentations_collection].find({"user_id": user_id}):
+            for presentation in db[self.presentations_collection].find({"user_id": user_id}):
                 presentation['_id'] = str(presentation['_id'])
                 presentations.append(presentation)
             return presentations
