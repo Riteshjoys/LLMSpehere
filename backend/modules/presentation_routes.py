@@ -209,7 +209,8 @@ async def export_presentation(
 async def get_presentation_history(current_user: str = Depends(get_current_user)):
     """Get presentation generation history for the current user"""
     try:
-        from utils.database import db
+        from utils.database import get_database
+        db = get_database()
         history = await presentation_service.get_presentation_history(db, current_user)
         return {"history": history}
     except Exception as e:
