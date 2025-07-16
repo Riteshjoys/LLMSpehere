@@ -202,7 +202,7 @@ class PresentationService:
             }
             
             # Insert into database
-            result = await db[self.templates_collection].insert_one(template_doc)
+            result = db[self.templates_collection].insert_one(template_doc)
             return template_doc["id"]
         except Exception as e:
             raise Exception(f"Error creating template: {str(e)}")
