@@ -168,7 +168,7 @@ class PresentationService:
             # Get custom templates from database
             custom_templates = []
             try:
-                async for template in db[self.templates_collection].find():
+                for template in db[self.templates_collection].find():
                     template['_id'] = str(template['_id'])
                     custom_templates.append(template)
             except:
