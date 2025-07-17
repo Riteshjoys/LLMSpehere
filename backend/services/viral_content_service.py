@@ -51,6 +51,18 @@ class ViralContentService:
                 "optimal_hashtags": 2,
                 "best_times": ["9am", "1pm", "3pm"],
                 "viral_elements": ["threads", "polls", "trending_topics", "engagement"]
+            },
+            SocialPlatform.FACEBOOK: {
+                "max_length": 63206,
+                "optimal_hashtags": 3,
+                "best_times": ["1pm", "3pm", "9pm"],
+                "viral_elements": ["groups", "pages", "events", "live_videos"]
+            },
+            SocialPlatform.LINKEDIN: {
+                "max_length": 3000,
+                "optimal_hashtags": 3,
+                "best_times": ["8am", "12pm", "5pm"],
+                "viral_elements": ["articles", "professional_content", "networking", "thought_leadership"]
             }
         }
 
