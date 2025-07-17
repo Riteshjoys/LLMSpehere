@@ -211,7 +211,7 @@ async def get_presentation_history(current_user: str = Depends(get_current_user)
     try:
         from utils.database import get_database
         db = get_database()
-        history = await presentation_service.get_presentation_history(db, current_user)
+        history = presentation_service.get_presentation_history(db, current_user)
         return {"history": history}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -222,7 +222,7 @@ async def get_presentation_stats(current_user: str = Depends(get_current_user)):
     try:
         from utils.database import get_database
         db = get_database()
-        stats = await presentation_service.get_presentation_stats(db, current_user)
+        stats = presentation_service.get_presentation_stats(db, current_user)
         return {"stats": stats}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
