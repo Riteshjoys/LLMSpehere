@@ -104,6 +104,11 @@ function App() {
                 <ViralContentGenerator />
               </ProtectedRoute>
             } />
+            <Route path="/faceless-content" element={
+              <ProtectedRoute>
+                <FacelessContentCreator />
+              </ProtectedRoute>
+            } />
             <Route path="/admin" element={
               <ProtectedRoute>
                 <AdminPanel />
