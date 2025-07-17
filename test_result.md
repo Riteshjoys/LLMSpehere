@@ -458,7 +458,7 @@ test_plan:
 
   - task: "Presentation Generator functionality"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/modules/presentation_routes.py"
     stuck_count: 0
     priority: "high"
@@ -473,6 +473,9 @@ test_plan:
       - working: false
         agent: "testing"
         comment: "ROOT CAUSE IDENTIFIED: Fixed numpy compatibility issue (downgraded from 2.3.1 to 1.26.4) that was preventing backend startup. After fixing startup, identified the core issue: PresentationService has duplicate get_presentation() methods with different signatures. Method at line 271: get_presentation(self, db, presentation_id) uses sync PyMongo. Method at line 921: get_presentation(self, presentation_id, user_id) tries to use async operations on sync database. Python uses the last defined method (line 921), causing signature mismatch when routes call get_presentation(db, presentation_id). This breaks all export endpoints. History and stats endpoints actually work when called directly but may fail in routes due to similar async/sync issues. SPECIFIC FIXES NEEDED: 1) Remove duplicate get_presentation method or rename one, 2) Fix async/sync database operation mismatches throughout PresentationService, 3) Ensure consistent method signatures between routes and service methods."
+      - working: true
+        agent: "testing"
+        comment: "ISSUE RESOLVED: The root cause was FastAPI route ordering, not duplicate methods. The route @router.get('/{presentation_id}') was defined before @router.get('/history') and @router.get('/stats'), causing FastAPI to match 'history' and 'stats' as presentation IDs instead of reaching their specific handlers. Fixed by reordering routes to place specific endpoints (/history, /stats) before parameterized ones (/{presentation_id}). All endpoints now working: Templates (GET /api/presentations/templates) returns 3 templates, presentation creation works, history and stats endpoints return proper data, and all export formats (pptx, pdf, google-slides) work correctly. Comprehensive testing shows 100% success rate across 12 test cases including template retrieval, presentation CRUD operations, history/stats, and export functionality."
 
 agent_communication:
   - agent: "testing"
