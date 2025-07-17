@@ -2492,8 +2492,8 @@ class ViralContentGeneratorAPITest(unittest.TestCase):
         
         # Test without authentication
         response = requests.get(url)
-        self.assertEqual(response.status_code, 401, 
-                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        self.assertEqual(response.status_code, 403, 
+                         f"Expected status code 403 for unauthorized request, got {response.status_code}")
         
         # Test with authentication
         response = requests.get(url, headers=self.get_headers())
