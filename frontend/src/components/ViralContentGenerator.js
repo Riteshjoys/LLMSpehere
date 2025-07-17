@@ -16,7 +16,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 const ViralContentGenerator = () => {
-    const { user } = useContext(AuthContext);
+    const { user } = useAuth();
     const [activeTab, setActiveTab] = useState('generate');
     const [loading, setLoading] = useState(false);
     const [platforms, setPlatforms] = useState([]);
