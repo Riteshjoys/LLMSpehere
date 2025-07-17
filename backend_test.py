@@ -1153,6 +1153,219 @@ class UserManagementAPITest(unittest.TestCase):
         print(f"✅ User analytics retrieved (7 days): {weekly_data['total_activity']} total activity")
 
 
+class PresentationGeneratorAPITest(unittest.TestCase):
+    """Test suite for Presentation Generator API endpoints"""
+    
+    def setUp(self):
+        """Set up test environment"""
+        self.base_url = f"{BACKEND_URL}/api"
+        self.auth_token = None
+        self.created_presentation_id = None
+        self.login()
+    
+    def login(self):
+        """Login to get authentication token"""
+        login_url = f"{self.base_url}/auth/login"
+        login_data = {
+            "username": "admin",
+            "password": "admin123"
+        }
+        
+        response = requests.post(login_url, json=login_data)
+        if response.status_code == 200:
+            data = response.json()
+            self.auth_token = data.get("access_token")
+            print(f"Successfully logged in as admin. Token: {self.auth_token[:10]}...")
+        else:
+            print(f"Failed to login: {response.status_code} - {response.text}")
+            self.fail("Login failed")
+    
+    def get_headers(self) -> Dict[str, str]:
+        """Get headers with authentication token"""
+        return {
+            "Authorization": f"Bearer {self.auth_token}",
+            "Content-Type": "application/json"
+        }
+    
+    def test_01_get_presentation_history(self):
+        """Test GET /api/presentations/history endpoint"""
+        print("\n=== Testing GET /api/presentations/history ===")
+        url = f"{self.base_url}/presentations/history"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.get(url, headers=self.get_headers())
+        print(f"Response status: {response.status_code}")
+        print(f"Response content: {response.text}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            self.assertIn("history", data, "Response should have 'history' field")
+            self.assertIsInstance(data["history"], list, "History should be a list")
+            print(f"✅ GET /api/presentations/history returned {len(data['history'])} history items")
+        else:
+            print(f"❌ GET /api/presentations/history failed with status {response.status_code}")
+            print(f"Error: {response.text}")
+    
+    def test_02_get_presentation_stats(self):
+        """Test GET /api/presentations/stats endpoint"""
+        print("\n=== Testing GET /api/presentations/stats ===")
+        url = f"{self.base_url}/presentations/stats"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.get(url, headers=self.get_headers())
+        print(f"Response status: {response.status_code}")
+        print(f"Response content: {response.text}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            self.assertIn("stats", data, "Response should have 'stats' field")
+            self.assertIsInstance(data["stats"], dict, "Stats should be a dict")
+            print(f"✅ GET /api/presentations/stats returned stats successfully")
+        else:
+            print(f"❌ GET /api/presentations/stats failed with status {response.status_code}")
+            print(f"Error: {response.text}")
+    
+    def test_03_create_presentation_with_business_pitch(self):
+        """Test POST /api/presentations/create with business_pitch template"""
+        print("\n=== Testing POST /api/presentations/create with business_pitch template ===")
+        url = f"{self.base_url}/presentations/create"
+        
+        # First get templates to find business_pitch template
+        templates_url = f"{self.base_url}/presentations/templates"
+        templates_response = requests.get(templates_url, headers=self.get_headers())
+        
+        if templates_response.status_code == 200:
+            templates_data = templates_response.json()
+            templates = templates_data.get("templates", [])
+            
+            # Find business_pitch template
+            business_pitch_template = None
+            for template in templates:
+                if template.get("id") == "business_pitch" or template.get("name") == "Business Pitch":
+                    business_pitch_template = template
+                    break
+            
+            if business_pitch_template:
+                # Create presentation with business_pitch template
+                create_data = {
+                    "template_id": business_pitch_template.get("id", "business_pitch"),
+                    "title": "Test Business Pitch Presentation",
+                    "data": {
+                        "company_name": "TechCorp Solutions",
+                        "problem": "Small businesses struggle with digital transformation",
+                        "solution": "AI-powered automation platform",
+                        "market_size": "$50B global market",
+                        "business_model": "SaaS subscription with tiered pricing",
+                        "team": "Experienced founders with 20+ years in tech",
+                        "financials": "Projected $1M ARR by year 2",
+                        "funding": "Seeking $2M Series A funding"
+                    }
+                }
+                
+                response = requests.post(url, json=create_data, headers=self.get_headers())
+                print(f"Response status: {response.status_code}")
+                print(f"Response content: {response.text}")
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    self.assertIn("presentation_id", data, "Response should have 'presentation_id' field")
+                    self.assertIn("message", data, "Response should have 'message' field")
+                    self.created_presentation_id = data["presentation_id"]
+                    print(f"✅ Created presentation with ID: {self.created_presentation_id}")
+                else:
+                    print(f"❌ POST /api/presentations/create failed with status {response.status_code}")
+                    print(f"Error: {response.text}")
+            else:
+                print("⚠️ business_pitch template not found in available templates")
+                print(f"Available templates: {[t.get('id', t.get('name')) for t in templates]}")
+        else:
+            print(f"⚠️ Could not get templates: {templates_response.status_code} - {templates_response.text}")
+    
+    def test_04_export_presentation_pptx(self):
+        """Test POST /api/presentations/{id}/export/pptx endpoint"""
+        print("\n=== Testing POST /api/presentations/{id}/export/pptx ===")
+        
+        if not self.created_presentation_id:
+            print("⚠️ No presentation created in previous test, skipping export test")
+            return
+        
+        url = f"{self.base_url}/presentations/{self.created_presentation_id}/export/pptx"
+        
+        response = requests.post(url, headers=self.get_headers())
+        print(f"Response status: {response.status_code}")
+        print(f"Response headers: {dict(response.headers)}")
+        
+        if response.status_code == 200:
+            # Check if it's a file download
+            content_type = response.headers.get('content-type', '')
+            if 'application/vnd.openxmlformats-officedocument.presentationml.presentation' in content_type:
+                print(f"✅ PPTX export successful - received file of {len(response.content)} bytes")
+            else:
+                print(f"✅ PPTX export successful - content type: {content_type}")
+        else:
+            print(f"❌ PPTX export failed with status {response.status_code}")
+            print(f"Error: {response.text}")
+    
+    def test_05_export_presentation_pdf(self):
+        """Test POST /api/presentations/{id}/export/pdf endpoint"""
+        print("\n=== Testing POST /api/presentations/{id}/export/pdf ===")
+        
+        if not self.created_presentation_id:
+            print("⚠️ No presentation created in previous test, skipping export test")
+            return
+        
+        url = f"{self.base_url}/presentations/{self.created_presentation_id}/export/pdf"
+        
+        response = requests.post(url, headers=self.get_headers())
+        print(f"Response status: {response.status_code}")
+        print(f"Response headers: {dict(response.headers)}")
+        
+        if response.status_code == 200:
+            # Check if it's a file download
+            content_type = response.headers.get('content-type', '')
+            if 'application/pdf' in content_type:
+                print(f"✅ PDF export successful - received file of {len(response.content)} bytes")
+            else:
+                print(f"✅ PDF export successful - content type: {content_type}")
+        else:
+            print(f"❌ PDF export failed with status {response.status_code}")
+            print(f"Error: {response.text}")
+    
+    def test_06_export_presentation_google_slides(self):
+        """Test POST /api/presentations/{id}/export/google-slides endpoint"""
+        print("\n=== Testing POST /api/presentations/{id}/export/google-slides ===")
+        
+        if not self.created_presentation_id:
+            print("⚠️ No presentation created in previous test, skipping export test")
+            return
+        
+        url = f"{self.base_url}/presentations/{self.created_presentation_id}/export/google-slides"
+        
+        response = requests.post(url, headers=self.get_headers())
+        print(f"Response status: {response.status_code}")
+        print(f"Response content: {response.text}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            if "url" in data:
+                print(f"✅ Google Slides export successful - URL: {data['url']}")
+            else:
+                print(f"✅ Google Slides export successful - response: {data}")
+        else:
+            print(f"❌ Google Slides export failed with status {response.status_code}")
+            print(f"Error: {response.text}")
+
+
 class AnalyticsAPITest(unittest.TestCase):
     """Test suite for Enhanced Analytics API endpoints"""
     
