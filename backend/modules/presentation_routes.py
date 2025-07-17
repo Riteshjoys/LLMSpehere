@@ -230,4 +230,5 @@ async def get_presentation_stats(current_user: str = Depends(get_current_user)):
         stats = presentation_service.get_presentation_stats(db, current_user)
         return {"stats": stats}
     except Exception as e:
+        print(f"Error in get_presentation_stats route: {str(e)}")  # Debug logging
         raise HTTPException(status_code=500, detail=str(e))
