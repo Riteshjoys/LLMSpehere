@@ -54,14 +54,15 @@ const ViralContentGenerator = () => {
     });
 
     useEffect(() => {
-        fetchPlatforms();
-        fetchContentTypes();
-        fetchTemplates();
-        fetchTrendingHashtags();
-        fetchContentHistory();
-        fetchStats();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        if (user && user.token) {
+            fetchPlatforms();
+            fetchContentTypes();
+            fetchTemplates();
+            fetchTrendingHashtags();
+            fetchContentHistory();
+            fetchStats();
+        }
+    }, [user]);
 
     const fetchPlatforms = async () => {
         try {
