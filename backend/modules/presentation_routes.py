@@ -230,10 +230,15 @@ async def get_presentation_history(current_user: str = Depends(get_current_user)
 async def get_presentation_stats(current_user: str = Depends(get_current_user)):
     """Get presentation statistics for the current user"""
     try:
+        import traceback
         from utils.database import get_database
         db = get_database()
+        print(f"DEBUG: Getting stats for user: {current_user}")
         stats = presentation_service.get_presentation_stats(db, current_user)
+        print(f"DEBUG: Stats result: {stats}")
         return {"stats": stats}
     except Exception as e:
         print(f"Error in get_presentation_stats route: {str(e)}")  # Debug logging
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error type: {type(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=f"Stats error: {str(e)}")
