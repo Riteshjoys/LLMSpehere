@@ -133,7 +133,7 @@ async def update_presentation(
         from utils.database import get_database
         db = get_database()
         # Check if user owns this presentation
-        presentation = await presentation_service.get_presentation_by_id(db, presentation_id)
+        presentation = presentation_service.get_presentation_by_id(db, presentation_id)
         if not presentation:
             raise HTTPException(status_code=404, detail="Presentation not found")
         
