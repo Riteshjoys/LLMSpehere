@@ -218,6 +218,7 @@ async def get_presentation_history(current_user: str = Depends(get_current_user)
         history = presentation_service.get_presentation_history(db, current_user)
         return {"history": history}
     except Exception as e:
+        print(f"Error in get_presentation_history route: {str(e)}")  # Debug logging
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/stats")
