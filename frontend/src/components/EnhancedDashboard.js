@@ -26,7 +26,8 @@ import {
   RefreshCw,
   Eye,
   PieChart,
-  LineChart
+  LineChart,
+  UserX
 } from 'lucide-react';
 import {
   Chart as ChartJS,
