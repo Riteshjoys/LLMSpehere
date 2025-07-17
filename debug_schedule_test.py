@@ -4,7 +4,7 @@ import requests
 import json
 
 # Backend URL
-BACKEND_URL = "https://745df14f-2559-4a5c-b370-9a8c6eb8d9c5.preview.emergentagent.com"
+BACKEND_URL = "https://0bb5c389-b719-436f-ba21-9a5ce8a4390f.preview.emergentagent.com"
 
 def login():
     """Login and get token"""
