@@ -87,6 +87,7 @@ async def create_presentation(
         )
         return {"presentation_id": presentation_id, "message": "Presentation created successfully"}
     except Exception as e:
+        print(f"Error in create_presentation route: {str(e)}")  # Debug logging
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/")
