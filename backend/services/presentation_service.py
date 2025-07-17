@@ -918,33 +918,19 @@ class PresentationService:
             print(f"Failed to get presentations: {e}")
             return []
 
-    async def get_presentation(self, presentation_id: str, user_id: str) -> Optional[PresentationResponse]:
-        """Get a specific presentation"""
+    async def get_presentation_with_user_check(self, presentation_id: str, user_id: str) -> Optional[Dict[str, Any]]:
+        """Get a specific presentation with user ownership check"""
         try:
-            presentation = await self.db.presentation_generations.find_one({
-                "presentation_id": presentation_id,
+            # Using synchronous database operations since we're using PyMongo not Motor
+            presentation = self.db[self.presentations_collection].find_one({
+                "id": presentation_id,
                 "user_id": user_id
             })
             
-            if not presentation:
-                return None
-                
-            return PresentationResponse(
-                presentation_id=presentation["presentation_id"],
-                title=presentation["title"],
-                topic=presentation["topic"],
-                slides=presentation["slides"],
-                theme=presentation["theme"],
-                format=presentation["format"],
-                total_slides=presentation["total_slides"],
-                file_base64=presentation.get("file_base64"),
-                file_url=presentation.get("file_url"),
-                thumbnail_url=presentation.get("thumbnail_url"),
-                created_at=presentation["created_at"],
-                user_id=presentation["user_id"],
-                provider=presentation.get("provider"),
-                model=presentation.get("model")
-            )
+            if presentation:
+                presentation['_id'] = str(presentation['_id'])
+                return presentation
+            return None
         except Exception as e:
             print(f"Failed to get presentation: {e}")
             return None
