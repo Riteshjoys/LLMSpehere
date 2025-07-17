@@ -98,6 +98,11 @@ function App() {
                 <PresentationGenerator />
               </ProtectedRoute>
             } />
+            <Route path="/viral-content" element={
+              <ProtectedRoute>
+                <ViralContentGenerator />
+              </ProtectedRoute>
+            } />
             <Route path="/admin" element={
               <ProtectedRoute>
                 <AdminPanel />
