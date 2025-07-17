@@ -11,8 +11,8 @@ from datetime import datetime
 from pathlib import Path
 
 import aiofiles
-from elevenlabs import ElevenLabs, Voice, VoiceSettings
 from elevenlabs.client import ElevenLabs as ElevenLabsClient
+from elevenlabs import Voice, VoiceSettings
 from pymongo import MongoClient
 from bson import Binary
 import ffmpeg
