@@ -230,7 +230,7 @@ class PresentationService:
         """Create a new presentation from template"""
         try:
             # Get template
-            template = await self.get_template(db, template_id)
+            template = self.get_template(db, template_id)
             if not template:
                 raise Exception("Template not found")
             
@@ -251,7 +251,7 @@ class PresentationService:
             result = db[self.presentations_collection].insert_one(presentation_doc)
             
             # Save to history
-            await self._save_to_history(db, presentation_doc["id"], user_id, "created")
+            self._save_to_history(db, presentation_doc["id"], user_id, "created")
             
             return presentation_doc["id"]
         except Exception as e:
