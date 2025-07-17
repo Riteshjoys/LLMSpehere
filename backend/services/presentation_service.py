@@ -268,8 +268,8 @@ class PresentationService:
         except Exception as e:
             raise Exception(f"Error getting user presentations: {str(e)}")
 
-    async def get_presentation(self, db, presentation_id: str):
-        """Get a specific presentation by ID"""
+    async def get_presentation_by_id(self, db, presentation_id: str):
+        """Get a specific presentation by ID (database version)"""
         try:
             presentation = db[self.presentations_collection].find_one({"id": presentation_id})
             if presentation:
