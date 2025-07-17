@@ -195,7 +195,7 @@ const ViralContentGenerator = () => {
     const renderTrendAnalysis = () => (
         <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center mb-6">
-                <TrendingUpIcon className="h-8 w-8 text-blue-500 mr-3" />
+                <ArrowTrendingUpIcon className="h-8 w-8 text-blue-500 mr-3" />
                 <h2 className="text-2xl font-bold text-gray-800">Trend Analysis</h2>
             </div>
 
