@@ -32,7 +32,8 @@ frozenlist
 propcache
 aiohappyeyeballs
 openai
-tiktoken
+tiktoken==0.8.0
+regex==2024.11.6
 tokenizers
 markupsafe
 aiohttp
