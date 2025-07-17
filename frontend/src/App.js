@@ -17,6 +17,7 @@ import SocialMediaGeneration from './components/SocialMediaGeneration';
 import WorkflowAutomation from './components/WorkflowAutomation';
 import PresentationGenerator from './components/PresentationGenerator';
 import ViralContentGenerator from './components/ViralContentGenerator';
+import FacelessContentCreator from './components/FacelessContentCreator';
 import AdminPanel from './components/AdminPanel';
 import './App.css';
 
