@@ -144,6 +144,14 @@ const EnhancedDashboard = () => {
       available: true
     },
     {
+      name: 'Faceless Content',
+      description: 'Create engaging videos without showing your face',
+      icon: UserX,
+      path: '/faceless-content',
+      color: 'bg-purple-600',
+      available: true
+    },
+    {
       name: 'Workflow Automation',
       description: 'Create multi-step automated workflows',
       icon: Zap,
