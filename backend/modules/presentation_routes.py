@@ -110,7 +110,7 @@ async def get_presentation(
     try:
         from utils.database import get_database
         db = get_database()
-        presentation = await presentation_service.get_presentation_by_id(db, presentation_id)
+        presentation = presentation_service.get_presentation_by_id(db, presentation_id)
         if not presentation:
             raise HTTPException(status_code=404, detail="Presentation not found")
         
