@@ -63,7 +63,10 @@ async def get_template(
         if not template:
             raise HTTPException(status_code=404, detail="Template not found")
         return template
+    except HTTPException:
+        raise  # Re-raise HTTP exceptions
     except Exception as e:
+        print(f"Error in get_template route: {str(e)}")  # Debug logging
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/create")
