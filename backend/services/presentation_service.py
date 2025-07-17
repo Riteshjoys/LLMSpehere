@@ -313,7 +313,7 @@ class PresentationService:
         """Generate presentation content using AI"""
         try:
             # Get presentation
-            presentation = await self.get_presentation_by_id(db, presentation_id)
+            presentation = self.get_presentation_by_id(db, presentation_id)
             if not presentation:
                 raise Exception("Presentation not found")
             
