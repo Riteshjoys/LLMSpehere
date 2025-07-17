@@ -2869,6 +2869,9 @@ if __name__ == "__main__":
     # Add Presentation Generator tests
     suite.addTests(loader.loadTestsFromTestCase(PresentationGeneratorAPITest))
     
+    # Add Viral Content Generator tests
+    suite.addTests(loader.loadTestsFromTestCase(ViralContentGeneratorAPITest))
+    
     # Run tests
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
