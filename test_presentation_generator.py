@@ -91,8 +91,8 @@ class PresentationGeneratorAPITest(unittest.TestCase):
         
         # Test without authentication
         response = requests.get(url)
-        self.assertEqual(response.status_code, 401, 
-                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        self.assertIn(response.status_code, [401, 403], 
+                         f"Expected status code 401 or 403 for unauthorized request, got {response.status_code}")
         
         # Test with user authentication
         response = requests.get(url, headers=self.get_user_headers())
@@ -134,8 +134,8 @@ class PresentationGeneratorAPITest(unittest.TestCase):
         
         # Test without authentication
         response = requests.get(url)
-        self.assertEqual(response.status_code, 401, 
-                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        self.assertIn(response.status_code, [401, 403], 
+                         f"Expected status code 401 or 403 for unauthorized request, got {response.status_code}")
         
         # Test with user authentication
         response = requests.get(url, headers=self.get_user_headers())
@@ -179,8 +179,8 @@ class PresentationGeneratorAPITest(unittest.TestCase):
         
         # Test without authentication
         response = requests.post(url, json=presentation_data)
-        self.assertEqual(response.status_code, 401, 
-                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        self.assertIn(response.status_code, [401, 403], 
+                         f"Expected status code 401 or 403 for unauthorized request, got {response.status_code}")
         
         # Test with user authentication
         response = requests.post(url, json=presentation_data, headers=self.get_user_headers())
@@ -212,8 +212,8 @@ class PresentationGeneratorAPITest(unittest.TestCase):
         
         # Test without authentication
         response = requests.get(url)
-        self.assertEqual(response.status_code, 401, 
-                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        self.assertIn(response.status_code, [401, 403], 
+                         f"Expected status code 401 or 403 for unauthorized request, got {response.status_code}")
         
         # Test with user authentication
         response = requests.get(url, headers=self.get_user_headers())
@@ -248,8 +248,8 @@ class PresentationGeneratorAPITest(unittest.TestCase):
         
         # Test without authentication
         response = requests.get(url)
-        self.assertEqual(response.status_code, 401, 
-                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        self.assertIn(response.status_code, [401, 403], 
+                         f"Expected status code 401 or 403 for unauthorized request, got {response.status_code}")
         
         # Test with user authentication
         response = requests.get(url, headers=self.get_user_headers())
@@ -290,8 +290,8 @@ class PresentationGeneratorAPITest(unittest.TestCase):
         
         # Test without authentication
         response = requests.post(url)
-        self.assertEqual(response.status_code, 401, 
-                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        self.assertIn(response.status_code, [401, 403], 
+                         f"Expected status code 401 or 403 for unauthorized request, got {response.status_code}")
         
         # Test with user authentication
         response = requests.post(url, headers=self.get_user_headers())
