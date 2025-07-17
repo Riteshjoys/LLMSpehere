@@ -137,7 +137,7 @@ const EnhancedDashboard = () => {
     {
       name: 'Viral Content',
       description: 'Generate viral content with trend analysis',
-      icon: ArrowTrendingUpIcon,
+      icon: TrendingUp,
       path: '/viral-content',
       color: 'bg-red-500',
       available: true
