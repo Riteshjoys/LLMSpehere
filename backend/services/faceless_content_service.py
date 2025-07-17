@@ -37,13 +37,12 @@ from models.faceless_content_models import (
     BackgroundMusic
 )
 from utils.database import get_database
-from utils.config import get_settings
+from utils.config import ELEVENLABS_API_KEY
 
 class FacelessContentService:
     def __init__(self):
-        self.settings = get_settings()
         self.db = get_database()
-        self.elevenlabs_client = ElevenLabsClient(api_key=self.settings.ELEVENLABS_API_KEY)
+        self.elevenlabs_client = ElevenLabsClient(api_key=ELEVENLABS_API_KEY)
         self.content_collection = self.db.faceless_content
         self.voices_collection = self.db.voices
         self.characters_collection = self.db.animated_characters
