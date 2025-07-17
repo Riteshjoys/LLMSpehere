@@ -290,6 +290,50 @@ class PresentationService:
         except Exception as e:
             raise Exception(f"Error updating presentation: {str(e)}")
 
+    async def export_presentation(self, db, presentation_id: str, format: str):
+        """Export presentation in specified format"""
+        try:
+            # Get presentation
+            presentation = await self.get_presentation_by_id(db, presentation_id)
+            if not presentation:
+                raise Exception("Presentation not found")
+            
+            if format == "pptx":
+                return await self._export_to_pptx(presentation)
+            elif format == "pdf":
+                return await self._export_to_pdf(presentation)
+            elif format == "google-slides":
+                return await self._export_to_google_slides(presentation)
+            else:
+                raise Exception("Unsupported export format")
+        except Exception as e:
+            raise Exception(f"Error exporting presentation: {str(e)}")
+
+    async def generate_presentation_content(self, db, presentation_id: str, request: Dict[str, Any]):
+        """Generate presentation content using AI"""
+        try:
+            # Get presentation
+            presentation = await self.get_presentation_by_id(db, presentation_id)
+            if not presentation:
+                raise Exception("Presentation not found")
+            
+            # Generate content based on request
+            content_type = request.get("content_type", "text")
+            prompt = request.get("prompt", "")
+            
+            if content_type == "text":
+                # Generate text content
+                generated_content = await self._generate_text_content(prompt)
+            elif content_type == "chart":
+                # Generate chart data
+                generated_content = await self._generate_chart_data(request)
+            else:
+                raise Exception("Unsupported content type")
+            
+            return {"content": generated_content, "type": content_type}
+        except Exception as e:
+            raise Exception(f"Error generating content: {str(e)}")
+
     async def delete_presentation(self, db, presentation_id: str):
         """Delete a presentation"""
         try:
