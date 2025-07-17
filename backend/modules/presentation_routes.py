@@ -59,7 +59,7 @@ async def get_template(
     try:
         from utils.database import get_database
         db = get_database()
-        template = await presentation_service.get_template(db, template_id)
+        template = presentation_service.get_template(db, template_id)
         if not template:
             raise HTTPException(status_code=404, detail="Template not found")
         return template
