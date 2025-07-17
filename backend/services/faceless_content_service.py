@@ -79,10 +79,10 @@ class FacelessContentService:
         """Initialize default ElevenLabs voices"""
         try:
             # Get available voices from ElevenLabs
-            voices = self.elevenlabs_client.voices.get_all()
+            voices_response = self.elevenlabs_client.voices.get_all()
             
             # Store voices in database
-            for voice in voices.voices:
+            for voice in voices_response.voices:
                 voice_data = {
                     "voice_id": voice.voice_id,
                     "name": voice.name,
@@ -103,6 +103,49 @@ class FacelessContentService:
                 
         except Exception as e:
             print(f"Error initializing voices: {e}")
+            # Add some default voices if API fails
+            default_voices = [
+                {
+                    "voice_id": "21m00Tcm4TlvDq8ikWAM",
+                    "name": "Rachel",
+                    "category": "General",
+                    "gender": "Female",
+                    "age": "Adult",
+                    "accent": "American",
+                    "language": "English",
+                    "preview_url": None,
+                    "created_at": datetime.utcnow()
+                },
+                {
+                    "voice_id": "AZnzlk1XvdvUeBnXmlld",
+                    "name": "Domi",
+                    "category": "General",
+                    "gender": "Female",
+                    "age": "Adult",
+                    "accent": "American",
+                    "language": "English",
+                    "preview_url": None,
+                    "created_at": datetime.utcnow()
+                },
+                {
+                    "voice_id": "EXAVITQu4vr4fYnSx1bJ",
+                    "name": "Bella",
+                    "category": "General",
+                    "gender": "Female",
+                    "age": "Adult",
+                    "accent": "American",
+                    "language": "English",
+                    "preview_url": None,
+                    "created_at": datetime.utcnow()
+                }
+            ]
+            
+            for voice in default_voices:
+                await self.voices_collection.replace_one(
+                    {"voice_id": voice["voice_id"]},
+                    voice,
+                    upsert=True
+                )
     
     async def _initialize_default_characters(self):
         """Initialize default animated characters"""
