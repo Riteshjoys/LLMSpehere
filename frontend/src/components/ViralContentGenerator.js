@@ -656,7 +656,7 @@ const ViralContentGenerator = () => {
                         <nav className="-mb-px flex space-x-8">
                             {[
                                 { id: 'generate', name: 'Generate', icon: SparklesIcon },
-                                { id: 'trends', name: 'Trends', icon: TrendingUpIcon },
+                                { id: 'trends', name: 'Trends', icon: ArrowTrendingUpIcon },
                                 { id: 'history', name: 'History', icon: DocumentTextIcon },
                                 { id: 'stats', name: 'Statistics', icon: ChartBarIcon }
                             ].map((tab) => (
