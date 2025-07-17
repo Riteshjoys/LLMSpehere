@@ -1,19 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { 
     FireIcon, 
     SparklesIcon, 
     ChartBarIcon, 
-    HashtagIcon,
-    ClockIcon,
     EyeIcon,
     HeartIcon,
     ChatBubbleBottomCenterIcon,
     ShareIcon,
-    TrendingUpIcon,
-    PlusIcon,
+    ArrowTrendingUpIcon,
     DocumentTextIcon,
     MagnifyingGlassIcon
 } from '@heroicons/react/24/outline';
