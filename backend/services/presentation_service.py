@@ -298,50 +298,6 @@ class PresentationService:
         except Exception as e:
             raise Exception(f"Error deleting presentation: {str(e)}")
 
-    async def generate_presentation_content(self, db, presentation_id: str, request: Dict[str, Any]):
-        """Generate presentation content using AI"""
-        try:
-            # Get presentation
-            presentation = await self.get_presentation(db, presentation_id)
-            if not presentation:
-                raise Exception("Presentation not found")
-            
-            # Generate content based on request
-            content_type = request.get("content_type", "text")
-            prompt = request.get("prompt", "")
-            
-            if content_type == "text":
-                # Generate text content
-                generated_content = await self._generate_text_content(prompt)
-            elif content_type == "chart":
-                # Generate chart data
-                generated_content = await self._generate_chart_data(request)
-            else:
-                raise Exception("Unsupported content type")
-            
-            return {"content": generated_content, "type": content_type}
-        except Exception as e:
-            raise Exception(f"Error generating content: {str(e)}")
-
-    async def export_presentation(self, db, presentation_id: str, format: str):
-        """Export presentation in specified format"""
-        try:
-            # Get presentation
-            presentation = await self.get_presentation(db, presentation_id)
-            if not presentation:
-                raise Exception("Presentation not found")
-            
-            if format == "pptx":
-                return await self._export_to_pptx(presentation)
-            elif format == "pdf":
-                return await self._export_to_pdf(presentation)
-            elif format == "google-slides":
-                return await self._export_to_google_slides(presentation)
-            else:
-                raise Exception("Unsupported export format")
-        except Exception as e:
-            raise Exception(f"Error exporting presentation: {str(e)}")
-
     async def add_slide(self, db, presentation_id: str, slide_data: Dict[str, Any]):
         """Add a new slide to presentation"""
         try:
@@ -349,7 +305,7 @@ class PresentationService:
             slide_data["id"] = slide_id
             
             # Add slide to presentation
-            result = await db[self.presentations_collection].update_one(
+            result = db[self.presentations_collection].update_one(
                 {"id": presentation_id},
                 {"$push": {"slides": slide_data}, "$set": {"updated_at": datetime.utcnow()}}
             )
@@ -361,12 +317,12 @@ class PresentationService:
     async def update_slide(self, db, presentation_id: str, slide_id: str, updates: Dict[str, Any]):
         """Update a slide in presentation"""
         try:
-            result = await db[self.presentations_collection].update_one(
+            result = db[self.presentations_collection].update_one(
                 {"id": presentation_id, "slides.id": slide_id},
                 {"$set": {f"slides.$.{k}": v for k, v in updates.items()}}
             )
             
-            await db[self.presentations_collection].update_one(
+            db[self.presentations_collection].update_one(
                 {"id": presentation_id},
                 {"$set": {"updated_at": datetime.utcnow()}}
             )
@@ -378,7 +334,7 @@ class PresentationService:
     async def delete_slide(self, db, presentation_id: str, slide_id: str):
         """Delete a slide from presentation"""
         try:
-            result = await db[self.presentations_collection].update_one(
+            result = db[self.presentations_collection].update_one(
                 {"id": presentation_id},
                 {"$pull": {"slides": {"id": slide_id}}, "$set": {"updated_at": datetime.utcnow()}}
             )
