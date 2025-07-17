@@ -872,7 +872,7 @@ class PresentationService:
         except Exception as e:
             raise Exception(f"Error generating chart: {str(e)}")
 
-    async def _save_to_history(self, db, presentation_id: str, user_id: str, action: str):
+    def _save_to_history(self, db, presentation_id: str, user_id: str, action: str):
         """Save action to history"""
         try:
             history_doc = {
