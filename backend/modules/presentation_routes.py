@@ -97,28 +97,6 @@ async def get_presentations(current_user: str = Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/history")
-async def get_presentation_history(current_user: str = Depends(get_current_user)):
-    """Get presentation generation history for the current user"""
-    try:
-        from utils.database import get_database
-        db = get_database()
-        history = await presentation_service.get_presentation_history(db, current_user)
-        return {"history": history}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.get("/stats")
-async def get_presentation_stats(current_user: str = Depends(get_current_user)):
-    """Get presentation statistics for the current user"""
-    try:
-        from utils.database import get_database
-        db = get_database()
-        stats = await presentation_service.get_presentation_stats(db, current_user)
-        return {"stats": stats}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 @router.get("/{presentation_id}")
 async def get_presentation(
     presentation_id: str,
