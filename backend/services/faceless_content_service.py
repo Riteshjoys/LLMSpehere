@@ -302,19 +302,15 @@ class FacelessContentService:
     async def generate_tts_audio(self, tts_request: TTSRequest) -> TTSResponse:
         """Generate text-to-speech audio using ElevenLabs"""
         try:
-            # Generate audio
-            audio_generator = self.elevenlabs_client.text_to_speech.stream(
+            # Generate audio using the new API
+            audio_generator = self.elevenlabs_client.generate(
                 text=tts_request.text,
-                voice_id=tts_request.voice_id,
-                model_id=tts_request.model_id,
-                stream=True,
-                voice_settings=VoiceSettings(
-                    stability=tts_request.stability,
-                    similarity_boost=tts_request.similarity_boost
-                )
+                voice=tts_request.voice_id,
+                model="eleven_monolingual_v1",
+                stream=True
             )
             
-            # Save audio to temporary file
+            # Collect audio data
             audio_data = b""
             for chunk in audio_generator:
                 audio_data += chunk
