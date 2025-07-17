@@ -404,7 +404,7 @@ class PresentationService:
         except Exception as e:
             raise Exception(f"Error creating chart: {str(e)}")
 
-    async def get_presentation_history(self, db, user_id: str):
+    def get_presentation_history(self, db, user_id: str):
         """Get presentation history for user"""
         try:
             history = []
@@ -415,7 +415,7 @@ class PresentationService:
         except Exception as e:
             raise Exception(f"Error getting presentation history: {str(e)}")
 
-    async def get_presentation_stats(self, db, user_id: str):
+    def get_presentation_stats(self, db, user_id: str):
         """Get presentation statistics for user"""
         try:
             # Count total presentations
