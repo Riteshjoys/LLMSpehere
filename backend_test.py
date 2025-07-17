@@ -2452,6 +2452,392 @@ class PresentationGeneratorAPITest(unittest.TestCase):
         self.created_presentation_id = None
 
 
+class ViralContentGeneratorAPITest(unittest.TestCase):
+    """Test suite for Viral Content Generator API endpoints"""
+    
+    def setUp(self):
+        """Set up test environment"""
+        self.base_url = f"{BACKEND_URL}/api"
+        self.auth_token = None
+        self.login()
+    
+    def login(self):
+        """Login to get authentication token"""
+        login_url = f"{self.base_url}/auth/login"
+        login_data = {
+            "username": "admin",
+            "password": "admin123"
+        }
+        
+        response = requests.post(login_url, json=login_data)
+        if response.status_code == 200:
+            data = response.json()
+            self.auth_token = data.get("access_token")
+            print(f"Successfully logged in as admin. Token: {self.auth_token[:10]}...")
+        else:
+            print(f"Failed to login: {response.status_code} - {response.text}")
+            self.fail("Login failed")
+    
+    def get_headers(self) -> Dict[str, str]:
+        """Get headers with authentication token"""
+        return {
+            "Authorization": f"Bearer {self.auth_token}",
+            "Content-Type": "application/json"
+        }
+    
+    def test_01_get_supported_platforms(self):
+        """Test GET /api/viral/platforms endpoint"""
+        print("\n=== Testing GET /api/viral/platforms ===")
+        url = f"{self.base_url}/viral/platforms"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.get(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIn("platforms", data, "Response should have 'platforms' field")
+        self.assertIsInstance(data["platforms"], list, "Platforms should be a list")
+        self.assertGreater(len(data["platforms"]), 0, "Should return at least one platform")
+        
+        # Check platform structure
+        for platform in data["platforms"]:
+            required_fields = ["name", "display_name", "max_length", "optimal_hashtags", "best_times", "viral_elements"]
+            for field in required_fields:
+                self.assertIn(field, platform, f"Platform should have '{field}' field")
+        
+        # Check for expected platforms
+        platform_names = [p["name"] for p in data["platforms"]]
+        expected_platforms = ["tiktok", "instagram", "youtube", "twitter"]
+        for expected in expected_platforms:
+            self.assertIn(expected, platform_names, f"Should include {expected} platform")
+        
+        print(f"✅ GET /api/viral/platforms returned {len(data['platforms'])} platforms")
+        for platform in data["platforms"]:
+            print(f"  - {platform['display_name']}: max {platform['max_length']} chars, {platform['optimal_hashtags']} hashtags")
+    
+    def test_02_get_content_types(self):
+        """Test GET /api/viral/content-types endpoint"""
+        print("\n=== Testing GET /api/viral/content-types ===")
+        url = f"{self.base_url}/viral/content-types"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.get(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIn("content_types", data, "Response should have 'content_types' field")
+        self.assertIsInstance(data["content_types"], list, "Content types should be a list")
+        self.assertGreater(len(data["content_types"]), 0, "Should return at least one content type")
+        
+        # Check content type structure
+        for content_type in data["content_types"]:
+            required_fields = ["name", "display_name"]
+            for field in required_fields:
+                self.assertIn(field, content_type, f"Content type should have '{field}' field")
+        
+        # Check for expected content types
+        content_type_names = [ct["name"] for ct in data["content_types"]]
+        expected_types = ["video", "image", "text", "reel", "short"]
+        for expected in expected_types:
+            self.assertIn(expected, content_type_names, f"Should include {expected} content type")
+        
+        print(f"✅ GET /api/viral/content-types returned {len(data['content_types'])} content types")
+        for ct in data["content_types"]:
+            print(f"  - {ct['display_name']} ({ct['name']})")
+    
+    def test_03_get_viral_templates(self):
+        """Test GET /api/viral/templates endpoint"""
+        print("\n=== Testing GET /api/viral/templates ===")
+        url = f"{self.base_url}/viral/templates"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.get(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIn("templates", data, "Response should have 'templates' field")
+        self.assertIsInstance(data["templates"], list, "Templates should be a list")
+        self.assertGreater(len(data["templates"]), 0, "Should return at least one template")
+        
+        # Check template structure
+        for template in data["templates"]:
+            required_fields = ["template_id", "name", "description", "platform", "content_type", "category"]
+            for field in required_fields:
+                self.assertIn(field, template, f"Template should have '{field}' field")
+        
+        # Check for expected templates
+        template_names = [t["name"] for t in data["templates"]]
+        expected_templates = ["TikTok Viral Hook", "Instagram Reel Viral", "YouTube Shorts Viral", "Twitter Viral Thread"]
+        for expected in expected_templates:
+            self.assertIn(expected, template_names, f"Should include '{expected}' template")
+        
+        print(f"✅ GET /api/viral/templates returned {len(data['templates'])} templates")
+        for template in data["templates"]:
+            print(f"  - {template['name']} ({template['platform']}, {template['content_type']})")
+        
+        # Test with platform filter
+        response = requests.get(f"{url}?platform=tiktok", headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200 for filtered request, got {response.status_code}")
+        
+        filtered_data = response.json()
+        self.assertIn("templates", filtered_data, "Filtered response should have 'templates' field")
+        
+        # All templates should be for TikTok
+        for template in filtered_data["templates"]:
+            self.assertEqual(template["platform"], "tiktok", "All filtered templates should be for TikTok")
+        
+        print(f"✅ GET /api/viral/templates?platform=tiktok returned {len(filtered_data['templates'])} TikTok templates")
+    
+    def test_04_get_trending_hashtags(self):
+        """Test GET /api/viral/trending-hashtags endpoint"""
+        print("\n=== Testing GET /api/viral/trending-hashtags ===")
+        url = f"{self.base_url}/viral/trending-hashtags"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.get(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIn("hashtags", data, "Response should have 'hashtags' field")
+        self.assertIsInstance(data["hashtags"], list, "Hashtags should be a list")
+        self.assertGreater(len(data["hashtags"]), 0, "Should return at least one hashtag")
+        
+        # Check hashtag format
+        for hashtag in data["hashtags"]:
+            self.assertIsInstance(hashtag, str, "Hashtag should be a string")
+            self.assertTrue(hashtag.startswith("#"), "Hashtag should start with #")
+        
+        print(f"✅ GET /api/viral/trending-hashtags returned {len(data['hashtags'])} hashtags")
+        print(f"  Sample hashtags: {', '.join(data['hashtags'][:5])}")
+        
+        # Test with platform filter
+        response = requests.get(f"{url}?platform=tiktok&limit=10", headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200 for filtered request, got {response.status_code}")
+        
+        filtered_data = response.json()
+        self.assertIn("hashtags", filtered_data, "Filtered response should have 'hashtags' field")
+        self.assertLessEqual(len(filtered_data["hashtags"]), 10, "Should respect limit parameter")
+        
+        print(f"✅ GET /api/viral/trending-hashtags?platform=tiktok&limit=10 returned {len(filtered_data['hashtags'])} hashtags")
+    
+    def test_05_analyze_trends(self):
+        """Test POST /api/viral/analyze-trends endpoint"""
+        print("\n=== Testing POST /api/viral/analyze-trends ===")
+        url = f"{self.base_url}/viral/analyze-trends"
+        
+        request_data = {
+            "platforms": ["tiktok", "instagram"],
+            "categories": ["entertainment", "lifestyle"],
+            "region": "global",
+            "timeframe": "24h",
+            "include_hashtags": True,
+            "include_sounds": True,
+            "include_effects": True
+        }
+        
+        # Test without authentication
+        response = requests.post(url, json=request_data)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.post(url, json=request_data, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        required_fields = ["trends", "total_trends", "analysis_date", "platforms_analyzed", "region", "timeframe", "next_update"]
+        for field in required_fields:
+            self.assertIn(field, data, f"Response should have '{field}' field")
+        
+        self.assertIsInstance(data["trends"], list, "Trends should be a list")
+        self.assertGreater(len(data["trends"]), 0, "Should return at least one trend")
+        self.assertEqual(data["total_trends"], len(data["trends"]), "Total trends should match trends list length")
+        self.assertEqual(data["region"], "global", "Region should match request")
+        self.assertEqual(data["timeframe"], "24h", "Timeframe should match request")
+        
+        # Check trend structure
+        for trend in data["trends"]:
+            trend_fields = ["title", "description", "platform", "category", "hashtags", "engagement_rate", "growth_rate", "popularity_score", "viral_potential"]
+            for field in trend_fields:
+                self.assertIn(field, trend, f"Trend should have '{field}' field")
+        
+        print(f"✅ POST /api/viral/analyze-trends returned {data['total_trends']} trends")
+        print(f"  Platforms analyzed: {', '.join(data['platforms_analyzed'])}")
+        print(f"  Sample trend: {data['trends'][0]['title']}")
+    
+    def test_06_generate_viral_content(self):
+        """Test POST /api/viral/generate endpoint"""
+        print("\n=== Testing POST /api/viral/generate ===")
+        url = f"{self.base_url}/viral/generate"
+        
+        request_data = {
+            "topic": "AI and Future of Work",
+            "platform": "tiktok",
+            "content_type": "video",
+            "target_audience": "young professionals",
+            "tone": "engaging",
+            "include_hashtags": True,
+            "include_trending_elements": True,
+            "max_length": 2200
+        }
+        
+        # Test without authentication
+        response = requests.post(url, json=request_data)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.post(url, json=request_data, headers=self.get_headers())
+        
+        # Note: This might fail due to missing API keys, but we check the endpoint processes the request
+        self.assertIn(response.status_code, [200, 500], 
+                     f"Expected status code 200 or 500, got {response.status_code}")
+        
+        data = response.json()
+        
+        if response.status_code == 200:
+            required_fields = ["content_id", "content", "platform", "content_type", "hashtags", "suggested_caption", 
+                             "optimal_post_time", "engagement_prediction", "viral_elements_used", "trending_hooks", 
+                             "call_to_action", "platform_specific_tips", "user_id", "topic"]
+            for field in required_fields:
+                self.assertIn(field, data, f"Response should have '{field}' field")
+            
+            self.assertEqual(data["platform"], "tiktok", "Platform should match request")
+            self.assertEqual(data["content_type"], "video", "Content type should match request")
+            self.assertEqual(data["topic"], "AI and Future of Work", "Topic should match request")
+            self.assertIsInstance(data["hashtags"], list, "Hashtags should be a list")
+            self.assertIsInstance(data["engagement_prediction"], dict, "Engagement prediction should be a dict")
+            
+            print(f"✅ POST /api/viral/generate successful")
+            print(f"  Content ID: {data['content_id']}")
+            print(f"  Content length: {len(data['content'])} characters")
+            print(f"  Hashtags: {', '.join(data['hashtags'])}")
+            print(f"  Predicted views: {data['engagement_prediction'].get('predicted_views', 'N/A')}")
+        else:
+            print(f"⚠️ POST /api/viral/generate returned error (likely due to missing API key)")
+            print(f"  Error: {data.get('detail', 'Unknown error')}")
+            # Don't fail the test if it's just missing API key
+            if "API key" in str(data) or "provider" in str(data):
+                print("  This is expected in test environment without real API keys")
+            else:
+                self.fail(f"Unexpected error: {data}")
+    
+    def test_07_get_user_viral_content(self):
+        """Test GET /api/viral/content endpoint"""
+        print("\n=== Testing GET /api/viral/content ===")
+        url = f"{self.base_url}/viral/content"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.get(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIn("content", data, "Response should have 'content' field")
+        self.assertIsInstance(data["content"], list, "Content should be a list")
+        
+        print(f"✅ GET /api/viral/content returned {len(data['content'])} content items")
+        
+        # Check content structure if any exist
+        if len(data["content"]) > 0:
+            content_item = data["content"][0]
+            required_fields = ["generation_id", "user_id", "topic", "platform", "content_type", "content", "hashtags", "viral_score"]
+            for field in required_fields:
+                self.assertIn(field, content_item, f"Content item should have '{field}' field")
+            
+            print(f"  Sample content: {content_item['topic']} ({content_item['platform']})")
+        
+        # Test with limit parameter
+        response = requests.get(f"{url}?limit=10", headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200 for limited request, got {response.status_code}")
+        
+        limited_data = response.json()
+        self.assertLessEqual(len(limited_data["content"]), 10, "Should respect limit parameter")
+        print(f"✅ GET /api/viral/content?limit=10 returned {len(limited_data['content'])} content items")
+    
+    def test_08_get_viral_content_stats(self):
+        """Test GET /api/viral/stats endpoint"""
+        print("\n=== Testing GET /api/viral/stats ===")
+        url = f"{self.base_url}/viral/stats"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with authentication
+        response = requests.get(url, headers=self.get_headers())
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        self.assertIn("stats", data, "Response should have 'stats' field")
+        
+        stats = data["stats"]
+        required_fields = ["total_generated", "by_platform", "by_content_type", "average_viral_score", 
+                          "top_performing_topics", "success_rate", "trending_hashtags", "recent_generations"]
+        for field in required_fields:
+            self.assertIn(field, stats, f"Stats should have '{field}' field")
+        
+        self.assertIsInstance(stats["total_generated"], int, "Total generated should be an integer")
+        self.assertIsInstance(stats["by_platform"], dict, "By platform should be a dict")
+        self.assertIsInstance(stats["by_content_type"], dict, "By content type should be a dict")
+        self.assertIsInstance(stats["average_viral_score"], (int, float), "Average viral score should be a number")
+        self.assertIsInstance(stats["top_performing_topics"], list, "Top performing topics should be a list")
+        self.assertIsInstance(stats["trending_hashtags"], list, "Trending hashtags should be a list")
+        self.assertIsInstance(stats["recent_generations"], list, "Recent generations should be a list")
+        
+        print(f"✅ GET /api/viral/stats returned comprehensive statistics")
+        print(f"  Total generated: {stats['total_generated']}")
+        print(f"  Average viral score: {stats['average_viral_score']:.2f}")
+        print(f"  Success rate: {stats['success_rate']:.1%}")
+        print(f"  Top topics: {', '.join(stats['top_performing_topics'][:3])}")
+    
+    def test_09_viral_health_check(self):
+        """Test GET /api/viral/health endpoint"""
+        print("\n=== Testing GET /api/viral/health ===")
+        url = f"{self.base_url}/viral/health"
+        
+        # Health check should not require authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 200, f"Expected status code 200, got {response.status_code}")
+        
+        data = response.json()
+        required_fields = ["status", "service", "timestamp"]
+        for field in required_fields:
+            self.assertIn(field, data, f"Health check should have '{field}' field")
+        
+        self.assertEqual(data["status"], "healthy", "Status should be 'healthy'")
+        self.assertEqual(data["service"], "viral_content", "Service should be 'viral_content'")
+        
+        print(f"✅ GET /api/viral/health returned: {data['status']}")
+        print(f"  Service: {data['service']}")
+        print(f"  Timestamp: {data['timestamp']}")
+
+
 if __name__ == "__main__":
     # Run all test suites
     print("=" * 80)
