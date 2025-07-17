@@ -213,13 +213,18 @@ async def export_presentation(
 async def get_presentation_history(current_user: str = Depends(get_current_user)):
     """Get presentation generation history for the current user"""
     try:
+        import traceback
         from utils.database import get_database
         db = get_database()
+        print(f"DEBUG: Getting history for user: {current_user}")
         history = presentation_service.get_presentation_history(db, current_user)
+        print(f"DEBUG: History result: {len(history)} items")
         return {"history": history}
     except Exception as e:
         print(f"Error in get_presentation_history route: {str(e)}")  # Debug logging
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error type: {type(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=f"History error: {str(e)}")
 
 @router.get("/stats")
 async def get_presentation_stats(current_user: str = Depends(get_current_user)):
