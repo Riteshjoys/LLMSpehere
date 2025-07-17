@@ -207,7 +207,7 @@ class PresentationService:
         except Exception as e:
             raise Exception(f"Error creating template: {str(e)}")
 
-    async def get_template(self, db, template_id: str):
+    def get_template(self, db, template_id: str):
         """Get a specific template by ID"""
         try:
             # Check default templates first
