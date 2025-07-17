@@ -20,6 +20,7 @@ from modules.admin_api_keys_routes import router as admin_api_keys_router
 from modules.user_routes import router as user_router
 from modules.analytics_routes import router as analytics_router
 from modules.presentation_routes import router as presentation_router
+from modules.viral_content_routes import router as viral_content_router
 from modules.startup import initialize_default_data, shutdown_scheduler
 
 # Initialize FastAPI app
