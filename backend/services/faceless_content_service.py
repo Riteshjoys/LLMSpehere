@@ -94,7 +94,7 @@ class FacelessContentService:
                     "created_at": datetime.utcnow()
                 }
                 
-                await self.voices_collection.replace_one(
+                self.voices_collection.replace_one(
                     {"voice_id": voice.voice_id},
                     voice_data,
                     upsert=True
