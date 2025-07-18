@@ -223,7 +223,7 @@ class FacelessContentService:
         
         for music in default_music:
             music["created_at"] = datetime.utcnow()
-            await self.music_collection.replace_one(
+            self.music_collection.replace_one(
                 {"track_id": music["track_id"]},
                 music,
                 upsert=True
