@@ -494,7 +494,7 @@ class FacelessContentService:
             
         except Exception as e:
             # Update content record with error
-            await self.content_collection.update_one(
+            self.content_collection.update_one(
                 {"content_id": content_id},
                 {
                     "$set": {
