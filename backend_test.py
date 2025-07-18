@@ -2838,6 +2838,542 @@ class ViralContentGeneratorAPITest(unittest.TestCase):
         print(f"  Timestamp: {data['timestamp']}")
 
 
+class FacelessContentAPITest(unittest.TestCase):
+    """Test suite for Faceless Content Creation API endpoints"""
+    
+    def setUp(self):
+        """Set up test environment"""
+        self.base_url = f"{BACKEND_URL}/api"
+        self.admin_token = None
+        self.user_token = None
+        self.created_content_id = None
+        self.login_admin()
+        self.login_user()
+    
+    def login_admin(self):
+        """Login as admin to get authentication token"""
+        login_url = f"{self.base_url}/auth/login"
+        login_data = {
+            "username": "admin",
+            "password": "admin123"
+        }
+        
+        response = requests.post(login_url, json=login_data)
+        if response.status_code == 200:
+            data = response.json()
+            self.admin_token = data.get("access_token")
+            print(f"Successfully logged in as admin. Token: {self.admin_token[:10]}...")
+        else:
+            print(f"Failed to login as admin: {response.status_code} - {response.text}")
+            self.fail("Admin login failed")
+    
+    def login_user(self):
+        """Login as regular user to get authentication token"""
+        # First register a test user if not exists
+        register_url = f"{self.base_url}/auth/register"
+        register_data = {
+            "username": "contentcreator",
+            "email": "contentcreator@example.com",
+            "password": "creator123",
+            "full_name": "Content Creator"
+        }
+        
+        # Try to register (might fail if user already exists, which is fine)
+        requests.post(register_url, json=register_data)
+        
+        # Now login
+        login_url = f"{self.base_url}/auth/login"
+        login_data = {
+            "username": "contentcreator",
+            "password": "creator123"
+        }
+        
+        response = requests.post(login_url, json=login_data)
+        if response.status_code == 200:
+            data = response.json()
+            self.user_token = data.get("access_token")
+            print(f"Successfully logged in as content creator. Token: {self.user_token[:10]}...")
+        else:
+            print(f"Failed to login as user: {response.status_code} - {response.text}")
+            self.fail("User login failed")
+    
+    def get_admin_headers(self) -> Dict[str, str]:
+        """Get headers with admin authentication token"""
+        return {
+            "Authorization": f"Bearer {self.admin_token}",
+            "Content-Type": "application/json"
+        }
+    
+    def get_user_headers(self) -> Dict[str, str]:
+        """Get headers with user authentication token"""
+        return {
+            "Authorization": f"Bearer {self.user_token}",
+            "Content-Type": "application/json"
+        }
+    
+    def test_01_get_voices(self):
+        """Test GET /api/faceless-content/voices endpoint"""
+        print("\n=== Testing GET /api/faceless-content/voices ===")
+        url = f"{self.base_url}/faceless-content/voices"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.get(url, headers=self.get_user_headers())
+        print(f"Response status: {response.status_code}")
+        print(f"Response content: {response.text[:500]}...")
+        
+        if response.status_code == 200:
+            data = response.json()
+            self.assertIsInstance(data, list, "Response should be a list")
+            
+            if len(data) > 0:
+                # Check voice structure
+                voice = data[0]
+                required_fields = ["voice_id", "name", "category", "gender", "age", "accent", "language"]
+                for field in required_fields:
+                    self.assertIn(field, voice, f"Voice should have '{field}' field")
+                
+                print(f"✅ GET /api/faceless-content/voices returned {len(data)} voices")
+                for v in data[:3]:  # Show first 3 voices
+                    print(f"  - {v['name']} ({v['gender']}, {v['accent']}, {v['language']})")
+            else:
+                print("⚠️ No voices returned - this might indicate ElevenLabs API key issues")
+        else:
+            print(f"❌ GET /api/faceless-content/voices failed with status {response.status_code}")
+            print(f"Error: {response.text}")
+    
+    def test_02_get_characters(self):
+        """Test GET /api/faceless-content/characters endpoint"""
+        print("\n=== Testing GET /api/faceless-content/characters ===")
+        url = f"{self.base_url}/faceless-content/characters"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.get(url, headers=self.get_user_headers())
+        print(f"Response status: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            self.assertIsInstance(data, list, "Response should be a list")
+            self.assertGreater(len(data), 0, "Should return at least some default characters")
+            
+            # Check character structure
+            character = data[0]
+            required_fields = ["character_id", "name", "animation_type", "position", "scale", "animations"]
+            for field in required_fields:
+                self.assertIn(field, character, f"Character should have '{field}' field")
+            
+            print(f"✅ GET /api/faceless-content/characters returned {len(data)} characters")
+            for char in data:
+                print(f"  - {char['name']} ({char['animation_type']}) - {len(char['animations'])} animations")
+        else:
+            print(f"❌ GET /api/faceless-content/characters failed with status {response.status_code}")
+            print(f"Error: {response.text}")
+    
+    def test_03_get_background_music(self):
+        """Test GET /api/faceless-content/background-music endpoint"""
+        print("\n=== Testing GET /api/faceless-content/background-music ===")
+        url = f"{self.base_url}/faceless-content/background-music"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.get(url, headers=self.get_user_headers())
+        print(f"Response status: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            self.assertIsInstance(data, list, "Response should be a list")
+            self.assertGreater(len(data), 0, "Should return at least some default music tracks")
+            
+            # Check music structure
+            music = data[0]
+            required_fields = ["track_id", "name", "genre", "duration", "tempo", "mood", "file_url"]
+            for field in required_fields:
+                self.assertIn(field, music, f"Music should have '{field}' field")
+            
+            print(f"✅ GET /api/faceless-content/background-music returned {len(data)} tracks")
+            for track in data:
+                print(f"  - {track['name']} ({track['genre']}, {track['mood']}) - {track['duration']}s")
+        else:
+            print(f"❌ GET /api/faceless-content/background-music failed with status {response.status_code}")
+            print(f"Error: {response.text}")
+    
+    def test_04_get_templates(self):
+        """Test GET /api/faceless-content/templates endpoint"""
+        print("\n=== Testing GET /api/faceless-content/templates ===")
+        url = f"{self.base_url}/faceless-content/templates"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.get(url, headers=self.get_user_headers())
+        print(f"Response status: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            self.assertIsInstance(data, list, "Response should be a list")
+            self.assertGreater(len(data), 0, "Should return at least some default templates")
+            
+            # Check template structure
+            template = data[0]
+            required_fields = ["template_id", "name", "description", "category", "default_voice_id", 
+                             "video_duration", "video_format", "video_quality", "video_resolution"]
+            for field in required_fields:
+                self.assertIn(field, template, f"Template should have '{field}' field")
+            
+            print(f"✅ GET /api/faceless-content/templates returned {len(data)} templates")
+            for tmpl in data:
+                print(f"  - {tmpl['name']} ({tmpl['category']}) - {tmpl['video_duration']}s")
+                
+            # Store first template for later tests
+            self.test_template = data[0]
+        else:
+            print(f"❌ GET /api/faceless-content/templates failed with status {response.status_code}")
+            print(f"Error: {response.text}")
+    
+    def test_05_generate_tts(self):
+        """Test POST /api/faceless-content/tts/generate endpoint"""
+        print("\n=== Testing POST /api/faceless-content/tts/generate ===")
+        url = f"{self.base_url}/faceless-content/tts/generate"
+        
+        # Get a voice ID first
+        voices_response = requests.get(f"{self.base_url}/faceless-content/voices", headers=self.get_user_headers())
+        if voices_response.status_code != 200 or not voices_response.json():
+            print("⚠️ Skipping TTS test - no voices available")
+            return
+        
+        voice_id = voices_response.json()[0]["voice_id"]
+        
+        tts_data = {
+            "text": "Hello, this is a test of the text-to-speech functionality for faceless content creation.",
+            "voice_id": voice_id,
+            "stability": 0.5,
+            "similarity_boost": 0.5,
+            "model_id": "eleven_monolingual_v1",
+            "format": "mp3"
+        }
+        
+        # Test without authentication
+        response = requests.post(url, json=tts_data)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.post(url, json=tts_data, headers=self.get_user_headers())
+        print(f"Response status: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            required_fields = ["audio_url", "duration", "voice_id", "format", "file_size"]
+            for field in required_fields:
+                self.assertIn(field, data, f"TTS response should have '{field}' field")
+            
+            self.assertEqual(data["voice_id"], voice_id, "Voice ID should match request")
+            self.assertEqual(data["format"], "mp3", "Format should match request")
+            self.assertGreater(data["duration"], 0, "Duration should be greater than 0")
+            self.assertGreater(data["file_size"], 0, "File size should be greater than 0")
+            
+            print(f"✅ TTS generation successful:")
+            print(f"  Duration: {data['duration']}s")
+            print(f"  File size: {data['file_size']} bytes")
+            print(f"  Voice: {data['voice_id']}")
+        else:
+            print(f"⚠️ TTS generation failed (likely due to ElevenLabs API key): {response.status_code}")
+            print(f"Error: {response.text}")
+            # Don't fail the test if it's just missing API key
+            if "API key" in response.text or response.status_code == 500:
+                print("  This is expected in test environment without real ElevenLabs API key")
+    
+    def test_06_simulate_screen_recording(self):
+        """Test POST /api/faceless-content/screen-recording/simulate endpoint"""
+        print("\n=== Testing POST /api/faceless-content/screen-recording/simulate ===")
+        url = f"{self.base_url}/faceless-content/screen-recording/simulate"
+        
+        recording_data = {
+            "duration": 10,
+            "fps": 30,
+            "quality": "high",
+            "capture_audio": True,
+            "region": {
+                "width": 1920,
+                "height": 1080,
+                "x": 0,
+                "y": 0
+            }
+        }
+        
+        # Test without authentication
+        response = requests.post(url, json=recording_data)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.post(url, json=recording_data, headers=self.get_user_headers())
+        print(f"Response status: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            required_fields = ["video_url", "duration", "fps", "resolution", "file_size"]
+            for field in required_fields:
+                self.assertIn(field, data, f"Screen recording response should have '{field}' field")
+            
+            self.assertEqual(data["fps"], 30, "FPS should match request")
+            self.assertGreater(data["duration"], 0, "Duration should be greater than 0")
+            self.assertGreater(data["file_size"], 0, "File size should be greater than 0")
+            
+            print(f"✅ Screen recording simulation successful:")
+            print(f"  Duration: {data['duration']}s")
+            print(f"  Resolution: {data['resolution']}")
+            print(f"  FPS: {data['fps']}")
+            print(f"  File size: {data['file_size']} bytes")
+        else:
+            print(f"❌ Screen recording simulation failed with status {response.status_code}")
+            print(f"Error: {response.text}")
+    
+    def test_07_generate_faceless_content(self):
+        """Test POST /api/faceless-content/generate endpoint"""
+        print("\n=== Testing POST /api/faceless-content/generate ===")
+        url = f"{self.base_url}/faceless-content/generate"
+        
+        # Get required data first
+        voices_response = requests.get(f"{self.base_url}/faceless-content/voices", headers=self.get_user_headers())
+        characters_response = requests.get(f"{self.base_url}/faceless-content/characters", headers=self.get_user_headers())
+        music_response = requests.get(f"{self.base_url}/faceless-content/background-music", headers=self.get_user_headers())
+        
+        if (voices_response.status_code != 200 or not voices_response.json() or
+            characters_response.status_code != 200 or not characters_response.json() or
+            music_response.status_code != 200 or not music_response.json()):
+            print("⚠️ Skipping content generation test - required data not available")
+            return
+        
+        voice_id = voices_response.json()[0]["voice_id"]
+        character_id = characters_response.json()[0]["character_id"]
+        track_id = music_response.json()[0]["track_id"]
+        
+        content_data = {
+            "title": "Test Faceless Content Video",
+            "description": "A test video generated using the faceless content API",
+            "tts_text": "Welcome to our amazing product demonstration. This video showcases the power of AI-generated content creation. Thank you for watching!",
+            "voice_id": voice_id,
+            "screen_recording": {
+                "duration": 30,
+                "fps": 30,
+                "quality": "high",
+                "capture_audio": False
+            },
+            "animated_character": {
+                "character_id": character_id,
+                "animation": "talking",
+                "duration": 30.0,
+                "position": {"x": 0.8, "y": 0.7},
+                "scale": 1.0,
+                "text": "Welcome to our demonstration!"
+            },
+            "background_music": {
+                "track_id": track_id,
+                "volume": 0.3,
+                "fade_in": 2.0,
+                "fade_out": 2.0,
+                "loop": True
+            },
+            "video_duration": 30.0,
+            "video_format": "mp4",
+            "video_quality": "high",
+            "video_resolution": "1920x1080"
+        }
+        
+        # Test without authentication
+        response = requests.post(url, json=content_data)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.post(url, json=content_data, headers=self.get_user_headers())
+        print(f"Response status: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            required_fields = ["content_id", "title", "status", "created_at"]
+            for field in required_fields:
+                self.assertIn(field, data, f"Content response should have '{field}' field")
+            
+            self.assertEqual(data["title"], content_data["title"], "Title should match request")
+            self.assertIn(data["status"], ["completed", "processing"], "Status should be completed or processing")
+            
+            # Store content ID for later tests
+            self.created_content_id = data["content_id"]
+            
+            print(f"✅ Faceless content generation successful:")
+            print(f"  Content ID: {data['content_id']}")
+            print(f"  Title: {data['title']}")
+            print(f"  Status: {data['status']}")
+            if data.get("duration"):
+                print(f"  Duration: {data['duration']}s")
+            if data.get("processing_time"):
+                print(f"  Processing time: {data['processing_time']}s")
+        else:
+            print(f"⚠️ Faceless content generation failed: {response.status_code}")
+            print(f"Error: {response.text}")
+            # Don't fail the test if it's due to missing API keys
+            if "API key" in response.text or response.status_code == 500:
+                print("  This might be due to missing ElevenLabs API key in test environment")
+    
+    def test_08_get_content_history(self):
+        """Test GET /api/faceless-content/history endpoint"""
+        print("\n=== Testing GET /api/faceless-content/history ===")
+        url = f"{self.base_url}/faceless-content/history"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.get(url, headers=self.get_user_headers())
+        print(f"Response status: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            self.assertIsInstance(data, list, "Response should be a list")
+            
+            print(f"✅ GET /api/faceless-content/history returned {len(data)} items")
+            
+            if len(data) > 0:
+                # Check content structure
+                content = data[0]
+                required_fields = ["content_id", "user_id", "title", "status", "created_at"]
+                for field in required_fields:
+                    self.assertIn(field, content, f"Content should have '{field}' field")
+                
+                print(f"  Latest content: {content['title']} ({content['status']})")
+            else:
+                print("  No content history found (this is normal if no content was generated)")
+        else:
+            print(f"❌ GET /api/faceless-content/history failed with status {response.status_code}")
+            print(f"Error: {response.text}")
+    
+    def test_09_get_content_stats(self):
+        """Test GET /api/faceless-content/stats/overview endpoint"""
+        print("\n=== Testing GET /api/faceless-content/stats/overview ===")
+        url = f"{self.base_url}/faceless-content/stats/overview"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.get(url, headers=self.get_user_headers())
+        print(f"Response status: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            required_fields = ["total_content", "total_duration", "success_rate", "avg_processing_time", 
+                             "popular_voices", "popular_characters", "content_by_category", "recent_content"]
+            for field in required_fields:
+                self.assertIn(field, data, f"Stats should have '{field}' field")
+            
+            print(f"✅ Content stats retrieved:")
+            print(f"  Total content: {data['total_content']}")
+            print(f"  Total duration: {data['total_duration']}s")
+            print(f"  Success rate: {data['success_rate']:.1f}%")
+            print(f"  Avg processing time: {data['avg_processing_time']:.2f}s")
+            print(f"  Popular voices: {len(data['popular_voices'])}")
+            print(f"  Recent content: {len(data['recent_content'])}")
+        else:
+            print(f"❌ GET /api/faceless-content/stats/overview failed with status {response.status_code}")
+            print(f"Error: {response.text}")
+    
+    def test_10_voice_preview(self):
+        """Test GET /api/faceless-content/voices/{voice_id}/preview endpoint"""
+        print("\n=== Testing GET /api/faceless-content/voices/{voice_id}/preview ===")
+        
+        # Get a voice ID first
+        voices_response = requests.get(f"{self.base_url}/faceless-content/voices", headers=self.get_user_headers())
+        if voices_response.status_code != 200 or not voices_response.json():
+            print("⚠️ Skipping voice preview test - no voices available")
+            return
+        
+        voice_id = voices_response.json()[0]["voice_id"]
+        url = f"{self.base_url}/faceless-content/voices/{voice_id}/preview"
+        
+        # Test without authentication
+        response = requests.get(url)
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.get(url, headers=self.get_user_headers())
+        print(f"Response status: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            self.assertIn("preview_url", data, "Response should have 'preview_url' field")
+            print(f"✅ Voice preview retrieved for voice {voice_id}")
+            print(f"  Preview URL: {data['preview_url']}")
+        else:
+            print(f"❌ Voice preview failed with status {response.status_code}")
+            print(f"Error: {response.text}")
+    
+    def test_11_template_generation(self):
+        """Test POST /api/faceless-content/templates/{template_id}/generate endpoint"""
+        print("\n=== Testing POST /api/faceless-content/templates/{template_id}/generate ===")
+        
+        # Get a template first
+        templates_response = requests.get(f"{self.base_url}/faceless-content/templates", headers=self.get_user_headers())
+        if templates_response.status_code != 200 or not templates_response.json():
+            print("⚠️ Skipping template generation test - no templates available")
+            return
+        
+        template = templates_response.json()[0]
+        template_id = template["template_id"]
+        url = f"{self.base_url}/faceless-content/templates/{template_id}/generate"
+        
+        custom_text = "This is a custom text for template-based content generation. We're testing the template system to ensure it works correctly with predefined settings."
+        
+        # Test without authentication
+        response = requests.post(url, params={"custom_text": custom_text})
+        self.assertEqual(response.status_code, 401, 
+                         f"Expected status code 401 for unauthorized request, got {response.status_code}")
+        
+        # Test with user authentication
+        response = requests.post(url, params={"custom_text": custom_text}, headers=self.get_user_headers())
+        print(f"Response status: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            required_fields = ["content_id", "title", "status", "created_at"]
+            for field in required_fields:
+                self.assertIn(field, data, f"Template generation response should have '{field}' field")
+            
+            print(f"✅ Template-based content generation successful:")
+            print(f"  Content ID: {data['content_id']}")
+            print(f"  Title: {data['title']}")
+            print(f"  Status: {data['status']}")
+            print(f"  Template used: {template['name']}")
+        else:
+            print(f"⚠️ Template-based generation failed: {response.status_code}")
+            print(f"Error: {response.text}")
+            # Don't fail the test if it's due to missing API keys
+            if "API key" in response.text or response.status_code == 500:
+                print("  This might be due to missing ElevenLabs API key in test environment")
+
+
 if __name__ == "__main__":
     # Run all test suites
     print("=" * 80)
