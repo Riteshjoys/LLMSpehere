@@ -611,7 +611,7 @@ class FacelessContentService:
         """Get all available content templates"""
         try:
             templates = []
-            async for template_doc in self.templates_collection.find({"is_active": True}):
+            for template_doc in self.templates_collection.find({"is_active": True}):
                 templates.append(FacelessContentTemplate(**template_doc))
             return templates
         except Exception as e:
