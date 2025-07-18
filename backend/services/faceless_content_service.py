@@ -621,7 +621,7 @@ class FacelessContentService:
         """Get user's faceless content"""
         try:
             content_list = []
-            async for content_doc in self.content_collection.find(
+            for content_doc in self.content_collection.find(
                 {"user_id": user_id}
             ).sort("created_at", -1).limit(limit):
                 content_list.append(FacelessContent(**content_doc))
