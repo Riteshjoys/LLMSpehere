@@ -434,7 +434,7 @@ class FacelessContentService:
                 status="processing"
             )
             
-            await self.content_collection.insert_one(content_record.dict())
+            self.content_collection.insert_one(content_record.dict())
             
             # Generate TTS audio
             tts_request = TTSRequest(
