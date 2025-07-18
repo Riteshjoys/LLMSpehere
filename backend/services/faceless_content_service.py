@@ -557,7 +557,7 @@ class FacelessContentService:
         """Get all available voices"""
         try:
             voices = []
-            async for voice_doc in self.voices_collection.find({}):
+            for voice_doc in self.voices_collection.find({}):
                 voices.append(VoiceModel(
                     voice_id=voice_doc["voice_id"],
                     name=voice_doc["name"],
