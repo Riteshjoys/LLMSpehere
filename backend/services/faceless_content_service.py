@@ -632,7 +632,7 @@ class FacelessContentService:
     async def get_content_by_id(self, content_id: str, user_id: str) -> Optional[FacelessContent]:
         """Get specific content by ID"""
         try:
-            content_doc = await self.content_collection.find_one({
+            content_doc = self.content_collection.find_one({
                 "content_id": content_id,
                 "user_id": user_id
             })
