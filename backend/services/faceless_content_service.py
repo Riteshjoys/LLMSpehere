@@ -140,7 +140,7 @@ class FacelessContentService:
             ]
             
             for voice in default_voices:
-                await self.voices_collection.replace_one(
+                self.voices_collection.replace_one(
                     {"voice_id": voice["voice_id"]},
                     voice,
                     upsert=True
