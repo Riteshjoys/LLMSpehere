@@ -643,7 +643,7 @@ class FacelessContentService:
     async def delete_content(self, content_id: str, user_id: str) -> bool:
         """Delete user's content"""
         try:
-            result = await self.content_collection.delete_one({
+            result = self.content_collection.delete_one({
                 "content_id": content_id,
                 "user_id": user_id
             })
