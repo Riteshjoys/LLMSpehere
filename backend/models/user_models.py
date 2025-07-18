@@ -14,6 +14,20 @@ class UserPlan(str, Enum):
     PRO = "pro"
     ENTERPRISE = "enterprise"
 
+class User(BaseModel):
+    user_id: str
+    username: str
+    email: str
+    full_name: Optional[str] = None
+    role: UserRole = UserRole.USER
+    plan: UserPlan = UserPlan.FREE
+    is_admin: bool = False
+    created_at: datetime
+    last_login: Optional[datetime] = None
+    profile: Optional[Dict[str, Any]] = None
+    preferences: Optional[Dict[str, Any]] = None
+    usage_stats: Optional[Dict[str, Any]] = None
+
 class UserCreate(BaseModel):
     username: str
     email: str
