@@ -292,7 +292,7 @@ class FacelessContentService:
             template["created_at"] = datetime.utcnow()
             template["updated_at"] = datetime.utcnow()
             template["is_active"] = True
-            await self.templates_collection.replace_one(
+            self.templates_collection.replace_one(
                 {"template_id": template["template_id"]},
                 template,
                 upsert=True
