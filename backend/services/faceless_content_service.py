@@ -465,7 +465,7 @@ class FacelessContentService:
             # Update content record
             processing_time = (datetime.utcnow() - start_time).total_seconds()
             
-            await self.content_collection.update_one(
+            self.content_collection.update_one(
                 {"content_id": content_id},
                 {
                     "$set": {
