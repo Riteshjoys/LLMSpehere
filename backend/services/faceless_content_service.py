@@ -681,7 +681,7 @@ class FacelessContentService:
             
             # Get recent content
             recent_content = []
-            async for content_doc in self.content_collection.find(
+            for content_doc in self.content_collection.find(
                 {"user_id": user_id}
             ).sort("created_at", -1).limit(10):
                 recent_content.append({
