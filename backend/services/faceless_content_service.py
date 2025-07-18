@@ -576,7 +576,7 @@ class FacelessContentService:
         """Get all available animated characters"""
         try:
             characters = []
-            async for char_doc in self.characters_collection.find({}):
+            for char_doc in self.characters_collection.find({}):
                 characters.append(AnimatedCharacter(
                     character_id=char_doc["character_id"],
                     name=char_doc["name"],
