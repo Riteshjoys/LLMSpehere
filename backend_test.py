@@ -3408,6 +3408,9 @@ if __name__ == "__main__":
     # Add Viral Content Generator tests
     suite.addTests(loader.loadTestsFromTestCase(ViralContentGeneratorAPITest))
     
+    # Add Faceless Content Generator tests
+    suite.addTests(loader.loadTestsFromTestCase(FacelessContentAPITest))
+    
     # Run tests
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
