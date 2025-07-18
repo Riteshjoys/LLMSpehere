@@ -180,7 +180,7 @@ class FacelessContentService:
         
         for character in default_characters:
             character["created_at"] = datetime.utcnow()
-            await self.characters_collection.replace_one(
+            self.characters_collection.replace_one(
                 {"character_id": character["character_id"]},
                 character,
                 upsert=True
