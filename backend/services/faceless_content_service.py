@@ -395,7 +395,7 @@ class FacelessContentService:
             # This is a placeholder - in a real implementation, you would use
             # libraries like Manim, Blender Python API, or other animation tools
             
-            character = await self.characters_collection.find_one(
+            character = self.characters_collection.find_one(
                 {"character_id": character_request.character_id}
             )
             
