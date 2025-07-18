@@ -593,7 +593,7 @@ class FacelessContentService:
         """Get all available background music"""
         try:
             music_list = []
-            async for music_doc in self.music_collection.find({}):
+            for music_doc in self.music_collection.find({}):
                 music_list.append(BackgroundMusic(
                     track_id=music_doc["track_id"],
                     name=music_doc["name"],
