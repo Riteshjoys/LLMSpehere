@@ -655,11 +655,11 @@ class FacelessContentService:
         """Get user's content statistics"""
         try:
             # Get total content count
-            total_content = await self.content_collection.count_documents({"user_id": user_id})
+            total_content = self.content_collection.count_documents({"user_id": user_id})
             
             # Get completed content for stats
             completed_content = []
-            async for content_doc in self.content_collection.find({
+            for content_doc in self.content_collection.find({
                 "user_id": user_id,
                 "status": "completed"
             }):
