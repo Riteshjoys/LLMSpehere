@@ -21,7 +21,7 @@ from modules.user_routes import router as user_router
 from modules.analytics_routes import router as analytics_router
 # from modules.presentation_routes import router as presentation_router
 from modules.viral_content_routes import router as viral_content_router
-from modules.faceless_content_routes import router as faceless_content_router
+# from modules.faceless_content_routes import router as faceless_content_router
 from modules.startup import initialize_default_data, shutdown_scheduler
 
 # Initialize FastAPI app
@@ -51,7 +51,7 @@ app.include_router(user_router)
 app.include_router(analytics_router)
 # app.include_router(presentation_router)
 app.include_router(viral_content_router)
-app.include_router(faceless_content_router)
+# app.include_router(faceless_content_router)
 
 # Health check
 @app.get("/api/health")
