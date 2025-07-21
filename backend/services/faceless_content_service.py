@@ -561,6 +561,7 @@ class FacelessContentService:
     
     async def get_available_voices(self) -> List[VoiceModel]:
         """Get all available voices"""
+        await self._ensure_initialized()
         try:
             voices = []
             for voice_doc in self.voices_collection.find({}):
