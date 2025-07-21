@@ -56,6 +56,12 @@ class FacelessContentService:
         # Initialize default data will be done on first use
         self._initialized = False
     
+    async def _ensure_initialized(self):
+        """Ensure default data is initialized"""
+        if not self._initialized:
+            await self._initialize_default_data()
+            self._initialized = True
+    
     async def _initialize_default_data(self):
         """Initialize default voices, characters, and music"""
         try:
