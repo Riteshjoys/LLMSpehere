@@ -8,7 +8,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://00ba6f41-0ae1-458d-9360-a210d1a70fe2.preview.emergentagent.com/api"
+BACKEND_URL = "https://613b2841-f21c-421a-84e1-5f0b9b887d0c.preview.emergentagent.com/api"
 
 def test_single_endpoint(endpoint_name, method, url, headers, data=None):
     """Test a single endpoint and capture detailed error information"""
