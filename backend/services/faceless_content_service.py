@@ -53,8 +53,8 @@ class FacelessContentService:
         self.temp_dir = Path(tempfile.gettempdir()) / "faceless_content"
         self.temp_dir.mkdir(exist_ok=True)
         
-        # Initialize default data
-        asyncio.create_task(self._initialize_default_data())
+        # Initialize default data will be done on first use
+        self._initialized = False
     
     async def _initialize_default_data(self):
         """Initialize default voices, characters, and music"""
