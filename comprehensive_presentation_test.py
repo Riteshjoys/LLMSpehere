@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import Dict, Any
 
 # Get the backend URL from the frontend .env file
-BACKEND_URL = "https://613b2841-f21c-421a-84e1-5f0b9b887d0c.preview.emergentagent.com/api"
+BACKEND_URL = "https://5247f2b8-9d59-47e0-9a5b-c9a6f5154eec.preview.emergentagent.com/api"
 
 class PresentationGeneratorTest:
     """Test suite specifically for Presentation Generator API endpoints"""
