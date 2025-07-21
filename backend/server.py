@@ -64,16 +64,16 @@ async def root():
     return {"message": "ContentForge AI API", "version": "1.0.0"}
 
 # Initialize default providers and admin user
-@app.on_event("startup")
-async def startup_event():
-    """Initialize default providers and admin user if they don't exist"""
-    await initialize_default_data()
+# @app.on_event("startup")
+# async def startup_event():
+#     """Initialize default providers and admin user if they don't exist"""
+#     await initialize_default_data()
 
 # Shutdown event handler
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Cleanup resources on shutdown"""
-    await shutdown_scheduler()
+# @app.on_event("shutdown")
+# async def shutdown_event():
+#     """Cleanup resources on shutdown"""
+#     await shutdown_scheduler()
 
 if __name__ == "__main__":
     import uvicorn
