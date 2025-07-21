@@ -599,6 +599,7 @@ class FacelessContentService:
     
     async def get_background_music(self) -> List[BackgroundMusic]:
         """Get all available background music"""
+        await self._ensure_initialized()
         try:
             music_list = []
             for music_doc in self.music_collection.find({}):
