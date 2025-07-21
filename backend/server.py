@@ -27,14 +27,14 @@ from modules.startup import initialize_default_data, shutdown_scheduler
 # Initialize FastAPI app
 app = FastAPI(title="ContentForge AI API", version="1.0.0")
 
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# CORS middleware - fixed format for FastAPI compatibility
+cors_options = {
+    "allow_origins": ["*"],
+    "allow_credentials": True,
+    "allow_methods": ["*"],
+    "allow_headers": ["*"],
+}
+app.add_middleware(CORSMiddleware, **cors_options)
 
 # Include routers
 app.include_router(auth_router)
