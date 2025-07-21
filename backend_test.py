@@ -9,6 +9,350 @@ from datetime import datetime
 # Get the backend URL from the frontend .env file
 BACKEND_URL = "https://55b0d0ee-c62d-4529-88fb-7de3d4a921c7.preview.emergentagent.com"
 
+class FacelessContentAPITest(unittest.TestCase):
+    """Test suite for Faceless Content Creation API endpoints"""
+    
+    def setUp(self):
+        """Set up test environment"""
+        self.base_url = f"{BACKEND_URL}/api"
+        self.auth_token = None
+        self.login()
+    
+    def login(self):
+        """Login to get authentication token"""
+        login_url = f"{self.base_url}/auth/login"
+        login_data = {
+            "username": "admin",
+            "password": "admin123"
+        }
+        
+        response = requests.post(login_url, json=login_data)
+        if response.status_code == 200:
+            data = response.json()
+            self.auth_token = data.get("access_token")
+            print(f"Successfully logged in as admin. Token: {self.auth_token[:10]}...")
+        else:
+            print(f"Failed to login: {response.status_code} - {response.text}")
+            self.fail("Login failed")
+    
+    def get_headers(self) -> Dict[str, str]:
+        """Get headers with authentication token"""
+        return {
+            "Authorization": f"Bearer {self.auth_token}",
+            "Content-Type": "application/json"
+        }
+    
+    def test_01_get_voices(self):
+        """Test GET /api/faceless-content/voices endpoint"""
+        print("\n=== Testing GET /api/faceless-content/voices ===")
+        url = f"{self.base_url}/faceless-content/voices"
+        response = requests.get(url, headers=self.get_headers())
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Response: {json.dumps(data, indent=2)}")
+            
+            self.assertIsInstance(data, list, "Response should be a list")
+            if len(data) > 0:
+                voice = data[0]
+                required_fields = ["voice_id", "name", "category", "gender", "language"]
+                for field in required_fields:
+                    self.assertIn(field, voice, f"Voice should have {field} field")
+                print(f"✅ Retrieved {len(data)} voices successfully")
+            else:
+                print("⚠️ No voices returned, but endpoint is working")
+        else:
+            print(f"❌ Failed with status {response.status_code}: {response.text}")
+            self.fail(f"Expected 200, got {response.status_code}")
+    
+    def test_02_get_characters(self):
+        """Test GET /api/faceless-content/characters endpoint"""
+        print("\n=== Testing GET /api/faceless-content/characters ===")
+        url = f"{self.base_url}/faceless-content/characters"
+        response = requests.get(url, headers=self.get_headers())
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Response: {json.dumps(data, indent=2)}")
+            
+            self.assertIsInstance(data, list, "Response should be a list")
+            if len(data) > 0:
+                character = data[0]
+                required_fields = ["character_id", "name", "animation_type", "position", "animations"]
+                for field in required_fields:
+                    self.assertIn(field, character, f"Character should have {field} field")
+                print(f"✅ Retrieved {len(data)} characters successfully")
+            else:
+                print("⚠️ No characters returned, but endpoint is working")
+        else:
+            print(f"❌ Failed with status {response.status_code}: {response.text}")
+            self.fail(f"Expected 200, got {response.status_code}")
+    
+    def test_03_get_background_music(self):
+        """Test GET /api/faceless-content/background-music endpoint"""
+        print("\n=== Testing GET /api/faceless-content/background-music ===")
+        url = f"{self.base_url}/faceless-content/background-music"
+        response = requests.get(url, headers=self.get_headers())
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Response: {json.dumps(data, indent=2)}")
+            
+            self.assertIsInstance(data, list, "Response should be a list")
+            if len(data) > 0:
+                music = data[0]
+                required_fields = ["track_id", "name", "genre", "duration", "tempo", "mood"]
+                for field in required_fields:
+                    self.assertIn(field, music, f"Music should have {field} field")
+                print(f"✅ Retrieved {len(data)} music tracks successfully")
+            else:
+                print("⚠️ No music tracks returned, but endpoint is working")
+        else:
+            print(f"❌ Failed with status {response.status_code}: {response.text}")
+            self.fail(f"Expected 200, got {response.status_code}")
+    
+    def test_04_get_templates(self):
+        """Test GET /api/faceless-content/templates endpoint"""
+        print("\n=== Testing GET /api/faceless-content/templates ===")
+        url = f"{self.base_url}/faceless-content/templates"
+        response = requests.get(url, headers=self.get_headers())
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Response: {json.dumps(data, indent=2)}")
+            
+            self.assertIsInstance(data, list, "Response should be a list")
+            if len(data) > 0:
+                template = data[0]
+                required_fields = ["template_id", "name", "description", "category", "default_voice_id"]
+                for field in required_fields:
+                    self.assertIn(field, template, f"Template should have {field} field")
+                print(f"✅ Retrieved {len(data)} templates successfully")
+            else:
+                print("⚠️ No templates returned, but endpoint is working")
+        else:
+            print(f"❌ Failed with status {response.status_code}: {response.text}")
+            self.fail(f"Expected 200, got {response.status_code}")
+    
+    def test_05_get_history(self):
+        """Test GET /api/faceless-content/history endpoint"""
+        print("\n=== Testing GET /api/faceless-content/history ===")
+        url = f"{self.base_url}/faceless-content/history"
+        response = requests.get(url, headers=self.get_headers())
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Response: {json.dumps(data, indent=2)}")
+            
+            self.assertIsInstance(data, list, "Response should be a list")
+            print(f"✅ Retrieved {len(data)} content items from history")
+        else:
+            print(f"❌ Failed with status {response.status_code}: {response.text}")
+            self.fail(f"Expected 200, got {response.status_code}")
+    
+    def test_06_get_stats_overview(self):
+        """Test GET /api/faceless-content/stats/overview endpoint"""
+        print("\n=== Testing GET /api/faceless-content/stats/overview ===")
+        url = f"{self.base_url}/faceless-content/stats/overview"
+        response = requests.get(url, headers=self.get_headers())
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Response: {json.dumps(data, indent=2)}")
+            
+            required_fields = ["total_content", "total_duration", "success_rate", "avg_processing_time"]
+            for field in required_fields:
+                self.assertIn(field, data, f"Stats should have {field} field")
+            print(f"✅ Retrieved stats: {data['total_content']} total content, {data['success_rate']:.1f}% success rate")
+        else:
+            print(f"❌ Failed with status {response.status_code}: {response.text}")
+            self.fail(f"Expected 200, got {response.status_code}")
+    
+    def test_07_tts_generation(self):
+        """Test POST /api/faceless-content/tts/generate endpoint"""
+        print("\n=== Testing POST /api/faceless-content/tts/generate ===")
+        
+        # First get available voices
+        voices_url = f"{self.base_url}/faceless-content/voices"
+        voices_response = requests.get(voices_url, headers=self.get_headers())
+        
+        if voices_response.status_code != 200:
+            self.fail("Could not get voices for TTS test")
+        
+        voices = voices_response.json()
+        if not voices:
+            self.fail("No voices available for TTS test")
+        
+        voice_id = voices[0]["voice_id"]
+        
+        tts_request = {
+            "text": "Hello, this is a test of the text-to-speech functionality for faceless content creation.",
+            "voice_id": voice_id,
+            "stability": 0.5,
+            "similarity_boost": 0.5,
+            "model_id": "eleven_monolingual_v1",
+            "format": "mp3"
+        }
+        
+        url = f"{self.base_url}/faceless-content/tts/generate"
+        response = requests.post(url, json=tts_request, headers=self.get_headers(), timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Response: {json.dumps(data, indent=2)}")
+            
+            required_fields = ["audio_url", "duration", "voice_id", "format", "file_size"]
+            for field in required_fields:
+                self.assertIn(field, data, f"TTS response should have {field} field")
+            print(f"✅ Generated TTS audio: {data['duration']:.2f}s, {data['file_size']} bytes")
+        else:
+            print(f"❌ Failed with status {response.status_code}: {response.text}")
+            # Don't fail the test if it's due to missing API key
+            if "API key" in response.text or "ELEVENLABS" in response.text:
+                print("⚠️ TTS failed due to missing/invalid ElevenLabs API key - this is expected in test environment")
+            else:
+                self.fail(f"Expected 200, got {response.status_code}")
+    
+    def test_08_screen_recording_simulation(self):
+        """Test POST /api/faceless-content/screen-recording/simulate endpoint"""
+        print("\n=== Testing POST /api/faceless-content/screen-recording/simulate ===")
+        
+        recording_request = {
+            "duration": 10,
+            "fps": 30,
+            "quality": "high",
+            "capture_audio": True,
+            "region": {"width": 1920, "height": 1080}
+        }
+        
+        url = f"{self.base_url}/faceless-content/screen-recording/simulate"
+        response = requests.post(url, json=recording_request, headers=self.get_headers(), timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Response: {json.dumps(data, indent=2)}")
+            
+            required_fields = ["video_url", "duration", "fps", "resolution", "file_size"]
+            for field in required_fields:
+                self.assertIn(field, data, f"Screen recording response should have {field} field")
+            print(f"✅ Generated screen recording: {data['duration']:.2f}s, {data['resolution']}, {data['file_size']} bytes")
+        else:
+            print(f"❌ Failed with status {response.status_code}: {response.text}")
+            self.fail(f"Expected 200, got {response.status_code}")
+    
+    def test_09_full_content_generation(self):
+        """Test POST /api/faceless-content/generate endpoint"""
+        print("\n=== Testing POST /api/faceless-content/generate ===")
+        
+        # Get required data first
+        voices_response = requests.get(f"{self.base_url}/faceless-content/voices", headers=self.get_headers())
+        characters_response = requests.get(f"{self.base_url}/faceless-content/characters", headers=self.get_headers())
+        music_response = requests.get(f"{self.base_url}/faceless-content/background-music", headers=self.get_headers())
+        
+        if not all(r.status_code == 200 for r in [voices_response, characters_response, music_response]):
+            self.fail("Could not get required data for content generation")
+        
+        voices = voices_response.json()
+        characters = characters_response.json()
+        music = music_response.json()
+        
+        if not all([voices, characters, music]):
+            self.fail("Missing required data (voices, characters, or music)")
+        
+        content_request = {
+            "title": "Test Faceless Content Video",
+            "description": "A test video generated using the faceless content API",
+            "tts_text": "Welcome to our test video. This is a demonstration of the faceless content creation system.",
+            "voice_id": voices[0]["voice_id"],
+            "animated_character": {
+                "character_id": characters[0]["character_id"],
+                "animation": "talking",
+                "duration": 15.0,
+                "position": {"x": 0.8, "y": 0.7},
+                "scale": 1.0,
+                "text": "Hello from the animated character!"
+            },
+            "background_music": {
+                "track_id": music[0]["track_id"],
+                "volume": 0.3,
+                "fade_in": 2.0,
+                "fade_out": 2.0,
+                "loop": True
+            },
+            "video_duration": 15.0,
+            "video_format": "mp4",
+            "video_quality": "high",
+            "video_resolution": "1920x1080"
+        }
+        
+        url = f"{self.base_url}/faceless-content/generate"
+        response = requests.post(url, json=content_request, headers=self.get_headers(), timeout=60)
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Response: {json.dumps(data, indent=2)}")
+            
+            required_fields = ["content_id", "title", "status"]
+            for field in required_fields:
+                self.assertIn(field, data, f"Content generation response should have {field} field")
+            print(f"✅ Generated content: ID={data['content_id']}, Status={data['status']}")
+        else:
+            print(f"❌ Failed with status {response.status_code}: {response.text}")
+            # Don't fail the test if it's due to missing API key
+            if "API key" in response.text or "ELEVENLABS" in response.text:
+                print("⚠️ Content generation failed due to missing/invalid ElevenLabs API key - this is expected in test environment")
+            else:
+                self.fail(f"Expected 200, got {response.status_code}")
+    
+    def test_10_voice_cloning(self):
+        """Test POST /api/faceless-content/voices/clone endpoint"""
+        print("\n=== Testing POST /api/faceless-content/voices/clone ===")
+        
+        # Test with fake audio data since we don't have real files
+        files = {"files": ("test.mp3", b"fake_audio_data", "audio/mpeg")}
+        data = {
+            "voice_name": "Test Cloned Voice",
+            "description": "A test voice clone",
+            "labels": json.dumps({"accent": "american", "gender": "female"})
+        }
+        
+        url = f"{self.base_url}/faceless-content/voices/clone"
+        response = requests.post(url, data=data, files=files, 
+                               headers={"Authorization": f"Bearer {self.auth_token}"}, timeout=30)
+        
+        print(f"Status Code: {response.status_code}")
+        
+        if response.status_code == 200:
+            response_data = response.json()
+            print(f"Response: {json.dumps(response_data, indent=2)}")
+            
+            required_fields = ["voice_id", "name", "status", "message"]
+            for field in required_fields:
+                self.assertIn(field, response_data, f"Voice cloning response should have {field} field")
+            print(f"✅ Voice cloning initiated: ID={response_data['voice_id']}, Status={response_data['status']}")
+        else:
+            print(f"❌ Failed with status {response.status_code}: {response.text}")
+            self.fail(f"Expected 200, got {response.status_code}")
+
+
 class CodeGenerationAPITest(unittest.TestCase):
     """Test suite for Code Generation API endpoints"""
     
