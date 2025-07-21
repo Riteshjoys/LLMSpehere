@@ -581,6 +581,7 @@ class FacelessContentService:
     
     async def get_animated_characters(self) -> List[AnimatedCharacter]:
         """Get all available animated characters"""
+        await self._ensure_initialized()
         try:
             characters = []
             for char_doc in self.characters_collection.find({}):
