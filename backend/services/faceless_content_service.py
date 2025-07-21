@@ -618,6 +618,7 @@ class FacelessContentService:
     
     async def get_content_templates(self) -> List[FacelessContentTemplate]:
         """Get all available content templates"""
+        await self._ensure_initialized()
         try:
             templates = []
             for template_doc in self.templates_collection.find({"is_active": True}):
