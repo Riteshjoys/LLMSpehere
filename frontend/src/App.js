@@ -18,6 +18,7 @@ import WorkflowAutomation from './components/WorkflowAutomation';
 import PresentationGenerator from './components/PresentationGenerator';
 import ViralContentGenerator from './components/ViralContentGenerator';
 import FacelessContentCreator from './components/FacelessContentCreator';
+import FullStackAIAssistant from './components/FullStackAIAssistant';
 import AdminPanel from './components/AdminPanel';
 import './App.css';
 
