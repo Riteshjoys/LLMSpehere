@@ -22,6 +22,7 @@ from modules.analytics_routes import router as analytics_router
 from modules.presentation_routes import router as presentation_router
 from modules.viral_content_routes import router as viral_content_router
 from modules.faceless_content_routes import router as faceless_content_router
+from modules.fullstack_ai_routes import router as fullstack_ai_router
 from modules.startup import initialize_default_data, shutdown_scheduler
 
 # Initialize FastAPI app
