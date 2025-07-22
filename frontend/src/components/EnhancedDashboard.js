@@ -27,7 +27,8 @@ import {
   Eye,
   PieChart,
   LineChart,
-  UserX
+  UserX,
+  Rocket
 } from 'lucide-react';
 import {
   Chart as ChartJS,
