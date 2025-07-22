@@ -497,7 +497,14 @@ const EnhancedDashboard = () => {
                     <tool.icon className="h-6 w-6 text-white" />
                   </div>
                   <div className="ml-4 flex-1">
-                    <h3 className="text-lg font-medium text-gray-900">{tool.name}</h3>
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-medium text-gray-900">{tool.name}</h3>
+                      {tool.premium && (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-purple-100 to-blue-100 text-purple-800">
+                          Premium
+                        </span>
+                      )}
+                    </div>
                     <p className="text-sm text-gray-600 mt-1">{tool.description}</p>
                     <div className="mt-4">
                       {tool.available ? (
