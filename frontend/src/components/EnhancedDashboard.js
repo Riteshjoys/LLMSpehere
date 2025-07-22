@@ -153,6 +153,15 @@ const EnhancedDashboard = () => {
       available: true
     },
     {
+      name: 'Full Stack AI Assistant',
+      description: 'Build complete applications with AI-powered development',
+      icon: Rocket,
+      path: '/fullstack-ai',
+      color: 'bg-gradient-to-r from-blue-600 to-purple-600',
+      available: true,
+      premium: true
+    },
+    {
       name: 'Workflow Automation',
       description: 'Create multi-step automated workflows',
       icon: Zap,
