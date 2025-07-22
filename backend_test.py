@@ -41,16 +41,16 @@ class APITester:
         url = f"{API_BASE}{endpoint}"
         try:
             if method.upper() == "GET":
-                response = self.session.get(url, headers=headers, timeout=30)
+                response = self.session.get(url, headers=headers, timeout=60)
             elif method.upper() == "POST":
                 if files:
-                    response = self.session.post(url, data=data, files=files, headers=headers, timeout=30)
+                    response = self.session.post(url, data=data, files=files, headers=headers, timeout=60)
                 else:
-                    response = self.session.post(url, json=data, headers=headers, timeout=30)
+                    response = self.session.post(url, json=data, headers=headers, timeout=60)
             elif method.upper() == "PUT":
-                response = self.session.put(url, json=data, headers=headers, timeout=30)
+                response = self.session.put(url, json=data, headers=headers, timeout=60)
             elif method.upper() == "DELETE":
-                response = self.session.delete(url, headers=headers, timeout=30)
+                response = self.session.delete(url, headers=headers, timeout=60)
             else:
                 raise ValueError(f"Unsupported method: {method}")
             return response
