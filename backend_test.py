@@ -227,8 +227,8 @@ class APITester:
             if response.status_code == 200:
                 self.log_test("/generate/text", "POST", "PASS", "Text generation endpoint accessible")
             elif response.status_code in [400, 401, 403, 500]:
-                # Expected if no API keys configured
-                self.log_test("/generate/text", "POST", "SKIP", f"Endpoint accessible but API key needed (Status: {response.status_code})")
+                # Expected if no API keys configured or model issues
+                self.log_test("/generate/text", "POST", "SKIP", f"Endpoint accessible but API key/model needed (Status: {response.status_code})")
             else:
                 self.log_test("/generate/text", "POST", "FAIL", f"Unexpected status: {response.status_code}")
         else:
