@@ -110,6 +110,11 @@ function App() {
                 <FacelessContentCreator />
               </ProtectedRoute>
             } />
+            <Route path="/fullstack-ai" element={
+              <ProtectedRoute>
+                <FullStackAIAssistant />
+              </ProtectedRoute>
+            } />
             <Route path="/admin" element={
               <ProtectedRoute>
                 <AdminPanel />
