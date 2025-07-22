@@ -20,7 +20,7 @@ from models.faceless_content_models import (
 )
 from services.faceless_content_service import FacelessContentService
 from utils.auth_utils import get_current_user
-from models.user_models import User
+from services.auth_service import AuthService
 
 router = APIRouter(prefix="/api/faceless-content", tags=["faceless-content"])
 
@@ -30,18 +30,20 @@ faceless_service = FacelessContentService()
 @router.post("/generate", response_model=FacelessContentResponse)
 async def generate_faceless_content(
     request: FacelessContentRequest,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Generate faceless video content"""
     try:
-        return await faceless_service.compose_faceless_video(request, current_user.user_id)
+        # Get user info to get user_id
+        user_info = await AuthService.get_current_user_info(current_user)
+        return await faceless_service.compose_faceless_video(request, user_info.user_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/tts/generate", response_model=TTSResponse)
 async def generate_tts_audio(
     request: TTSRequest,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Generate text-to-speech audio"""
     try:
@@ -52,7 +54,7 @@ async def generate_tts_audio(
 @router.post("/screen-recording/simulate", response_model=ScreenRecordingResponse)
 async def simulate_screen_recording(
     request: ScreenRecordingRequest,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Simulate screen recording (placeholder)"""
     try:
@@ -61,7 +63,7 @@ async def simulate_screen_recording(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/voices", response_model=List[Voice])
-async def get_available_voices(current_user: User = Depends(get_current_user)):
+async def get_available_voices(current_user: str = Depends(get_current_user)):
     """Get all available voices"""
     try:
         return await faceless_service.get_available_voices()
@@ -69,7 +71,7 @@ async def get_available_voices(current_user: User = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/characters", response_model=List[AnimatedCharacter])
-async def get_animated_characters(current_user: User = Depends(get_current_user)):
+async def get_animated_characters(current_user: str = Depends(get_current_user)):
     """Get all available animated characters"""
     try:
         return await faceless_service.get_animated_characters()
@@ -77,7 +79,7 @@ async def get_animated_characters(current_user: User = Depends(get_current_user)
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/background-music", response_model=List[BackgroundMusic])
-async def get_background_music(current_user: User = Depends(get_current_user)):
+async def get_background_music(current_user: str = Depends(get_current_user)):
     """Get all available background music"""
     try:
         return await faceless_service.get_background_music()
@@ -85,7 +87,7 @@ async def get_background_music(current_user: User = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/templates", response_model=List[FacelessContentTemplate])
-async def get_content_templates(current_user: User = Depends(get_current_user)):
+async def get_content_templates(current_user: str = Depends(get_current_user)):
     """Get all available content templates"""
     try:
         return await faceless_service.get_content_templates()
@@ -95,22 +97,26 @@ async def get_content_templates(current_user: User = Depends(get_current_user)):
 @router.get("/history", response_model=List[FacelessContent])
 async def get_user_content(
     limit: int = 50,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Get user's faceless content history"""
     try:
-        return await faceless_service.get_user_content(current_user.user_id, limit)
+        # Get user info to get user_id
+        user_info = await AuthService.get_current_user_info(current_user)
+        return await faceless_service.get_user_content(user_info.user_id, limit)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/{content_id}", response_model=FacelessContent)
 async def get_content_by_id(
     content_id: str,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Get specific content by ID"""
     try:
-        content = await faceless_service.get_content_by_id(content_id, current_user.user_id)
+        # Get user info to get user_id
+        user_info = await AuthService.get_current_user_info(current_user)
+        content = await faceless_service.get_content_by_id(content_id, user_info.user_id)
         if not content:
             raise HTTPException(status_code=404, detail="Content not found")
         return content
@@ -122,11 +128,13 @@ async def get_content_by_id(
 @router.delete("/{content_id}")
 async def delete_content(
     content_id: str,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Delete user's content"""
     try:
-        success = await faceless_service.delete_content(content_id, current_user.user_id)
+        # Get user info to get user_id
+        user_info = await AuthService.get_current_user_info(current_user)
+        success = await faceless_service.delete_content(content_id, user_info.user_id)
         if not success:
             raise HTTPException(status_code=404, detail="Content not found")
         return {"message": "Content deleted successfully"}
@@ -136,10 +144,12 @@ async def delete_content(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/stats/overview", response_model=FacelessContentStats)
-async def get_content_stats(current_user: User = Depends(get_current_user)):
+async def get_content_stats(current_user: str = Depends(get_current_user)):
     """Get user's content statistics"""
     try:
-        return await faceless_service.get_content_stats(current_user.user_id)
+        # Get user info to get user_id
+        user_info = await AuthService.get_current_user_info(current_user)
+        return await faceless_service.get_content_stats(user_info.user_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -149,7 +159,7 @@ async def clone_voice(
     description: str = Form(None),
     labels: str = Form(None),
     files: List[UploadFile] = File(...),
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Clone a voice from audio samples"""
     try:
@@ -221,7 +231,7 @@ async def recording_stream_websocket(websocket):
 @router.get("/voices/{voice_id}/preview")
 async def get_voice_preview(
     voice_id: str,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Get voice preview URL"""
     try:
@@ -238,7 +248,7 @@ async def get_voice_preview(
 @router.get("/characters/{character_id}/animations")
 async def get_character_animations(
     character_id: str,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Get available animations for a character"""
     try:
@@ -255,7 +265,7 @@ async def get_character_animations(
 @router.get("/templates/{template_id}")
 async def get_template_by_id(
     template_id: str,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Get specific template by ID"""
     try:
@@ -273,7 +283,7 @@ async def get_template_by_id(
 async def generate_content_from_template(
     template_id: str,
     custom_text: str,
-    current_user: User = Depends(get_current_user)
+    current_user: str = Depends(get_current_user)
 ):
     """Generate content using a template"""
     try:
@@ -316,7 +326,9 @@ async def generate_content_from_template(
                 loop=True
             )
         
-        return await faceless_service.compose_faceless_video(content_request, current_user.user_id)
+        # Get user info to get user_id
+        user_info = await AuthService.get_current_user_info(current_user)
+        return await faceless_service.compose_faceless_video(content_request, user_info.user_id)
     except HTTPException:
         raise
     except Exception as e:
