@@ -49,7 +49,7 @@ app.include_router(dashboard_router)
 app.include_router(admin_api_keys_router)
 app.include_router(user_router)
 app.include_router(analytics_router)
-# app.include_router(presentation_router)
+app.include_router(presentation_router)
 app.include_router(viral_content_router)
 # app.include_router(faceless_content_router)
 
