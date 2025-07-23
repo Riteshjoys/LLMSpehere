@@ -242,8 +242,12 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
-  stuck_tasks: []
+  current_focus: 
+    - "Image Generation page functionality"
+    - "Presentation Generator page functionality"
+  stuck_tasks: 
+    - "Image Generation page functionality"
+    - "Presentation Generator page functionality"
   test_all: false
   test_priority: "high_first"
 
