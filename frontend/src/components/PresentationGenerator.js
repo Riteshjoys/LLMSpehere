@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 
 const PresentationGenerator = () => {
+  const { api } = useAuth();
   const [activeTab, setActiveTab] = useState('create');
   const [templates, setTemplates] = useState([]);
   const [presentations, setPresentations] = useState([]);
