@@ -34,14 +34,21 @@ async def verify_premium_access(current_user: str = Depends(get_current_user)):
             )
         
         # Check if user has premium access
-        user_plan = user_info.get("plan", "free")
+        user_plan = user_info.plan if hasattr(user_info, 'plan') else "free"
         if user_plan not in ["premium", "pro", "enterprise"]:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Premium subscription required to access Full Stack AI Assistant"
             )
         
-        return user_info
+        # Convert to dict for easier access in routes
+        return {
+            "user_id": user_info.user_id,
+            "username": user_info.username,
+            "email": user_info.email,
+            "plan": user_info.plan,
+            "is_admin": user_info.is_admin
+        }
         
     except HTTPException:
         raise
