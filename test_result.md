@@ -180,11 +180,16 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All backend endpoints tested and working"
-  stuck_tasks: []
+    - "Code Generation page functionality"
+    - "Full Stack AI Assistant functionality"
+  stuck_tasks:
+    - "Code Generation page functionality"
+    - "Full Stack AI Assistant functionality"
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
   - agent: "testing"
     message: "Comprehensive backend API testing completed. Fixed critical issue in faceless content routes where User type annotations were incorrect. All major endpoints are now functional. Success rate: 93.5% with only minor timeout issues in test script, not actual API problems."
+  - agent: "testing"
+    message: "Frontend testing completed. Login functionality works perfectly with admin credentials. However, both Code Generation and Full Stack AI pages have critical 401 authentication errors when making API calls after successful login. The UI loads correctly but backend integration fails due to JWT token authentication issues. This suggests the token is not being properly passed to API requests or there's a backend authentication middleware problem."
