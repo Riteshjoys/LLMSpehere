@@ -42,17 +42,9 @@ const ImageGeneration = () => {
 
   const fetchImageHistory = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/generations/images`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setImageHistory(data.generations);
+      const response = await api.get('/api/generations/images');
+      if (response.status === 200) {
+        setImageHistory(response.data.generations);
       }
     } catch (error) {
       console.error('Error fetching image history:', error);
