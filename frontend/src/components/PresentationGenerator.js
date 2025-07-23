@@ -62,35 +62,26 @@ const PresentationGenerator = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/presentations/create`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          template_id: selectedTemplate.id,
-          title: presentationData.title,
-          data: {
-            topic: presentationData.topic,
-            slides: presentationData.slides
-          }
-        })
+      const response = await api.post('/api/presentations/create', {
+        template_id: selectedTemplate.id,
+        title: presentationData.title,
+        data: {
+          topic: presentationData.topic,
+          slides: presentationData.slides
+        }
       });
 
-      const result = await response.json();
-      
-      if (response.ok) {
+      if (response.status === 200) {
         toast.success('Presentation created successfully!');
         setPresentationData({ title: '', topic: '', slides: [], templateId: '' });
         setSelectedTemplate(null);
         loadPresentations();
       } else {
-        throw new Error(result.detail || 'Failed to create presentation');
+        throw new Error(response.data?.detail || 'Failed to create presentation');
       }
     } catch (error) {
       console.error('Error creating presentation:', error);
-      toast.error(error.message || 'Failed to create presentation');
+      toast.error(error.response?.data?.detail || error.message || 'Failed to create presentation');
     } finally {
       setLoading(false);
     }
