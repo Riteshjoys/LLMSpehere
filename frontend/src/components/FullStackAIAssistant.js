@@ -245,8 +245,9 @@ const FullStackAIAssistant = () => {
     }
 
     try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/fullstack-ai/project/${projectId}`, {
+      const response = await fetch(`${backendUrl}/api/fullstack-ai/project/${projectId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
