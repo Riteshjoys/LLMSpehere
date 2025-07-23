@@ -169,14 +169,8 @@ const FullStackAIAssistant = () => {
 
   const resumeProject = async (projectId) => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${backendUrl}/api/fullstack-ai/project/${projectId}/resume`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      if (response.ok) {
+      const response = await api.post(`/api/fullstack-ai/project/${projectId}/resume`);
+      if (response.status === 200) {
         toast.success('Project resumed successfully');
         fetchProjects();
       } else {
