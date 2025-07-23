@@ -30,9 +30,9 @@ class AuthTester:
         url = f"{API_BASE}{endpoint}"
         try:
             if method.upper() == "GET":
-                response = self.session.get(url, headers=headers, timeout=30)
+                response = self.session.get(url, headers=headers, timeout=10)
             elif method.upper() == "POST":
-                response = self.session.post(url, json=data, headers=headers, timeout=30)
+                response = self.session.post(url, json=data, headers=headers, timeout=10)
             else:
                 raise ValueError(f"Unsupported method: {method}")
             return response
