@@ -132,34 +132,23 @@ const FullStackAIAssistant = () => {
 
   const executeTask = async (projectId, taskId = null) => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${backendUrl}/api/fullstack-ai/project/${projectId}/execute-task`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          project_id: projectId,
-          task_id: taskId,
-          execution_mode: 'auto',
-          force_execution: false
-        })
+      const response = await api.post(`/api/fullstack-ai/project/${projectId}/execute-task`, {
+        project_id: projectId,
+        task_id: taskId,
+        execution_mode: 'auto',
+        force_execution: false
       });
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (response.data.success) {
         toast.success('Task execution started!');
         // Refresh project status
         fetchProjects();
       } else {
-        toast.error(data.message || 'Failed to execute task');
+        toast.error(response.data.message || 'Failed to execute task');
       }
     } catch (error) {
       console.error('Error executing task:', error);
-      toast.error('Failed to execute task');
+      toast.error(error.response?.data?.message || 'Failed to execute task');
     }
   };
 
