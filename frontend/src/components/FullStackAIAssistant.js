@@ -122,8 +122,9 @@ const FullStackAIAssistant = () => {
     setLoading(true);
     
     try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/fullstack-ai/project/initialize', {
+      const response = await fetch(`${backendUrl}/api/fullstack-ai/project/initialize`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
