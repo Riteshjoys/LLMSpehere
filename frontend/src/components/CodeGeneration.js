@@ -78,36 +78,25 @@ const CodeGeneration = () => {
     setResponse('');
 
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${backendUrl}/api/code/generate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          provider: selectedProvider,
-          model: selectedModel,
-          request_type: selectedRequestType,
-          language: selectedLanguage,
-          prompt: prompt,
-          max_tokens: maxTokens
-        })
+      const response = await api.post('/api/code/generate', {
+        provider: selectedProvider,
+        model: selectedModel,
+        request_type: selectedRequestType,
+        language: selectedLanguage,
+        prompt: prompt,
+        max_tokens: maxTokens
       });
 
-      const data = await response.json();
-      
-      if (response.ok) {
-        setResponse(data.response);
+      if (response.status === 200) {
+        setResponse(response.data.response);
         toast.success('Code generated successfully!');
         fetchHistory(); // Refresh history
       } else {
-        toast.error(data.detail || 'Generation failed');
+        toast.error(response.data.detail || 'Generation failed');
       }
     } catch (error) {
       console.error('Error generating code:', error);
-      toast.error('Generation failed');
+      toast.error(error.response?.data?.detail || 'Generation failed');
     } finally {
       setLoading(false);
     }
