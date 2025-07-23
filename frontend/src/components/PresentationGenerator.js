@@ -36,13 +36,8 @@ const PresentationGenerator = () => {
 
   const loadTemplates = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/presentations/templates`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      const data = await response.json();
-      setTemplates(data.templates || []);
+      const response = await api.get('/api/presentations/templates');
+      setTemplates(response.data.templates || []);
     } catch (error) {
       console.error('Error loading templates:', error);
       toast.error('Failed to load templates');
