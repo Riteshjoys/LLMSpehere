@@ -11,6 +11,7 @@ import {
   ChartBarIcon
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
+import { useAuth } from '../contexts/AuthContext';
 
 const PresentationGenerator = () => {
   const [activeTab, setActiveTab] = useState('create');
