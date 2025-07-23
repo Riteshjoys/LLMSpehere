@@ -199,8 +199,9 @@ const FullStackAIAssistant = () => {
 
   const pauseProject = async (projectId) => {
     try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/fullstack-ai/project/${projectId}/pause`, {
+      const response = await fetch(`${backendUrl}/api/fullstack-ai/project/${projectId}/pause`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
