@@ -494,6 +494,109 @@ class APITester:
         else:
             self.log_test("/dashboard/statistics", "GET", "FAIL", f"Status: {response.status_code if response else 'No response'}")
             
+    def test_code_generation_endpoints(self):
+        """Test code generation endpoints that were returning 401 errors"""
+        print("\n=== Testing Code Generation Endpoints ===")
+        
+        # Test public endpoints first (no auth required)
+        # Get code providers
+        response = self.make_request("GET", "/code/providers")
+        if response and response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                self.log_test("/code/providers", "GET", "PASS", f"Found {len(data)} code providers")
+            else:
+                self.log_test("/code/providers", "GET", "FAIL", f"Invalid response: {data}")
+        else:
+            self.log_test("/code/providers", "GET", "FAIL", f"Status: {response.status_code if response else 'No response'}")
+            
+        # Get supported languages
+        response = self.make_request("GET", "/code/languages")
+        if response and response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                self.log_test("/code/languages", "GET", "PASS", f"Found {len(data)} programming languages")
+            else:
+                self.log_test("/code/languages", "GET", "FAIL", f"Invalid response: {data}")
+        else:
+            self.log_test("/code/languages", "GET", "FAIL", f"Status: {response.status_code if response else 'No response'}")
+            
+        # Get request types
+        response = self.make_request("GET", "/code/request-types")
+        if response and response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                self.log_test("/code/request-types", "GET", "PASS", f"Found {len(data)} request types")
+            else:
+                self.log_test("/code/request-types", "GET", "FAIL", f"Invalid response: {data}")
+        else:
+            self.log_test("/code/request-types", "GET", "FAIL", f"Status: {response.status_code if response else 'No response'}")
+            
+        # Test authenticated endpoints
+        if not self.user_token:
+            self.log_test("Code generation auth tests", "SKIP", "SKIP", "No user token available")
+            return
+            
+        headers = {"Authorization": f"Bearer {self.user_token}"}
+        
+        # Get code generation history
+        response = self.make_request("GET", "/code/history", headers=headers)
+        if response and response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                self.log_test("/code/history", "GET", "PASS", f"Retrieved {len(data)} code generations")
+            else:
+                self.log_test("/code/history", "GET", "FAIL", f"Invalid response: {data}")
+        else:
+            self.log_test("/code/history", "GET", "FAIL", f"Status: {response.status_code if response else 'No response'}")
+            
+        # Get code generation stats
+        response = self.make_request("GET", "/code/stats", headers=headers)
+        if response and response.status_code == 200:
+            data = response.json()
+            if "total_generations" in data:
+                self.log_test("/code/stats", "GET", "PASS", f"Retrieved code generation stats")
+            else:
+                self.log_test("/code/stats", "GET", "FAIL", f"Invalid response: {data}")
+        else:
+            self.log_test("/code/stats", "GET", "FAIL", f"Status: {response.status_code if response else 'No response'}")
+            
+    def test_fullstack_ai_endpoints(self):
+        """Test Full Stack AI Assistant endpoints that were returning 401 errors"""
+        print("\n=== Testing Full Stack AI Assistant Endpoints ===")
+        
+        if not self.admin_token:
+            self.log_test("Full Stack AI tests", "SKIP", "SKIP", "No admin token available")
+            return
+            
+        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        
+        # Get AI Assistant capabilities
+        response = self.make_request("GET", "/fullstack-ai/capabilities", headers=headers)
+        if response and response.status_code == 200:
+            data = response.json()
+            if "project_management" in data and "development" in data:
+                self.log_test("/fullstack-ai/capabilities", "GET", "PASS", "Retrieved AI capabilities")
+            else:
+                self.log_test("/fullstack-ai/capabilities", "GET", "FAIL", f"Invalid response: {data}")
+        elif response and response.status_code == 403:
+            self.log_test("/fullstack-ai/capabilities", "GET", "SKIP", "Premium subscription required (expected for free users)")
+        else:
+            self.log_test("/fullstack-ai/capabilities", "GET", "FAIL", f"Status: {response.status_code if response else 'No response'}")
+            
+        # Get user projects
+        response = self.make_request("GET", "/fullstack-ai/projects", headers=headers)
+        if response and response.status_code == 200:
+            data = response.json()
+            if isinstance(data, list):
+                self.log_test("/fullstack-ai/projects", "GET", "PASS", f"Retrieved {len(data)} projects")
+            else:
+                self.log_test("/fullstack-ai/projects", "GET", "FAIL", f"Invalid response: {data}")
+        elif response and response.status_code == 403:
+            self.log_test("/fullstack-ai/projects", "GET", "SKIP", "Premium subscription required (expected for free users)")
+        else:
+            self.log_test("/fullstack-ai/projects", "GET", "FAIL", f"Status: {response.status_code if response else 'No response'}")
+            
     def run_all_tests(self):
         """Run all API tests"""
         print(f"Starting comprehensive API tests for: {API_BASE}")
