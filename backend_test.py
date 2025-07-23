@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 # Get backend URL from environment
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://a404ac43-d9cd-45b4-bd34-442e1343555e.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://d4beb4cc-564e-4149-b7f0-c736467390d4.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class APITester:
