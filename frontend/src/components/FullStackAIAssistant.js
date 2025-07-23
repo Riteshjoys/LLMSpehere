@@ -77,8 +77,9 @@ const FullStackAIAssistant = () => {
 
   const fetchCapabilities = async () => {
     try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/fullstack-ai/capabilities', {
+      const response = await fetch(`${backendUrl}/api/fullstack-ai/capabilities`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
