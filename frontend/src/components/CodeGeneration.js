@@ -6,7 +6,7 @@ import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import toast from 'react-hot-toast';
 
 const CodeGeneration = () => {
-  const { user } = useAuth();
+  const { user, api } = useAuth();
   const [providers, setProviders] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [requestTypes, setRequestTypes] = useState([]);
