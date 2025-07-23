@@ -613,6 +613,10 @@ class APITester:
         self.test_analytics_endpoints()
         self.test_dashboard_endpoints()
         
+        # Test the specific endpoints mentioned in the review request
+        self.test_code_generation_endpoints()
+        self.test_fullstack_ai_endpoints()
+        
         # Summary
         print("\n" + "="*60)
         print("TEST SUMMARY")
