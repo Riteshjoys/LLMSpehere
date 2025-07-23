@@ -54,3 +54,4 @@ ffmpeg-python==0.2.0
 websockets==15.0.1
 certifi==2025.7.14
 lxml==6.0.0
+pyparsing
