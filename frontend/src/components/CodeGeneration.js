@@ -45,7 +45,8 @@ const CodeGeneration = () => {
 
   const fetchLanguages = async () => {
     try {
-      const response = await fetch('/api/code/languages');
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+      const response = await fetch(`${backendUrl}/api/code/languages`);
       const data = await response.json();
       setLanguages(data);
     } catch (error) {
