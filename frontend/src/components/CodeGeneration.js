@@ -30,7 +30,8 @@ const CodeGeneration = () => {
 
   const fetchProviders = async () => {
     try {
-      const response = await fetch('/api/code/providers');
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+      const response = await fetch(`${backendUrl}/api/code/providers`);
       const data = await response.json();
       setProviders(data);
       if (data.length > 0) {
