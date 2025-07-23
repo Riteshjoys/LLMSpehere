@@ -52,10 +52,8 @@ const CodeGeneration = () => {
 
   const fetchRequestTypes = async () => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
-      const response = await fetch(`${backendUrl}/api/code/request-types`);
-      const data = await response.json();
-      setRequestTypes(data);
+      const response = await api.get('/api/code/request-types');
+      setRequestTypes(response.data);
     } catch (error) {
       console.error('Error fetching request types:', error);
     }
