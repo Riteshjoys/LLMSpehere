@@ -67,8 +67,9 @@ const CodeGeneration = () => {
 
   const fetchHistory = async () => {
     try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/code/history', {
+      const response = await fetch(`${backendUrl}/api/code/history`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
