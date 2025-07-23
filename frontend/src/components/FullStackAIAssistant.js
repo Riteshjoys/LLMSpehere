@@ -21,7 +21,7 @@ import {
 import toast from 'react-hot-toast';
 
 const FullStackAIAssistant = () => {
-  const { user } = useAuth();
+  const { user, api } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
