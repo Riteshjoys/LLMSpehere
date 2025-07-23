@@ -78,19 +78,12 @@ const FullStackAIAssistant = () => {
 
   const fetchProjects = async () => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${backendUrl}/api/fullstack-ai/projects`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setProjects(data);
-      } else if (response.status === 403) {
+      const response = await api.get('/api/fullstack-ai/projects');
+      setProjects(response.data);
+    } catch (error) {
+      if (error.response?.status === 403) {
         toast.error('Premium subscription required');
       }
-    } catch (error) {
       console.error('Error fetching projects:', error);
     }
   };
