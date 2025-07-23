@@ -223,7 +223,29 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
-agent_communication:
+  - task: "Image Generation page functionality"
+    implemented: true
+    working: false
+    file: "frontend/src/components/ImageGeneration.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL AUTHENTICATION ISSUE: Image Generation page returns 401 Unauthorized errors for /api/providers/image and /api/generations/images endpoints. JWT tokens are not being properly authenticated for image-related API calls, indicating incomplete authentication fix."
+
+  - task: "Presentation Generator page functionality"
+    implemented: true
+    working: false
+    file: "frontend/src/components/PresentationGenerator.js"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL AUTHENTICATION ISSUE: Presentation Generator page returns 401 Unauthorized errors for /api/presentations/templates and /api/presentations/ endpoints. JWT tokens are not being properly authenticated for presentation-related API calls, indicating incomplete authentication fix."
   - agent: "testing"
     message: "Comprehensive backend API testing completed. Fixed critical issue in faceless content routes where User type annotations were incorrect. All major endpoints are now functional. Success rate: 93.5% with only minor timeout issues in test script, not actual API problems."
   - agent: "testing"
