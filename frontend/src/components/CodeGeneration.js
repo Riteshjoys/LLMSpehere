@@ -30,13 +30,11 @@ const CodeGeneration = () => {
 
   const fetchProviders = async () => {
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
-      const response = await fetch(`${backendUrl}/api/code/providers`);
-      const data = await response.json();
-      setProviders(data);
-      if (data.length > 0) {
-        setSelectedProvider(data[0].provider);
-        setSelectedModel(data[0].models[0].id);
+      const response = await api.get('/api/code/providers');
+      setProviders(response.data);
+      if (response.data.length > 0) {
+        setSelectedProvider(response.data[0].provider);
+        setSelectedModel(response.data[0].models[0].id);
       }
     } catch (error) {
       console.error('Error fetching providers:', error);
