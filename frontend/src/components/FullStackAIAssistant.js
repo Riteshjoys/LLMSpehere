@@ -99,20 +99,9 @@ const FullStackAIAssistant = () => {
     setLoading(true);
     
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${backendUrl}/api/fullstack-ai/project/initialize`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(projectForm)
-      });
+      const response = await api.post('/api/fullstack-ai/project/initialize', projectForm);
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (response.data.success) {
         toast.success('Project initialized successfully!');
         setIsCreatingProject(false);
         setProjectForm({
@@ -127,15 +116,15 @@ const FullStackAIAssistant = () => {
         
         // Auto-select the new project
         setTimeout(() => {
-          setSelectedProject(data.project_id);
+          setSelectedProject(response.data.project_id);
           setActiveTab('project');
         }, 1000);
       } else {
-        toast.error(data.message || 'Failed to create project');
+        toast.error(response.data.message || 'Failed to create project');
       }
     } catch (error) {
       console.error('Error creating project:', error);
-      toast.error('Failed to create project');
+      toast.error(error.response?.data?.message || 'Failed to create project');
     } finally {
       setLoading(false);
     }
