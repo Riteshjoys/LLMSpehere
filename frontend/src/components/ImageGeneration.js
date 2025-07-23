@@ -74,23 +74,15 @@ const ImageGeneration = () => {
     const loadingToast = toast.loading('Generating image...');
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/generate/image`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          provider_name: selectedProvider,
-          model: selectedModel,
-          prompt: prompt,
-          number_of_images: numberOfImages
-        })
+      const response = await api.post('/api/generate/image', {
+        provider_name: selectedProvider,
+        model: selectedModel,
+        prompt: prompt,
+        number_of_images: numberOfImages
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      if (response.status === 200) {
+        const data = response.data;
         const newImage = {
           id: Date.now(),
           image_base64: data.image_base64,
@@ -104,12 +96,11 @@ const ImageGeneration = () => {
         setImageHistory(prev => [newImage, ...prev]);
         toast.success('Image generated successfully!');
       } else {
-        const errorData = await response.json();
-        toast.error(errorData.detail || 'Failed to generate image');
+        toast.error(response.data?.detail || 'Failed to generate image');
       }
     } catch (error) {
       console.error('Error generating image:', error);
-      toast.error('Failed to generate image');
+      toast.error(error.response?.data?.detail || 'Failed to generate image');
     } finally {
       setIsGenerating(false);
       toast.dismiss(loadingToast);
