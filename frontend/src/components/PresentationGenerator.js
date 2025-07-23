@@ -46,13 +46,8 @@ const PresentationGenerator = () => {
 
   const loadPresentations = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/presentations/`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      const data = await response.json();
-      setPresentations(data.presentations || []);
+      const response = await api.get('/api/presentations/');
+      setPresentations(response.data.presentations || []);
     } catch (error) {
       console.error('Error loading presentations:', error);
       toast.error('Failed to load presentations');
