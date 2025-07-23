@@ -56,7 +56,8 @@ const FullStackAIAssistant = () => {
   const checkPremiumAccess = async () => {
     // This will be handled by the backend route automatically
     try {
-      const response = await fetch('/api/fullstack-ai/capabilities', {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
+      const response = await fetch(`${backendUrl}/api/fullstack-ai/capabilities`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
