@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import { useAuth } from '../contexts/AuthContext';
 
 const ImageGeneration = () => {
+  const { api } = useAuth();
   const [providers, setProviders] = useState([]);
   const [selectedProvider, setSelectedProvider] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
