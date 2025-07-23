@@ -24,22 +24,14 @@ const ImageGeneration = () => {
 
   const fetchImageProviders = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/providers/image`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setProviders(data.providers);
+      const response = await api.get('/api/providers/image');
+      if (response.status === 200) {
+        setProviders(response.data.providers);
         
         // Select first provider by default
-        if (data.providers.length > 0) {
-          setSelectedProvider(data.providers[0].name);
-          setSelectedModel(data.providers[0].models[0]);
+        if (response.data.providers.length > 0) {
+          setSelectedProvider(response.data.providers[0].name);
+          setSelectedModel(response.data.providers[0].models[0]);
         }
       }
     } catch (error) {
