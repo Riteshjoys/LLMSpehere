@@ -56,20 +56,12 @@ const FullStackAIAssistant = () => {
   const checkPremiumAccess = async () => {
     // This will be handled by the backend route automatically
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || '';
-      const response = await fetch(`${backendUrl}/api/fullstack-ai/capabilities`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (response.status === 403) {
-        toast.error('Premium subscription required for Full Stack AI Assistant');
-        return false;
-      }
-
-      return response.ok;
+      const response = await api.get('/api/fullstack-ai/capabilities');
+      return response.status === 200;
     } catch (error) {
+      if (error.response?.status === 403) {
+        toast.error('Premium subscription required for Full Stack AI Assistant');
+      }
       console.error('Error checking premium access:', error);
       return false;
     }
